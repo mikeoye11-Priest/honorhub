@@ -323,6 +323,7 @@
   .wizard-steps{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin:0 0 18px;color:#98A2B3;font-size:11px}
   .wizard-steps span{display:flex;align-items:center;gap:6px}.wizard-steps b{width:22px;height:22px;border-radius:50%;
     background:#EEF0F5;display:grid;place-items:center;color:#667085}.wizard-steps span.active b{background:#6545E8;color:#fff}
+  .wizard-steps span.done b{background:#E7F8EE;color:#0F9B5F}
   .org-select{border:1px solid #DADDE8;border-radius:7px;background:#fff;padding:8px 12px;font-size:12px;color:#374151}
   .stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:14px 0}
   .stat-box{border:1px solid #EAECF0;border-radius:10px;padding:14px;background:#fff}
@@ -355,6 +356,7 @@
   .template-card .thumb{aspect-ratio:1.58;border:1px solid #E7C26F;border-radius:5px;background:#FFF8EA;margin-bottom:7px}
   .import-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}.import-option{border:1px solid #EAECF0;border-radius:10px;
     min-height:170px;display:grid;place-items:center;text-align:center;padding:18px}
+  .drop-zone{border:1px dashed #6545E8;border-radius:8px;background:#FBFAFF;padding:22px;text-align:center;margin-top:16px}
   .editor-layout{display:grid;grid-template-columns:135px 1fr 190px;gap:15px}.tool-list{display:grid;gap:8px}
   .tool-list button{border:0;background:#fff;text-align:left;padding:9px 10px;border-radius:7px;color:#344054}
   .recipient-list{border:1px solid #EAECF0;border-radius:10px;padding:12px}.recipient-list ol{font-size:12px;line-height:2;margin:0;padding-left:20px}
@@ -365,6 +367,10 @@
   .brand-layout{display:grid;grid-template-columns:130px 1fr 1fr;gap:14px}.brand-menu button{display:block;width:100%;border:0;text-align:left;background:#fff;
     border-radius:7px;padding:9px 10px}.brand-menu button.active{background:#ECE8FF;color:#3019A5;font-weight:800}
   .table{width:100%;border-collapse:collapse;font-size:12px}.table th,.table td{border-bottom:1px solid #EAECF0;padding:9px;text-align:left}.table th{color:#667085}
+  .signature-row{display:grid;grid-template-columns:48px 1fr 180px 50px;gap:12px;align-items:center;border-bottom:1px solid #EAECF0;padding:13px 0}
+  .sig-script{font-family:var(--serif);font-style:italic;color:#6B7280;font-size:20px}
+  .toggle{width:36px;height:20px;border-radius:999px;background:#D0D5DD;position:relative}.toggle::after{content:"";position:absolute;width:16px;height:16px;left:2px;top:2px;border-radius:50%;background:#fff}.toggle.on{background:#22C55E}.toggle.on::after{left:18px}
+  .help-layout{display:grid;grid-template-columns:1.3fr 1fr;gap:20px}.article-list a{display:block;border-bottom:1px solid #EAECF0;padding:10px 0;color:#3019A5;text-decoration:none;font-size:13px}
   .chart-line{height:88px;border:1px solid #EAECF0;border-radius:8px;background:
     linear-gradient(180deg,rgba(101,69,232,.18),rgba(101,69,232,.03)),
     linear-gradient(90deg,#fff0 0 11%,#EAECF0 11% 11.4%,#fff0 11.4% 22%,#EAECF0 22% 22.4%,#fff0 22.4% 33%,#EAECF0 33% 33.4%,#fff0 33.4% 44%,#EAECF0 44% 44.4%,#fff0 44.4% 55%,#EAECF0 55% 55.4%,#fff0 55.4% 66%,#EAECF0 66% 66.4%,#fff0 66.4% 77%,#EAECF0 77% 77.4%,#fff0 77.4%),
@@ -390,7 +396,7 @@
   .plan-box{background:linear-gradient(135deg,#3A1B91,#231063);border-radius:9px;padding:14px;color:#fff}
   .plan-box strong{display:block;font-size:17px;margin-bottom:6px}.plan-box small{display:block;color:#D8DEF8;margin-bottom:12px}
   .plan-box button{width:100%;border:0;border-radius:7px;background:rgba(255,255,255,.14);color:#fff;padding:9px;font-weight:800}
-  .help-chip{border-top:1px solid rgba(255,255,255,.12);padding-top:16px;display:flex;align-items:center;gap:10px;color:#fff;font-size:12px}
+  .help-chip{border:0;border-top:1px solid rgba(255,255,255,.12);background:transparent;padding-top:16px;display:flex;align-items:center;gap:10px;color:#fff;font-size:12px;text-align:left;cursor:pointer}
   .help-icon{width:34px;height:34px;border-radius:50%;border:2px solid rgba(255,255,255,.45);display:grid;place-items:center;font-weight:800}
   @media (max-width:1200px){.product-board{grid-template-columns:1fr}.app-sidebar{min-height:auto}.app-header{height:auto;align-items:flex-start;flex-direction:column;padding:18px}.board-grid{grid-template-columns:1fr;padding:18px}.board-card{grid-column:1!important}.stat-grid,.activity-grid,.org-type-grid,.template-gallery,.editor-layout,.brand-layout,.dashboard-stats,.dashboard-main-grid,.dashboard-bottom-grid{grid-template-columns:1fr}}
   @media print{.product-board{display:none!important}.product-board + .layout{display:block}}
@@ -430,7 +436,7 @@
           <div class="plan-box"><strong>Professional</strong><small>Valid until 24 May 2026</small><button type="button">View Plan</button></div>
         </div>
       </div>
-      <div class="help-chip"><span class="help-icon">?</span><span><strong>Need help?</strong><br>Visit our help centre</span></div>
+      <button class="help-chip" type="button" data-page-jump="help"><span class="help-icon">?</span><span><strong>Need help?</strong><br>Visit our help centre</span></button>
     </aside>
 
     <main class="app-main">
@@ -494,6 +500,7 @@
 
       <article class="board-card span-12" data-page="templates">
         <div class="step-title">3. Templates</div>
+        <div class="wizard-steps"><span class="done"><b>✓</b>Category</span><span class="active"><b>2</b>Template</span><span><b>3</b>Recipients</span><span><b>4</b>Customise</span><span><b>5</b>Preview</span></div>
         <h3>Templates</h3>
         <p>Choose a template for your certificate</p>
         <div class="module-tags"><span>All</span><span>Classic</span><span>Modern</span><span>Children</span><span>Premium</span><span>Sports</span><span>Corporate</span><span>Church</span></div>
@@ -508,18 +515,20 @@
 
       <article class="board-card span-12" data-page="recipients">
         <div class="step-title">4. Recipients Import</div>
+        <div class="wizard-steps"><span class="done"><b>✓</b>Category</span><span class="done"><b>✓</b>Template</span><span class="active"><b>3</b>Recipients</span><span><b>4</b>Customise</span><span><b>5</b>Preview</span></div>
         <h3>Add Recipients</h3><p>Import recipients to generate certificates in bulk.</p>
         <div class="import-grid">
-          <div class="import-option"><div><h3>▤</h3><strong>Upload CSV File</strong><p>Upload a CSV file with recipient details.</p><button class="solid-action purple" type="button">Upload CSV</button></div></div>
+          <div class="import-option"><div><h3>▤</h3><strong>Upload CSV File</strong><p>Upload a CSV file with recipient details.</p><div class="drop-zone">Drag & drop your file here<br><br><button class="solid-action purple" type="button">Choose File</button><br><small>honorhub_recipients.csv · 2.4 KB ✓</small></div></div></div>
           <div class="import-option"><div><h3>♙</h3><strong>Enter Manually</strong><p>Add recipients one by one or paste from Excel.</p><button class="btn btn-ghost" type="button">Enter Manually</button></div></div>
         </div>
-        <p class="hint" style="background:#F4F1FF;border:1px solid #DAD8FA;border-radius:8px;padding:10px;margin-top:12px">CSV Template Columns: Name, Award/Reason, Class/Team, Date, Email (optional)</p>
+        <p class="hint" style="background:#F4F1FF;border:1px solid #DAD8FA;border-radius:8px;padding:10px;margin-top:12px">CSV Template Columns: Name, Award/Reason, Class/Team, Date (optional), Email (optional)<br><strong>Total recipients: 25</strong></p>
         <div class="top-row" style="margin-top:14px"><button class="btn btn-ghost" type="button" data-page-jump="templates">← Back</button><button class="solid-action purple" type="button" data-page-jump="editor">Next →</button></div>
       </article>
 
       <article class="board-card span-12" data-page="editor">
         <div class="step-title">5. Certificate Editor</div>
-        <div class="top-row"><div><h3>Preview & Edit</h3><p>Review and customise your certificate.</p></div><button class="solid-action purple" type="button">Save Changes</button></div>
+        <div class="wizard-steps"><span class="done"><b>✓</b>Category</span><span class="done"><b>✓</b>Template</span><span class="done"><b>✓</b>Recipients</span><span class="active"><b>4</b>Customise</span><span><b>5</b>Preview</span></div>
+        <div class="top-row"><div><h3>Customise Certificate</h3><p>Review and customise your certificate.</p></div><button class="solid-action purple" type="button">Save Changes</button></div>
         <div class="editor-layout">
           <div class="tool-list"><button>Text</button><button>Change Template</button><button>Colours & Fonts</button><button>Logo</button><button>Signatories</button><button>AI Writer</button></div>
           <div class="dark-cert"><div><h4>CERTIFICATE<br>OF ACHIEVEMENT</h4><small>PRESENTED TO</small><div class="recipient">Daniel Williams</div><p>For outstanding performance, dedication and excellent teamwork.</p></div></div>
@@ -530,6 +539,7 @@
 
       <article class="board-card span-12" data-page="preview">
         <div class="step-title">6. Certificate Preview</div>
+        <div class="wizard-steps"><span class="done"><b>✓</b>Category</span><span class="done"><b>✓</b>Template</span><span class="done"><b>✓</b>Recipients</span><span class="done"><b>✓</b>Customise</span><span class="active"><b>5</b>Preview</span></div>
         <div class="top-row"><div><h3>Certificate Preview</h3></div><div><strong style="font-size:12px">Recipient 1 of 25</strong> <button class="iconbtn" type="button">‹</button> <button class="iconbtn" type="button">›</button> <button class="solid-action purple" type="button">Export ▾</button></div></div>
         <div class="editor-layout" style="grid-template-columns:1fr 170px">
           <div class="certificate-shot"><div><h4>STAR OF THE WEEK</h4><small>Presented to</small><div class="recipient">Emma Johnson</div><p>For showing kindness, great effort and a positive attitude all week.</p></div></div>
@@ -569,11 +579,11 @@
       <article class="board-card span-12" data-page="signatories">
         <div class="step-title">Signatories</div>
         <div class="top-row"><div><h3>Signatories</h3><p>Manage approved signatories for certificates.</p></div><button class="solid-action purple" type="button">+ Add Signatory</button></div>
-        <table class="table"><thead><tr><th>Name</th><th>Position</th><th>Default For</th><th>Signature</th><th>Status</th></tr></thead><tbody>
-          <tr><td>Mr. James Wilson</td><td>Headteacher</td><td>School awards</td><td>Uploaded</td><td>Active</td></tr>
-          <tr><td>Coach Williams</td><td>Head Coach</td><td>Football awards</td><td>Uploaded</td><td>Active</td></tr>
-          <tr><td>Pastor Ade</td><td>Senior Pastor</td><td>Church certificates</td><td>Pending</td><td>Draft</td></tr>
-        </tbody></table>
+        <div class="signature-row"><span class="avatar">J</span><span><strong>Mr. James Wilson</strong><br><small>Headteacher</small></span><span class="sig-script">James Wilson</span><span class="toggle on"></span></div>
+        <div class="signature-row"><span class="avatar">S</span><span><strong>Mrs. Sarah Johnson</strong><br><small>Deputy Headteacher</small></span><span class="sig-script">Sarah Johnson</span><span class="toggle on"></span></div>
+        <div class="signature-row"><span class="avatar">D</span><span><strong>Mr. David Brown</strong><br><small>Sports Coach</small></span><span class="sig-script">David Brown</span><span class="toggle on"></span></div>
+        <div class="signature-row"><span class="avatar">E</span><span><strong>Mrs. Emily Taylor</strong><br><small>Class Teacher</small></span><span class="sig-script">Emily Taylor</span><span class="toggle"></span></div>
+        <div class="signature-row"><span class="avatar">P</span><span><strong>Pastor John Smith</strong><br><small>Youth Pastor</small></span><span class="sig-script">John Smith</span><span class="toggle on"></span></div>
       </article>
 
       <article class="board-card span-12" data-page="users">
@@ -599,6 +609,15 @@
         <div class="brand-layout" style="grid-template-columns:130px 1fr">
           <div class="brand-menu"><button>Profile</button><button class="active">Organisation</button><button>Billing</button><button>Security</button><button>Audit Logs</button></div>
           <div><label>Organisation Name</label><input type="text" value="Oakfield Primary School"><label>Organisation Type</label><select><option>School</option></select><label>Website</label><input type="text" value="www.oakfieldprimary.co.uk"></div>
+        </div>
+      </article>
+
+      <article class="board-card span-12" data-page="help">
+        <div class="step-title">13. Help Centre</div>
+        <h3>How can we help you today?</h3>
+        <div class="help-layout">
+          <div class="list-card"><input type="text" value="" placeholder="Search for help articles..." style="margin-bottom:12px"><strong>Popular Articles</strong><div class="article-list"><a href="#">How to create a certificate</a><a href="#">Importing recipients from CSV</a><a href="#">Using organisation branding</a><a href="#">Managing templates</a><a href="#">Download & print certificates</a></div></div>
+          <div class="list-card"><h3>Contact Support</h3><p>Need more help? Our support team is here for you.</p><button class="solid-action purple" type="button">Send us a message</button><hr style="border:0;border-top:1px solid #EAECF0;margin:22px 0"><strong>Live Chat</strong><p>Available Mon - Fri<br>9:00 AM - 5:00 PM</p></div>
         </div>
       </article>
     </div>
@@ -1130,7 +1149,8 @@ function showAppPage(page){
     signatories:'Signatories',
     users:'Users',
     reports:'Reports & Analytics',
-    settings:'Settings'
+    settings:'Settings',
+    help:'Help Centre'
   };
   document.querySelectorAll('[data-page]').forEach(card=>{
     card.classList.toggle('page-active',card.dataset.page===selected);
