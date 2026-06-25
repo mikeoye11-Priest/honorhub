@@ -1,60 +1,93 @@
 const platform = {
-  product: 'School Recognition Platform',
-  privacyMode: 'session-only-pupils',
-  message: 'Designed with privacy first. No pupil records stored by default.',
+  product: 'HonorHub',
+  company: 'Zequence',
+  tagline: 'Recognise. Celebrate. Inspire.',
+  privacyMode: 'session-only-recipients',
+  message: 'Recognition made simple. No recipient records stored by default.',
+  modules: [
+    'Dashboard',
+    'Certificates',
+    'Templates',
+    'Organisations',
+    'Users',
+    'Branding',
+    'Signatories',
+    'Recipients',
+    'AI Writer',
+    'Print & PDF',
+    'Settings'
+  ],
   tenantModel: {
-    trust: 'Oakfield Learning Trust',
-    schools: [
+    account: 'Zequence Digital',
+    organisationTypes: [
+      'Schools',
+      'Churches',
+      'Charities',
+      'Companies',
+      'Football Clubs',
+      'Sports Clubs',
+      'Youth Clubs',
+      'Training Providers',
+      'Events',
+      'Communities'
+    ],
+    organisations: [
       {
-        id: 'school_oakfield',
+        id: 'org_oakfield_primary',
+        type: 'School',
         name: 'Oakfield Primary School',
-        roles: ['Headteacher', 'Admin', 'Year 1 Teachers', 'Year 2 Teachers', 'SENCO']
-      },
-      {
-        id: 'school_brook_lane',
-        name: 'Brook Lane School',
         roles: ['Headteacher', 'Admin', 'Teachers', 'SENCO']
       },
       {
-        id: 'school_hilltop',
-        name: 'Hilltop Academy',
-        roles: ['Headteacher', 'Admin', 'Teachers', 'SENCO']
+        id: 'org_grace_church',
+        type: 'Church',
+        name: 'Grace Community Church',
+        roles: ['Pastor', 'Administrator', 'Volunteer Coordinator']
+      },
+      {
+        id: 'org_oakfield_fc',
+        type: 'Football Club',
+        name: 'Oakfield Juniors FC',
+        roles: ['Coach', 'Manager', 'Administrator']
       }
     ]
   },
   storedByDefault: [
-    'trust account',
-    'school account',
-    'teacher accounts',
-    'school logo',
-    'school branding',
+    'organisation account',
+    'user accounts',
+    'organisation logo',
+    'brand colours',
     'favourite certificate templates',
-    'signatures',
-    'school colours',
-    'award categories'
+    'signatories',
+    'default footer',
+    'award categories',
+    'billing settings'
   ],
   notStoredByDefault: [
-    'pupil names',
+    'recipient names',
     'certificate history',
-    'award history'
-  ],
-  futureModules: [
-    'student database',
     'award history',
-    'analytics',
-    'trust dashboard',
-    'sports day certificates',
-    'attendance certificates',
-    'reading awards',
-    'house points',
-    'behaviour rewards',
-    'graduation certificates',
-    'nursery certificates',
-    'EYFS learning journeys',
-    'staff appreciation certificates',
-    'governor appreciation certificates'
+    'recognition timeline'
   ],
-  aiGuardrail: 'AI receives achievement notes only. Pupil names are merged locally in the browser.'
+  categorySets: {
+    school: ['Weekly Awards', 'Reading', 'Attendance', 'Behaviour', 'Sports Day', 'Graduation', 'Teacher Awards'],
+    football: ['Player of Match', 'Golden Boot', 'Respect Award', 'Parents Player', 'Season Awards', 'Tournament Winners', 'Academy Graduation'],
+    church: ['Membership', 'Baptism', 'Workers Training', 'Volunteer', 'Conference', 'Bible School', 'Appreciation'],
+    company: ['Employee of Month', 'Training', 'Long Service', 'Innovation', 'Safety', 'Leadership', 'Recognition']
+  },
+  futureModules: [
+    'Recognition Timeline',
+    'Digital Badges',
+    'Achievement Wall',
+    'Event Awards',
+    'Hall of Fame',
+    'Mobile App',
+    'Marketplace',
+    'Saved Contacts',
+    'QR Verification',
+    'Email Delivery'
+  ],
+  aiGuardrail: 'AI receives achievement notes only. Recipient names are merged locally in the browser.'
 };
 
 export default function handler(req, res) {

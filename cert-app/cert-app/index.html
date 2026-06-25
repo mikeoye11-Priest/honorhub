@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>School Recognition Platform</title>
+<title>HonorHub by Zequence</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Quicksand:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -42,6 +42,9 @@
     border-radius:999px;padding:8px 12px;white-space:nowrap}
 
   .layout{display:grid;grid-template-columns:355px 1fr;gap:0;min-height:calc(100vh - 67px)}
+  .navline{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+  .navline span{font-size:11.5px;color:var(--ink-soft);background:#F7F5EF;border:1px solid var(--line);
+    border-radius:999px;padding:4px 8px}
 
   /* ---------- Controls ---------- */
   .controls{background:var(--panel);border-right:1px solid var(--line);
@@ -95,6 +98,24 @@
   .module-tags{display:flex;flex-wrap:wrap;gap:7px}
   .module-tags span{border:1px solid var(--line);background:#FBFAF7;border-radius:999px;
     padding:6px 9px;font-size:12px;color:var(--ink-soft)}
+  .sector-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .sector-btn{border:1px solid var(--line);background:#FBFAF7;border-radius:8px;padding:9px 10px;
+    text-align:left;font-family:var(--ui);font-size:12.5px;color:var(--ink);cursor:pointer}
+  .sector-btn.active{border-color:var(--ink);background:#fff;box-shadow:0 1px 0 var(--ink)}
+  .stage-dashboard{width:100%;max-width:980px;margin-bottom:22px}
+  .dash-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:14px}
+  .dash-head h2{font-family:var(--serif);font-size:28px;line-height:1.05;margin:0;color:var(--ink)}
+  .dash-head p{margin:5px 0 0;color:var(--ink-soft);font-size:13.5px}
+  .metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:13px}
+  .metric{background:#fff;border:1px solid var(--line);border-radius:8px;padding:12px}
+  .metric .n{font-family:var(--serif);font-size:25px;line-height:1;color:var(--ink)}
+  .metric .k{font-size:11.5px;color:var(--ink-faint);text-transform:uppercase;letter-spacing:.08em;margin-top:5px}
+  .quick-actions{display:flex;gap:8px;flex-wrap:wrap}
+  .quick-actions button{border:1px solid var(--line);background:#fff;border-radius:8px;padding:9px 11px;
+    font-family:var(--ui);font-size:12.5px;color:var(--ink);cursor:pointer}
+  .preview-tools{width:100%;max-width:780px;display:flex;align-items:center;justify-content:space-between;
+    gap:10px;margin-bottom:10px;color:var(--ink-soft);font-size:12.5px}
+  .preview-tools strong{color:var(--ink)}
   .logo-up{display:flex;align-items:center;gap:12px}
   .logo-thumb{width:46px;height:46px;border:1px solid var(--line);border-radius:9px;background:#FBFAF7;
     display:flex;align-items:center;justify-content:center;overflow:hidden;flex:none}
@@ -258,17 +279,18 @@
     .topbar{align-items:flex-start;flex-direction:column}
     .controls{border-right:none;border-bottom:1px solid var(--line);max-height:none}
     .stage{max-height:none}
+    .metrics{grid-template-columns:1fr 1fr}
   }
 </style>
 </head>
 <body>
   <div class="topbar">
     <div class="brand">
-      <h1>School Recognition Platform</h1>
-      <span>privacy-first certificates for UK schools</span>
+      <h1>HonorHub</h1>
+      <span>by Zequence · Recognise. Celebrate. Inspire.</span>
     </div>
     <div class="top-actions">
-      <span class="privacy-pill">No pupil records stored by default</span>
+      <span class="privacy-pill">No recipient records stored by default</span>
       <button class="btn btn-primary" id="printBtn">Print or save PDF</button>
     </div>
   </div>
@@ -278,20 +300,43 @@
     <aside class="controls">
       <div class="group">
         <div class="privacy-panel">
-          <strong>Session-only pupil data</strong>
-          Upload a weekly CSV, generate certificates, then clear the names and notes from this browser session. School branding can be saved; pupil records are not saved.
+          <strong>Session-only recipient data</strong>
+          Upload a CSV, generate certificates, then clear the names and notes from this browser session. Organisation branding can be saved; recipient records are not saved by default.
           <div class="session-row">
             <span class="session-state" id="sessionState">5 pupils in this session</span>
-            <button class="btn btn-ghost" id="clearSessionBtn" type="button">Clear pupils</button>
+            <button class="btn btn-ghost" id="clearSessionBtn" type="button">Clear recipients</button>
           </div>
           <div class="backend-state" id="backendState">Checking privacy backend...</div>
         </div>
       </div>
 
       <div class="group">
-        <span class="group-label">School profile</span>
-        <div class="field"><label>Trust</label><input type="text" id="trust" value="Oakfield Learning Trust"></div>
-        <div class="field"><label>School name</label><input type="text" id="school" value="Oakfield Primary School"></div>
+        <span class="group-label">MVP modules</span>
+        <div class="navline">
+          <span>Dashboard</span><span>Certificates</span><span>Templates</span><span>Organisations</span>
+          <span>Users</span><span>Branding</span><span>Signatories</span><span>Recipients</span>
+          <span>AI Writer</span><span>Print & PDF</span><span>Settings</span>
+        </div>
+      </div>
+
+      <div class="group">
+        <span class="group-label">Who are you recognising?</span>
+        <div class="sector-grid" id="sectorGrid">
+          <button class="sector-btn active" type="button" data-sector="school">School</button>
+          <button class="sector-btn" type="button" data-sector="football">Football Club</button>
+          <button class="sector-btn" type="button" data-sector="sports">Sports Club</button>
+          <button class="sector-btn" type="button" data-sector="church">Church</button>
+          <button class="sector-btn" type="button" data-sector="charity">Charity</button>
+          <button class="sector-btn" type="button" data-sector="company">Company</button>
+          <button class="sector-btn" type="button" data-sector="training">Training Provider</button>
+          <button class="sector-btn" type="button" data-sector="event">Event</button>
+        </div>
+      </div>
+
+      <div class="group">
+        <span class="group-label">Organisation profile</span>
+        <div class="field"><label>Group</label><input type="text" id="trust" value="Zequence Digital"></div>
+        <div class="field"><label>Organisation name</label><input type="text" id="school" value="Oakfield Primary School"></div>
         <div class="field"><label>Role</label>
           <select id="role">
             <option>Headteacher</option>
@@ -299,32 +344,36 @@
             <option selected>Class Teacher</option>
             <option>SENCO</option>
             <option>Trust Leader</option>
+            <option>Coach</option>
+            <option>Pastor</option>
+            <option>Manager</option>
+            <option>Director</option>
           </select>
         </div>
-        <p class="hint">V1 keeps school settings separate from weekly pupil uploads, ready for trust and school tenancy.</p>
+        <p class="hint">V1 keeps organisation settings separate from recipient uploads, ready for multi-organisation tenancy.</p>
       </div>
 
       <div class="group">
         <span class="group-label">Tenant boundary</span>
         <div class="mini-map">
-          <strong id="tenantTrust">Oakfield Learning Trust</strong>
+          <strong id="tenantTrust">Zequence Digital</strong>
           <ul id="tenantSchools">
-            <li>Oakfield Primary: logo, colours, signatures, templates, teachers</li>
-            <li>Brook Lane School: separate branding and teacher accounts</li>
-            <li>Hilltop Academy: isolated from every other school</li>
+            <li>Schools: isolated branding, templates and users</li>
+            <li>Churches: separate signatories, categories and reports</li>
+            <li>Football clubs: team templates and coach accounts</li>
           </ul>
         </div>
-        <p class="hint">Production rule: every school record is scoped by trust and school membership.</p>
+        <p class="hint">Production rule: every organisation record is scoped by account and membership.</p>
       </div>
 
       <div class="group">
-        <span class="group-label">Teacher workflow</span>
+        <span class="group-label">Certificate workflow</span>
         <div class="workflow">
           <div><span>1</span>Log in</div>
-          <div><span>2</span>Choose certificate type</div>
-          <div><span>3</span>Upload weekly CSV</div>
+          <div><span>2</span>Choose recognition sector</div>
+          <div><span>3</span>Upload CSV or enter manually</div>
           <div><span>4</span>Preview and print or save PDF</div>
-          <div><span>5</span>Clear pupil session data</div>
+          <div><span>5</span>Clear recipient session data</div>
         </div>
       </div>
 
@@ -348,7 +397,7 @@
       </div>
 
       <div class="group">
-        <span class="group-label">School logo</span>
+        <span class="group-label">Organisation logo</span>
         <div class="logo-up">
           <label class="filebtn">Add logo<input type="file" id="logo" accept="image/*"></label>
           <div class="logo-meta" id="logoMeta">PNG or JPG · shown on every certificate</div>
@@ -357,15 +406,16 @@
 
       <div class="group">
         <span class="group-label">Wording</span>
+        <div class="field"><label>Certificate category</label><select id="category"></select></div>
         <div class="field"><label>Award title</label><input type="text" id="award" value="Star of the Week"></div>
-        <div class="field"><label>Default reason (used when a pupil has none)</label><input type="text" id="reason" value="for brilliant effort and kindness this week"></div>
+        <div class="field"><label>Default reason (used when a recipient has none)</label><input type="text" id="reason" value="for brilliant effort and kindness this week"></div>
         <div class="field"><label>Signed by</label><input type="text" id="signatory" value="Mrs Hart · Class 3"></div>
         <div class="field"><label>Date</label><input type="text" id="date" value=""></div>
       </div>
 
       <div class="group">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:9px">
-          <span class="group-label" style="margin-bottom:0">Pupils</span>
+          <span class="group-label" style="margin-bottom:0">Recipients</span>
           <label class="filebtn">⬆ Upload CSV<input type="file" id="csv" accept=".csv,.txt"></label>
         </div>
         <textarea id="pupils" spellcheck="false">Amelia Cole — for beautiful, careful handwriting all week
@@ -373,12 +423,12 @@ Noah Bryant — for being a kind and helpful friend
 Priya Shah — for fantastic ideas in our science lesson
 Leo Walsh — for never giving up on tricky maths
 Grace Owusu — for reading with wonderful expression</textarea>
-        <p class="hint">Session-only data. One pupil per line. Add a short note or finished reason after a dash:
+        <p class="hint">Session-only data. One recipient per line. Add a short note or finished reason after a dash:
           <em>Name — kind, tidy, great ideas</em>. Skip the dash to use the default reason.</p>
         <div class="ai-row">
           <button class="btn-ai" id="aiBtn">✨ Write reasons with AI</button>
         </div>
-        <p class="ai-note">Only your notes are sent to be rewritten — pupil names never leave this page. Clear the session when printing or downloading is done.</p>
+        <p class="ai-note">Only your notes are sent to be rewritten — recipient names never leave this page. AI tone changes for schools, clubs, churches, companies and events.</p>
         <p class="ai-error" id="aiErr"></p>
         <p class="count-note" id="count"></p>
       </div>
@@ -386,21 +436,46 @@ Grace Owusu — for reading with wonderful expression</textarea>
       <div class="group">
         <span class="group-label">Future opt-in modules</span>
         <div class="module-tags">
-          <span>Student database</span><span>Award history</span><span>House totals</span>
-          <span>Trust dashboard</span><span>Sports Day</span><span>Attendance</span>
-          <span>Reading awards</span><span>EYFS</span><span>Staff appreciation</span>
+          <span>Recognition Timeline</span><span>Digital badges</span><span>Achievement wall</span>
+          <span>Event awards</span><span>Hall of Fame</span><span>Marketplace</span>
+          <span>QR verification</span><span>Mobile app</span><span>Saved contacts</span>
         </div>
-        <p class="hint">These become paid modules because they add stored records, analytics, and trust-wide value.</p>
+        <p class="hint">These become opt-in paid modules because they add stored records, analytics and organisation-wide value.</p>
       </div>
     </aside>
 
     <!-- ===================== PREVIEW ===================== -->
     <main class="stage">
+      <section class="stage-dashboard" aria-label="HonorHub dashboard">
+        <div class="dash-head">
+          <div>
+            <h2>Good morning Michael</h2>
+            <p>Recognition made simple across schools, clubs, churches, charities and companies.</p>
+          </div>
+          <button class="btn btn-primary" type="button" id="createBtn">Create Certificate</button>
+        </div>
+        <div class="metrics">
+          <div class="metric"><div class="n">1,240</div><div class="k">Certificates Created</div></div>
+          <div class="metric"><div class="n">186</div><div class="k">This Month</div></div>
+          <div class="metric"><div class="n">14</div><div class="k">Templates</div></div>
+          <div class="metric"><div class="n">8</div><div class="k">Users</div></div>
+        </div>
+        <div class="quick-actions">
+          <button type="button">Upload CSV</button>
+          <button type="button">Browse Templates</button>
+          <button type="button">Manage Branding</button>
+          <button type="button">AI Writer</button>
+        </div>
+      </section>
+      <div class="preview-tools">
+        <span><strong id="previewSector">School</strong> · Canva-style preview</span>
+        <span>Print · One PDF · Separate PDFs · Email · Share · QR</span>
+      </div>
       <div class="mount" id="mount"></div>
       <div class="pager">
-        <button class="iconbtn" id="prev" aria-label="Previous pupil">‹</button>
+        <button class="iconbtn" id="prev" aria-label="Previous recipient">‹</button>
         <span class="who" id="who">Pupil 1 of 5</span>
-        <button class="iconbtn" id="next" aria-label="Next pupil">›</button>
+        <button class="iconbtn" id="next" aria-label="Next recipient">›</button>
       </div>
     </main>
   </div>
@@ -502,10 +577,101 @@ const ACCENTS=[
   {name:'Sky',hex:'#4F86B0'},{name:'Plum',hex:'#8A5A86'},{name:'Ink',hex:'#46443F'}
 ];
 
+const SECTORS={
+  school:{
+    label:'School',
+    org:'Oakfield Primary School',
+    group:'Oakfield Learning Trust',
+    role:'Class Teacher',
+    signatory:'Mrs Hart · Class 3',
+    award:'Star of the Week',
+    reason:'for brilliant effort and kindness this week',
+    categories:['Weekly Awards','Reading','Attendance','Behaviour','Sports Day','Graduation','Teacher Awards'],
+    tone:'warm, age-appropriate and suitable for a UK school assembly'
+  },
+  football:{
+    label:'Football Club',
+    org:'Oakfield Juniors FC',
+    group:'Zequence Digital',
+    role:'Coach',
+    signatory:'Coach Williams',
+    award:'Player of the Match',
+    reason:'for outstanding teamwork and determination on the pitch',
+    categories:['Player of Match','Golden Boot','Respect Award','Parents Player','Season Awards','Tournament Winners','Academy Graduation'],
+    tone:'energetic, team-focused and suitable for a football club presentation'
+  },
+  sports:{
+    label:'Sports Club',
+    org:'Oakfield Sports Club',
+    group:'Zequence Digital',
+    role:'Coach',
+    signatory:'Club Coach',
+    award:'Achievement Award',
+    reason:'for commitment, sportsmanship and consistent improvement',
+    categories:['Most Improved','Teamwork','Leadership','Competition Award','Respect Award','Season Awards'],
+    tone:'motivational, disciplined and suitable for a sports club'
+  },
+  church:{
+    label:'Church',
+    org:'Grace Community Church',
+    group:'Zequence Digital',
+    role:'Pastor',
+    signatory:'Pastor Ade',
+    award:'Volunteer Appreciation',
+    reason:'for faithful and dedicated service to the ministry',
+    categories:['Membership','Baptism','Workers Training','Volunteer','Conference','Bible School','Appreciation'],
+    tone:'gracious, respectful and suitable for a church or ministry setting'
+  },
+  charity:{
+    label:'Charity',
+    org:'Hope Outreach',
+    group:'Zequence Digital',
+    role:'Administrator',
+    signatory:'Programme Lead',
+    award:'Volunteer Recognition',
+    reason:'for generous service and commitment to the community',
+    categories:['Volunteer','Community Impact','Fundraising','Service Award','Training','Appreciation'],
+    tone:'sincere, community-minded and suitable for a charity'
+  },
+  company:{
+    label:'Company',
+    org:'Zequence Digital',
+    group:'Zequence Digital',
+    role:'Director',
+    signatory:'Managing Director',
+    award:'Employee of the Month',
+    reason:'for excellent contribution, professionalism and initiative',
+    categories:['Employee of Month','Training','Long Service','Innovation','Safety','Leadership','Recognition'],
+    tone:'polished, professional and suitable for a workplace recognition programme'
+  },
+  training:{
+    label:'Training Provider',
+    org:'Zequence Training Academy',
+    group:'Zequence Digital',
+    role:'Director',
+    signatory:'Training Director',
+    award:'Certificate of Completion',
+    reason:'for successfully completing the training programme',
+    categories:['Course Completion','Attendance','Assessment','Leadership','Professional Development','Graduation'],
+    tone:'formal, encouraging and suitable for training completion'
+  },
+  event:{
+    label:'Event',
+    org:'HonorHub Conference',
+    group:'Zequence Digital',
+    role:'Manager',
+    signatory:'Event Director',
+    award:'Event Appreciation',
+    reason:'for valuable contribution to the success of the event',
+    categories:['Speaker','Volunteer','Sponsor','Committee','Attendee','Conference Award'],
+    tone:'polished, celebratory and suitable for an event ceremony'
+  }
+};
+
 /* ----------------------------- state ----------------------------- */
-const state={template:'laurel',accent:'#B8893A',index:0,pupils:[],logo:null};
+const state={template:'laurel',accent:'#B8893A',sector:'school',index:0,pupils:[],logo:null};
 const $=id=>document.getElementById(id);
-const SETTINGS_KEY='certificateStudioSchoolSettings.v1';
+const SETTINGS_KEY='honorHubOrgSettings.v1';
 let lastSessionCount=0;
 
 function todayUK(){return new Date().toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}
@@ -524,6 +690,8 @@ function saveSchoolSettings(){
     trust:$('trust').value,
     school:$('school').value,
     role:$('role').value,
+    sector:state.sector,
+    category:$('category').value,
     award:$('award').value,
     reason:$('reason').value,
     signatory:$('signatory').value,
@@ -541,6 +709,7 @@ function loadSchoolSettings(){
     ['trust','school','role','award','reason','signatory'].forEach(id=>{
       if(settings[id])$(id).value=settings[id];
     });
+    if(settings.sector)state.sector=settings.sector;
     if(settings.template)state.template=settings.template;
     if(settings.accent)state.accent=settings.accent;
     if(settings.logo)state.logo=settings.logo;
@@ -552,14 +721,14 @@ async function closeSessionOnBackend(count){
     const res=await fetch('/api/session-complete',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({schoolId:'prototype',certificateCount:count})
+      body:JSON.stringify({organisationId:state.sector,certificateCount:count})
     });
     if(!res.ok)throw new Error('status '+res.status);
     const data=await res.json();
     $('backendState').textContent=data.message || 'Session closed without storing pupil records.';
     $('backendState').className='backend-state ok';
   }catch(e){
-    $('backendState').textContent='Pupil data cleared in this browser. Backend confirmation is unavailable in static preview.';
+    $('backendState').textContent='Recipient data cleared in this browser. Backend confirmation is unavailable in static preview.';
     $('backendState').className='backend-state warn';
   }
 }
@@ -581,12 +750,12 @@ async function loadPlatformStatus(){
     const res=await fetch('/api/platform');
     if(!res.ok)throw new Error('status '+res.status);
     const data=await res.json();
-    const schools=(data.tenantModel && data.tenantModel.schools) || [];
-    if(data.tenantModel && data.tenantModel.trust){
-      $('tenantTrust').textContent=data.tenantModel.trust;
+    const organisations=(data.tenantModel && data.tenantModel.organisations) || [];
+    if(data.tenantModel && data.tenantModel.account){
+      $('tenantTrust').textContent=data.tenantModel.account;
     }
-    if(schools.length){
-      $('tenantSchools').innerHTML=schools.map(s=>`<li>${esc(s.name)}: isolated branding, templates and teacher accounts</li>`).join('');
+    if(organisations.length){
+      $('tenantSchools').innerHTML=organisations.map(o=>`<li>${esc(o.name)}: isolated branding, templates and users</li>`).join('');
     }
     $('backendState').textContent='Backend connected: '+data.privacyMode.replace(/-/g,' ');
     $('backendState').className='backend-state ok';
@@ -596,7 +765,7 @@ async function loadPlatformStatus(){
   }
 }
 
-/* build one certificate element from a pupil */
+/* build one certificate element from a recipient */
 function certHTML(p){
   return `<div class="cert t-${state.template}" style="--accent:${state.accent}">
     <div class="frame"></div><div class="frame inner"></div>
@@ -606,7 +775,7 @@ function certHTML(p){
       <div class="eyebrow">${esc($('school').value)}</div>
       <h2 class="award">${esc($('award').value)}</h2>
       <div class="preposition">is proudly awarded to</div>
-      <div class="name">${esc(p?p.name:'Pupil name')}</div>
+      <div class="name">${esc(p?p.name:'Recipient name')}</div>
       <div class="rule"></div>
       <div class="reason">${esc(p?p.reason:'')}</div>
     </div>
@@ -622,14 +791,33 @@ function esc(s){return (s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>'
 function render(){
   parsePupils();
   const p=state.pupils[state.index];
+  const sector=SECTORS[state.sector] || SECTORS.school;
   $('mount').innerHTML=certHTML(p);
   const n=state.pupils.length;
   lastSessionCount=Math.max(lastSessionCount,n);
-  $('who').textContent=n?`${p.name} — ${state.index+1} of ${n}`:'No pupils yet';
+  $('who').textContent=n?`${p.name} — ${state.index+1} of ${n}`:'No recipients yet';
   $('count').textContent=n?`${n} certificate${n>1?'s':''} ready to print`:'';
-  $('sessionState').textContent=n?`${n} pupil${n>1?'s':''} in this session`:'No pupils in this session';
+  $('sessionState').textContent=n?`${n} recipient${n>1?'s':''} in this session`:'No recipients in this session';
+  $('previewSector').textContent=sector.label;
   $('prev').disabled=state.index<=0;
   $('next').disabled=state.index>=n-1;
+}
+
+function applySectorDefaults(forceText){
+  const sector=SECTORS[state.sector] || SECTORS.school;
+  $('previewSector').textContent=sector.label;
+  $('category').innerHTML=sector.categories.map(c=>`<option>${esc(c)}</option>`).join('');
+  if(forceText){
+    $('trust').value=sector.group;
+    $('school').value=sector.org;
+    $('role').value=sector.role;
+    $('signatory').value=sector.signatory;
+    $('award').value=sector.award;
+    $('reason').value=sector.reason;
+  }
+  $('sectorGrid').querySelectorAll('.sector-btn').forEach(btn=>{
+    btn.classList.toggle('active',btn.dataset.sector===state.sector);
+  });
 }
 
 /* ---------------------------- wiring ---------------------------- */
@@ -647,11 +835,18 @@ $('templates').querySelectorAll('.tpl').forEach(el=>el.onclick=()=>{
   $('templates').querySelectorAll('.tpl').forEach(t=>t.classList.remove('active'));
   el.classList.add('active');saveSchoolSettings();render();
 });
-['trust','school','role','award','reason','signatory'].forEach(id=>$(id).addEventListener('input',()=>{saveSchoolSettings();render()}));
+Array.from($('sectorGrid').querySelectorAll('.sector-btn')).forEach(btn=>btn.onclick=()=>{
+  state.sector=btn.dataset.sector;
+  applySectorDefaults(true);
+  saveSchoolSettings();
+  render();
+});
+['trust','school','role','category','award','reason','signatory'].forEach(id=>$(id).addEventListener('input',()=>{saveSchoolSettings();render()}));
 ['date','pupils'].forEach(id=>$(id).addEventListener('input',render));
 $('prev').onclick=()=>{if(state.index>0){state.index--;render()}};
 $('next').onclick=()=>{if(state.index<state.pupils.length-1){state.index++;render()}};
 $('clearSessionBtn').onclick=clearPupilSession;
+$('createBtn').onclick=()=>$('award').focus();
 
 $('printBtn').onclick=()=>{
   parsePupils();
@@ -702,7 +897,7 @@ $('csv').addEventListener('change',e=>{
   r.onload=()=>{
     const rows=parseCSV(r.result); if(!rows.length)return;
     let start=0; const h0=(rows[0][0]||'').toLowerCase();
-    if(/name|pupil|child|first|forename/.test(h0)) start=1;   /* skip a header row */
+    if(/name|pupil|child|recipient|first|forename/.test(h0)) start=1;   /* skip a header row */
     const lines=rows.slice(start).map(c=>{
       const name=(c[0]||'').trim(), reason=(c[1]||'').trim();
       return reason?`${name} — ${reason}`:name;
@@ -720,9 +915,11 @@ async function writeReasons(){
   const original=btn.innerHTML;
   btn.disabled=true; btn.innerHTML='<span class="spin"></span> Writing…';
   const notes=state.pupils.map((p,i)=>`${i+1}. ${p.reason}`).join('\n');
-  const prompt=`You write short award-certificate lines for a UK primary school's weekly celebration assembly.
-You are given a numbered list of short notes from a teacher (each may be a few keywords or a rough phrase). You are NOT given the pupils' names and do not need them.
-Rewrite each note as ONE warm, specific, encouraging line to be read aloud in assembly and printed on a certificate.
+  const sector=SECTORS[state.sector] || SECTORS.school;
+  const prompt=`You write short award-certificate lines for HonorHub by Zequence.
+Context: ${sector.label}. Tone: ${sector.tone}.
+You are given a numbered list of short notes from an organisation user (each may be a few keywords or a rough phrase). You are NOT given the recipients' names and do not need them.
+Rewrite each note as ONE warm, specific, encouraging line to be read aloud or printed on a certificate.
 
 Rules:
 - British English. Genuine and age-appropriate. No clichés, no emojis, no exclamation marks.
@@ -761,6 +958,7 @@ $('aiBtn').onclick=writeReasons;
 
 /* ---------------------------- init ---------------------------- */
 loadSchoolSettings();
+applySectorDefaults(false);
 $('date').value=todayUK();
 buildSwatches();
 $('customColor').value=state.accent;
