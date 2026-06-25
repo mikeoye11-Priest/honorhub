@@ -311,6 +311,7 @@
   .board-card{display:none;background:#fff;border:1px solid #DAD8FA;border-radius:10px;padding:16px;
     box-shadow:0 12px 32px rgba(42,38,90,.06)}
   .board-card.page-active{display:block}
+  .board-card[data-page="dashboard"]{background:transparent;border:0;box-shadow:none;padding:0}
   .span-3{grid-column:span 3}.span-4{grid-column:span 4}.span-5{grid-column:span 5}
   .span-6{grid-column:span 6}.span-7{grid-column:span 7}.span-8{grid-column:span 8}.span-12{grid-column:span 12}
   .step-title{display:inline-flex;align-items:center;border:1px solid #DAD8FA;background:#fff;border-radius:10px;
@@ -364,14 +365,34 @@
   .brand-layout{display:grid;grid-template-columns:130px 1fr 1fr;gap:14px}.brand-menu button{display:block;width:100%;border:0;text-align:left;background:#fff;
     border-radius:7px;padding:9px 10px}.brand-menu button.active{background:#ECE8FF;color:#3019A5;font-weight:800}
   .table{width:100%;border-collapse:collapse;font-size:12px}.table th,.table td{border-bottom:1px solid #EAECF0;padding:9px;text-align:left}.table th{color:#667085}
-  .chart-line{height:88px;border:1px solid #EAECF0;border-radius:8px;background:linear-gradient(180deg,#F5F1FF,#fff)}
+  .chart-line{height:88px;border:1px solid #EAECF0;border-radius:8px;background:
+    linear-gradient(180deg,rgba(101,69,232,.18),rgba(101,69,232,.03)),
+    linear-gradient(90deg,#fff0 0 11%,#EAECF0 11% 11.4%,#fff0 11.4% 22%,#EAECF0 22% 22.4%,#fff0 22.4% 33%,#EAECF0 33% 33.4%,#fff0 33.4% 44%,#EAECF0 44% 44.4%,#fff0 44.4% 55%,#EAECF0 55% 55.4%,#fff0 55.4% 66%,#EAECF0 66% 66.4%,#fff0 66.4% 77%,#EAECF0 77% 77.4%,#fff0 77.4%),
+    linear-gradient(0deg,#fff0 0 24%,#EAECF0 24% 24.5%,#fff0 24.5% 49%,#EAECF0 49% 49.5%,#fff0 49.5% 74%,#EAECF0 74% 74.5%,#fff0 74.5%)}
   .dashboard-lower{display:grid;grid-template-columns:1.3fr 1fr 1.15fr;gap:18px;margin-top:18px}
+  .dashboard-top{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;margin-bottom:20px}
+  .date-range{border:1px solid #E3E6EF;background:#fff;border-radius:10px;padding:11px 14px;color:#111827;font-size:13px;font-weight:700}
+  .dashboard-stats{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;margin-bottom:20px}
+  .dash-stat{display:flex;gap:14px;align-items:center;border:1px solid #EAECF0;background:#fff;border-radius:12px;padding:20px}
+  .stat-icon{width:64px;height:64px;border-radius:10px;display:grid;place-items:center;font-size:26px}
+  .stat-icon.purple{background:#F0EAFE;color:#6545E8}.stat-icon.green{background:#E8F8EF;color:#0F9B5F}
+  .stat-icon.orange{background:#FFF1D8;color:#F59E0B}.stat-icon.blue{background:#EAF1FF;color:#356CF6}.stat-icon.pink{background:#FDE8EF;color:#E5487A}
+  .dash-stat strong{display:block;font-size:26px;color:#0B1026;line-height:1;margin:6px 0}.dash-stat span{font-size:12px;color:#667085}.dash-stat em{font-style:normal;font-size:12px;color:#667085}
+  .dashboard-main-grid{display:grid;grid-template-columns:1.2fr 1fr 1.2fr;gap:18px;margin-bottom:18px}
+  .dashboard-bottom-grid{display:grid;grid-template-columns:1.2fr 1fr 1.2fr;gap:18px}
   .event-list{display:grid;gap:11px}
   .event-item{display:grid;grid-template-columns:48px 1fr auto;gap:12px;align-items:center;border-bottom:1px solid #EAECF0;padding-bottom:11px}
   .event-date{border:1px solid #E4E7EC;border-radius:8px;text-align:center;padding:5px 0;font-weight:800;color:#111827}
   .event-date small{display:block;color:#E5484D;font-size:11px}
   .badge{border-radius:8px;padding:6px 12px;font-size:12px;font-weight:800}.badge.green{background:#DDF8E9;color:#0F7A43}.badge.amber{background:#FFF0D8;color:#A14D00}.badge.blue{background:#E4EEFF;color:#1857D1}
-  @media (max-width:1200px){.product-board{grid-template-columns:1fr}.app-sidebar{min-height:auto}.app-header{height:auto;align-items:flex-start;flex-direction:column;padding:18px}.board-grid{grid-template-columns:1fr;padding:18px}.board-card{grid-column:1!important}.stat-grid,.activity-grid,.org-type-grid,.template-gallery,.editor-layout,.brand-layout{grid-template-columns:1fr}}
+  .plan-card{margin-top:18px;border-top:1px solid rgba(255,255,255,.12);padding-top:18px}
+  .plan-card>span{display:block;color:#AEB8DA;font-size:12px;margin-bottom:8px}
+  .plan-box{background:linear-gradient(135deg,#3A1B91,#231063);border-radius:9px;padding:14px;color:#fff}
+  .plan-box strong{display:block;font-size:17px;margin-bottom:6px}.plan-box small{display:block;color:#D8DEF8;margin-bottom:12px}
+  .plan-box button{width:100%;border:0;border-radius:7px;background:rgba(255,255,255,.14);color:#fff;padding:9px;font-weight:800}
+  .help-chip{border-top:1px solid rgba(255,255,255,.12);padding-top:16px;display:flex;align-items:center;gap:10px;color:#fff;font-size:12px}
+  .help-icon{width:34px;height:34px;border-radius:50%;border:2px solid rgba(255,255,255,.45);display:grid;place-items:center;font-weight:800}
+  @media (max-width:1200px){.product-board{grid-template-columns:1fr}.app-sidebar{min-height:auto}.app-header{height:auto;align-items:flex-start;flex-direction:column;padding:18px}.board-grid{grid-template-columns:1fr;padding:18px}.board-card{grid-column:1!important}.stat-grid,.activity-grid,.org-type-grid,.template-gallery,.editor-layout,.brand-layout,.dashboard-stats,.dashboard-main-grid,.dashboard-bottom-grid{grid-template-columns:1fr}}
   @media print{.product-board{display:none!important}.product-board + .layout{display:block}}
 </style>
 </head>
@@ -400,10 +421,16 @@
           <a href="#branding" data-page-link="branding">◎ Branding</a>
           <a href="#users" data-page-link="users">♙ Users</a>
           <a href="#reports" data-page-link="reports">▥ Reports</a>
+          <a href="#events" data-page-link="dashboard">▥ Events</a>
           <a href="#settings" data-page-link="settings">⚙ Settings</a>
         </nav>
+        <button class="solid-action purple" type="button" data-page-jump="certificates" style="width:100%;margin-top:28px">+ Create Certificate</button>
+        <div class="plan-card">
+          <span>Current Plan</span>
+          <div class="plan-box"><strong>Professional</strong><small>Valid until 24 May 2026</small><button type="button">View Plan</button></div>
+        </div>
       </div>
-      <div class="user-chip"><span class="avatar">M</span><span><strong>Michael Johnson</strong><br>Administrator</span></div>
+      <div class="help-chip"><span class="help-icon">?</span><span><strong>Need help?</strong><br>Visit our help centre</span></div>
     </aside>
 
     <main class="app-main">
@@ -419,35 +446,29 @@
     <div class="board-grid">
       <article class="board-card span-12 page-active" data-page="dashboard">
         <div class="step-title">1. Dashboard</div>
-        <div><h3>Good morning, Michael! 👋</h3><p>Here's what's happening with Oakfield Primary School today.</p></div>
-        <div class="stat-grid">
-          <div class="stat-box"><span>Certificates Created</span><strong>1,240</strong><span class="up">↑ 12% from last month</span></div>
-          <div class="stat-box"><span>This Month</span><strong>186</strong><span class="up">↑ 8% from last month</span></div>
-          <div class="stat-box"><span>Templates</span><strong>14</strong><span>Total templates</span></div>
-          <div class="stat-box"><span>Users</span><strong>8</strong><span>Active users</span></div>
+        <div class="dashboard-top"><div><h3>Good morning, Michael! 👋</h3><p>Here's what's happening with your organisation today.</p></div><div class="date-range">📅 20 May - 26 May 2026 ˅</div></div>
+        <div class="dashboard-stats">
+          <div class="dash-stat"><span class="stat-icon purple">▤</span><span><small>Certificates Created</small><strong>1,240</strong><em class="up">↑ 12% from last month</em></span></div>
+          <div class="dash-stat"><span class="stat-icon green">▣</span><span><small>This Month</small><strong>186</strong><em class="up">↑ 8% from last month</em></span></div>
+          <div class="dash-stat"><span class="stat-icon orange">▧</span><span><small>Templates</small><strong>14</strong><em>2 new this month</em></span></div>
+          <div class="dash-stat"><span class="stat-icon blue">♙</span><span><small>Users</small><strong>8</strong><em>1 active invite</em></span></div>
+          <div class="dash-stat"><span class="stat-icon pink">♙</span><span><small>Recipients</small><strong>1,356</strong><em>Total in your contacts</em></span></div>
         </div>
-        <div class="activity-grid">
-          <div class="list-card"><strong>Recent Activity</strong>
-            <div class="activity-item"><span class="mini-avatar"></span><span>Football Awards<br><small>Created by Sarah Johnson</small></span></div>
-            <div class="activity-item"><span class="mini-avatar"></span><span>Volunteer Certificates<br><small>Created by David Wilson</small></span></div>
-            <div class="activity-item"><span class="mini-avatar"></span><span>Staff Recognition<br><small>Created by Emily Brown</small></span></div>
-          </div>
-          <div class="list-card action-stack"><strong>Quick Actions</strong>
-            <button class="purple" type="button" data-page-jump="certificates">+ Create Certificate</button>
-            <button class="green" type="button" data-page-jump="recipients">⇧ Upload Recipients</button>
-            <button class="orange" type="button" data-page-jump="templates">▣ Browse Templates</button>
-            <button class="blue" type="button" data-page-jump="branding">◎ Manage Branding</button>
-          </div>
-          <div class="list-card"><strong>Top Templates</strong>
-            <div class="template-row"><span class="template-mini"></span><span>Modern Achievement<br><small>156 used</small></span></div>
-            <div class="template-row"><span class="template-mini"></span><span>Classic Gold<br><small>134 used</small></span></div>
-            <div class="template-row"><span class="template-mini"></span><span>Player of the Match<br><small>98 used</small></span></div>
+        <div class="dashboard-main-grid">
+          <div class="list-card"><div class="top-row"><strong>Certificates Over Time</strong><select class="org-select"><option>Last 6 Months</option></select></div><div class="chart-line" style="height:240px;margin-top:18px"></div></div>
+          <div class="list-card"><strong>Certificates by Category</strong><div style="display:flex;align-items:center;gap:22px;margin-top:26px"><div style="width:170px;height:170px;border-radius:50%;background:conic-gradient(#6545E8 0 40%,#356CF6 0 60%,#18B875 0 75%,#FF951A 0 85%,#EF4770 0 95%,#C8CDD6 0);"></div><div class="module-tags"><span>Weekly Awards 40%</span><span>Sports 20%</span><span>Reading 15%</span><span>Attendance 10%</span><span>Behaviour 10%</span><span>Other 5%</span></div></div></div>
+          <div class="list-card"><div class="top-row"><strong>Recent Activity</strong><a href="#" style="font-size:12px;color:#3019A5;text-decoration:none">View all</a></div>
+            <div class="activity-item"><span class="mini-avatar"></span><span><strong>Star of the Week Certificates</strong><br><small>Created by Sarah Johnson</small></span><small>2 hours ago</small></div>
+            <div class="activity-item"><span class="mini-avatar"></span><span><strong>Recipients Imported</strong><br><small>From students_may.csv</small></span><small>5 hours ago</small></div>
+            <div class="activity-item"><span class="mini-avatar"></span><span><strong>New Template Added</strong><br><small>Sports Day Achievement</small></span><small>1 day ago</small></div>
+            <div class="activity-item"><span class="mini-avatar"></span><span><strong>User Added</strong><br><small>David Wilson</small></span><small>2 days ago</small></div>
+            <div class="activity-item"><span class="mini-avatar"></span><span><strong>Certificates Emailed</strong><br><small>Reading Champion Awards</small></span><small>2 days ago</small></div>
           </div>
         </div>
-        <div class="dashboard-lower">
-          <div class="list-card"><div class="top-row"><strong>Certificates Over Time</strong><select class="org-select"><option>Last 6 Months</option></select></div><div class="chart-line" style="height:190px;margin-top:12px"></div></div>
-          <div class="list-card"><strong>Certificates by Category</strong><div style="display:flex;align-items:center;gap:18px;margin-top:18px"><div style="width:150px;height:150px;border-radius:50%;background:conic-gradient(#6545E8 0 40%,#356CF6 0 60%,#18B875 0 75%,#FF951A 0 85%,#C8CDD6 0);"></div><div class="module-tags"><span>Weekly Awards 40%</span><span>Sports 20%</span><span>Reading 15%</span><span>Attendance 10%</span><span>Other 15%</span></div></div></div>
-          <div class="list-card"><div class="top-row"><strong>Upcoming Events</strong><a href="#" style="font-size:12px;color:#3019A5;text-decoration:none">View calendar</a></div><div class="event-list" style="margin-top:14px"><div class="event-item"><span class="event-date"><small>MAY</small>25</span><span><strong>Sports Day</strong><br><small>25 May 2026 · 9:00 AM</small></span><span class="badge green">Registered</span></div><div class="event-item"><span class="event-date"><small>MAY</small>28</span><span><strong>End of Term Awards</strong><br><small>28 May 2026 · 10:00 AM</small></span><span class="badge amber">Pending</span></div><div class="event-item"><span class="event-date"><small>JUN</small>05</span><span><strong>Graduation Ceremony</strong><br><small>5 Jun 2026 · 11:00 AM</small></span><span class="badge blue">Upcoming</span></div></div></div>
+        <div class="dashboard-bottom-grid">
+          <div class="list-card"><div class="top-row"><strong>Upcoming Events</strong><a href="#" style="font-size:12px;color:#3019A5;text-decoration:none">View calendar</a></div><div class="event-list" style="margin-top:14px"><div class="event-item"><span class="event-date"><small>MAY</small>28</span><span><strong>Sports Day</strong><br><small>28 May 2026 · 09:00 AM</small></span><span class="badge green">Registered</span></div><div class="event-item"><span class="event-date"><small>JUN</small>05</span><span><strong>End of Term Awards</strong><br><small>5 Jun 2026 · 10:00 AM</small></span><span class="badge amber">Pending</span></div><div class="event-item"><span class="event-date"><small>JUN</small>20</span><span><strong>Graduation Ceremony</strong><br><small>20 Jun 2026 · 11:00 AM</small></span><span class="badge blue">Upcoming</span></div></div></div>
+          <div class="list-card"><div class="top-row"><strong>Top Templates</strong><a href="#" style="font-size:12px;color:#3019A5;text-decoration:none">View all</a></div><div class="template-row"><span class="template-mini"></span><span>Star of the Week<br><small>156 used</small></span></div><div class="template-row"><span class="template-mini"></span><span>Reading Champion<br><small>134 used</small></span></div><div class="template-row"><span class="template-mini"></span><span>Perfect Attendance<br><small>98 used</small></span></div><div class="template-row"><span class="template-mini"></span><span>Good Behaviour<br><small>76 used</small></span></div><div class="template-row"><span class="template-mini"></span><span>Sports Achievement<br><small>65 used</small></span></div></div>
+          <div class="list-card action-stack"><strong>Quick Actions</strong><button class="purple" type="button" data-page-jump="certificates">Create Certificate</button><button class="green" type="button" data-page-jump="recipients">Upload Recipients</button><button class="orange" type="button" data-page-jump="templates">Browse Templates</button><button class="blue" type="button" data-page-jump="signatories">Manage Signatories</button><button class="purple" type="button" data-page-jump="branding">Manage Branding</button></div>
         </div>
       </article>
 
