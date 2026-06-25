@@ -1,0 +1,401 @@
+import { useState, type ElementType } from "react"
+import { useNavigate } from "react-router-dom"
+import {
+  Plus,
+  Search,
+  Filter,
+  ArrowUpDown,
+  Copy,
+  Check,
+  Palette,
+  Type,
+  Image,
+  ShoppingBag,
+  Package,
+  Sparkles,
+  Upload,
+  ArrowRight,
+} from "lucide-react"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Badge } from "@/components/ui/badge"
+import { Certificate } from "@/components/Certificate"
+import { useHonor } from "@/lib/store"
+import { TEMPLATES, ACCENTS, VERTICAL_LIST, VERTICALS, type VerticalKey } from "@/lib/honor"
+import { COLLECTIONS, PACKS, PREMIUM_COLLECTIONS } from "@/lib/catalog"
+
+function EmptyState({ icon: Icon, title, body, cta }: { icon: ElementType; title: string; body: string; cta: string }) {
+  return (
+    <div className="grid place-items-center rounded-xl border border-dashed py-16 text-center">
+      <Icon className="size-8 text-muted-foreground/50" />
+      <h3 className="mt-3 font-semibold">{title}</h3>
+      <p className="mt-1 max-w-sm text-sm text-muted-foreground">{body}</p>
+      <Button className="mt-4">{cta}</Button>
+    </div>
+  )
+}
+
+export default function Library() {
+  const h = useHonor()
+  const navigate = useNavigate()
+  const [sector, setSector] = useState<VerticalKey | "all">(h.vertical)
+  const fields = { template: h.template, accent: h.accent, logo: h.logo, org: h.org, award: h.award, date: h.date, signatory: h.signatory }
+
+  const useAward = (name: string) => {
+    h.setPack(null)
+    h.setField("award", name)
+    navigate("/create")
+  }
+
+  const usePack = (key: string, firstAward: string) => {
+    h.setPack(key)
+    h.setField("award", firstAward)
+    navigate("/create")
+  }
+
+  const sectorsForFilter = sector === "all" ? VERTICAL_LIST.map((v) => v.key) : [sector]
+  const visiblePacks = PACKS.filter((p) => p.sectors.some((s) => sectorsForFilter.includes(s)))
+
+  return (
+    <div className="mx-auto max-w-7xl">
+      <Tabs defaultValue="templates">
+        <TabsList>
+          <TabsTrigger value="templates">Templates</TabsTrigger>
+          <TabsTrigger value="awards">Awards</TabsTrigger>
+          <TabsTrigger value="brand">Brand Kit</TabsTrigger>
+          <TabsTrigger value="assets">Assets</TabsTrigger>
+          <TabsTrigger value="marketplace">Marketplace</TabsTrigger>
+        </TabsList>
+
+        {/* ---------------- Templates ---------------- */}
+        <TabsContent value="templates" className="mt-6">
+          <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
+            <div>
+              <h1 className="text-3xl font-semibold tracking-tight">Certificate Templates</h1>
+              <p className="mt-1 text-muted-foreground">Manage your designs for every recognition occasion.</p>
+            </div>
+            <Button className="font-semibold">
+              <Plus className="size-4" /> Create new template
+            </Button>
+          </div>
+
+          {/* Filter bar */}
+          <div className="mb-6 flex flex-wrap items-center gap-3 rounded-xl border bg-card p-3 shadow-sm">
+            <div className="relative min-w-[260px] flex-1">
+              <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+              <Input placeholder="Search templates by name or style…" className="pl-9" />
+            </div>
+            <Button variant="outline">
+              <Filter className="size-4" /> Filter
+            </Button>
+            <Button variant="outline">
+              <ArrowUpDown className="size-4" /> Sort: Recently used
+            </Button>
+          </div>
+
+          {/* Grid */}
+          <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+            {TEMPLATES.map((t, i) => {
+              const active = h.template === t.key
+              const status = active ? "In use" : i % 3 === 0 ? "Default" : "Active"
+              return (
+                <div key={t.key} className="group flex flex-col overflow-hidden rounded-xl border bg-card shadow-soft transition hover:-translate-y-1 hover:shadow-soft-lg">
+                  <div className="relative border-b bg-muted/40 p-4">
+                    <div className="overflow-hidden rounded-lg ring-1 ring-border">
+                      <Certificate fields={{ ...fields, template: t.key }} recipient={h.recipients[0]} />
+                    </div>
+                    <div className="absolute inset-0 flex items-center justify-center bg-foreground/5 opacity-0 transition-opacity group-hover:opacity-100">
+                      <Button size="sm" onClick={() => h.setTemplate(t.key)} className="shadow-sm">
+                        {active ? "Selected" : "Use template"}
+                      </Button>
+                    </div>
+                  </div>
+                  <div className="flex flex-1 flex-col p-4">
+                    <div className="mb-3 flex items-start justify-between">
+                      <div>
+                        <h3 className="font-semibold">{t.name}</h3>
+                        <div className="mt-1 flex items-center gap-2 text-xs text-muted-foreground">
+                          <span className={`rounded-full px-2 py-0.5 ${active ? "bg-success/10 text-success" : "bg-muted text-muted-foreground"}`}>{status}</span>
+                          <span>· {t.blurb}</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="mt-auto flex gap-2">
+                      <Button variant="outline" className="flex-1" onClick={() => h.setTemplate(t.key)}>
+                        {active ? <Check className="size-4" /> : null} {active ? "Selected" : "Use template"}
+                      </Button>
+                      <Button variant="outline" size="icon" aria-label="Duplicate">
+                        <Copy className="size-4" />
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              )
+            })}
+
+            {/* Create new */}
+            <button className="group flex min-h-[320px] flex-col items-center justify-center rounded-xl border-2 border-dashed p-8 text-center transition hover:border-primary/40 hover:bg-accent/40">
+              <span className="grid size-16 place-items-center rounded-full bg-muted transition-transform group-hover:scale-110">
+                <Plus className="size-8 text-primary" />
+              </span>
+              <span className="mt-4 font-semibold">Create new template</span>
+              <p className="mt-1 max-w-[200px] text-xs text-muted-foreground">Start from scratch or use AI to generate a unique design.</p>
+            </button>
+          </div>
+        </TabsContent>
+
+        {/* ---------------- Awards (collections + packs) ---------------- */}
+        <TabsContent value="awards" className="mt-6">
+          <div className="mb-5">
+            <h1 className="text-3xl font-semibold tracking-tight">Award Templates</h1>
+            <p className="mt-1 text-muted-foreground">Ready-made award designs — preview live, then start a recognition in one click.</p>
+          </div>
+
+          {/* Sector filter chips */}
+          <div className="mb-6 flex flex-wrap gap-2">
+            <button
+              onClick={() => setSector("all")}
+              className={`rounded-full border px-3 py-1.5 text-sm font-medium ${sector === "all" ? "border-primary bg-accent text-accent-foreground" : "bg-card"}`}
+            >
+              All
+            </button>
+            {VERTICAL_LIST.map((v) => (
+              <button
+                key={v.key}
+                onClick={() => setSector(v.key)}
+                className={`rounded-full border px-3 py-1.5 text-sm font-medium ${sector === v.key ? "border-primary bg-accent text-accent-foreground" : "bg-card"}`}
+              >
+                {v.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Award template gallery — each award rendered as a live certificate */}
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {sectorsForFilter
+              .flatMap((s) => COLLECTIONS[s].map((a) => ({ ...a, sectorLabel: VERTICALS[s].label })))
+              .map((a, i) => (
+                <div
+                  key={`${a.name}-${i}`}
+                  className="group flex flex-col overflow-hidden rounded-xl border bg-card shadow-soft transition hover:-translate-y-1 hover:shadow-soft-lg"
+                >
+                  <div className="relative border-b bg-muted/40 p-3">
+                    <div className="overflow-hidden rounded-md ring-1 ring-border">
+                      <Certificate fields={{ ...fields, award: a.name }} recipient={h.recipients[0]} />
+                    </div>
+                    <span className="absolute left-5 top-5 grid size-8 place-items-center rounded-full bg-card text-base shadow-soft">
+                      {a.icon}
+                    </span>
+                    <div className="absolute inset-0 flex items-center justify-center bg-foreground/5 opacity-0 transition-opacity group-hover:opacity-100">
+                      <Button size="sm" className="shadow-sm" onClick={() => useAward(a.name)}>
+                        Use award <ArrowRight className="size-4" />
+                      </Button>
+                    </div>
+                  </div>
+                  <button onClick={() => useAward(a.name)} className="flex items-center justify-between gap-2 p-3 text-left">
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-semibold">{a.name}</p>
+                      <p className="text-[11px] text-muted-foreground">{a.sectorLabel} award</p>
+                    </div>
+                    <ArrowRight className="size-4 shrink-0 text-muted-foreground transition group-hover:translate-x-0.5 group-hover:text-primary" />
+                  </button>
+                </div>
+              ))}
+          </div>
+
+          {/* Recognition Packs */}
+          <div className="mt-10 mb-4 flex items-center gap-2">
+            <Package className="size-5 text-primary" />
+            <h2 className="text-xl font-semibold">Recognition Packs</h2>
+            <Badge variant="secondary" className="bg-accent text-accent-foreground">one click, whole event</Badge>
+          </div>
+          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+            {visiblePacks.map((p) => {
+              const certs = p.items.filter((i) => i.kind === "certificate").length
+              const extras = p.items.length - certs
+              const firstCert = p.items.find((i) => i.kind === "certificate")?.label ?? p.items[0].label
+              return (
+                <div key={p.key} className="flex flex-col rounded-xl border bg-card p-5 shadow-sm transition hover:shadow-soft-lg">
+                  <div className="flex items-start justify-between">
+                    <span className="grid size-10 place-items-center rounded-lg bg-accent text-primary">
+                      <Package className="size-5" />
+                    </span>
+                    <span className="text-xs font-medium text-muted-foreground">{certs} certs · {extras} extras</span>
+                  </div>
+                  <h3 className="mt-3 font-semibold">{p.name}</h3>
+                  <p className="mt-1 text-sm text-muted-foreground">{p.blurb}</p>
+                  <div className="mt-3 flex flex-wrap gap-1.5">
+                    {p.items.map((it) => (
+                      <span key={it.label} className="rounded-full bg-muted px-2 py-0.5 text-[11px] text-muted-foreground">
+                        {it.label}
+                      </span>
+                    ))}
+                  </div>
+                  <Button className="mt-4 w-full" onClick={() => usePack(p.key, firstCert)}>
+                    Use pack <ArrowRight className="size-4" />
+                  </Button>
+                </div>
+              )
+            })}
+          </div>
+        </TabsContent>
+
+        {/* ---------------- Brand Kit ---------------- */}
+        <TabsContent value="brand" className="mt-6">
+          <div className="mb-6">
+            <h1 className="text-3xl font-semibold tracking-tight">Brand Identity</h1>
+            <p className="mt-1 max-w-2xl text-muted-foreground">
+              Your visual identity is applied automatically to every certificate.
+            </p>
+          </div>
+          <div className="grid grid-cols-12 gap-6">
+            {/* Colours */}
+            <section className="col-span-12 rounded-xl border bg-card p-6 shadow-sm lg:col-span-7">
+              <div className="mb-5 flex items-center gap-2">
+                <Palette className="size-5 text-primary" />
+                <h3 className="text-xl font-semibold">Brand colours</h3>
+              </div>
+              <div className="grid grid-cols-3 gap-4">
+                {[
+                  { name: "Honor Orange", hex: "#F58220", label: "Primary", text: "text-white" },
+                  { name: "Coffee Brown", hex: "#6A4A3C", label: "Secondary", text: "text-white" },
+                  { name: "Surface White", hex: "#F8FAFC", label: "Background", text: "text-foreground", border: true },
+                ].map((c) => (
+                  <div key={c.label} className="flex flex-col gap-2">
+                    <div className={`flex h-28 items-end rounded-lg p-3 ${c.border ? "border" : ""}`} style={{ background: c.hex }}>
+                      <span className={`text-sm font-bold ${c.text}`}>{c.label}</span>
+                    </div>
+                    <div>
+                      <p className="text-sm font-bold">{c.hex}</p>
+                      <p className="text-xs text-muted-foreground">{c.name}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div className="mt-6">
+                <p className="mb-2 text-xs font-medium uppercase tracking-wide text-muted-foreground">Certificate accent</p>
+                <div className="flex flex-wrap gap-2">
+                  {ACCENTS.map((a) => (
+                    <button
+                      key={a.hex}
+                      title={a.name}
+                      onClick={() => h.setAccent(a.hex)}
+                      className={`size-8 rounded-full ${h.accent === a.hex ? "ring-2 ring-foreground ring-offset-2" : ""}`}
+                      style={{ background: a.hex }}
+                    />
+                  ))}
+                </div>
+              </div>
+              <div className="mt-6 flex items-start gap-3 rounded-lg border border-primary/10 bg-accent/40 p-4">
+                <Sparkles className="mt-0.5 size-4 text-primary" />
+                <p className="text-sm text-accent-foreground">
+                  <span className="font-bold">AI insight:</span> this palette exceeds WCAG AA contrast for both printed and digital certificates.
+                </p>
+              </div>
+            </section>
+
+            {/* Typography */}
+            <section className="col-span-12 rounded-xl border bg-card p-6 shadow-sm lg:col-span-5">
+              <div className="mb-5 flex items-center gap-2">
+                <Type className="size-5 text-primary" />
+                <h3 className="text-xl font-semibold">Typography</h3>
+              </div>
+              <div className="flex flex-col gap-5">
+                <div className="border-b pb-4">
+                  <p className="mb-1 text-xs text-muted-foreground">Heading (Inter)</p>
+                  <p className="text-3xl font-bold leading-tight">Inter Bold</p>
+                  <p className="mt-1 text-xs text-primary">Weight 700 · tracking -0.02em</p>
+                </div>
+                <div className="border-b pb-4">
+                  <p className="mb-1 text-xs text-muted-foreground">Body text</p>
+                  <p className="leading-relaxed">Designed for readability in professional certificates and modern interfaces.</p>
+                  <p className="mt-1 text-xs text-primary">Weight 400 · line-height 1.5</p>
+                </div>
+                <div>
+                  <p className="mb-1 text-xs text-muted-foreground">Labels &amp; microcopy</p>
+                  <p className="font-medium uppercase tracking-wider">Button label style</p>
+                  <p className="mt-1 text-xs text-primary">Weight 500 · letter-spacing 0.05em</p>
+                </div>
+              </div>
+            </section>
+
+            {/* Core assets */}
+            <section className="col-span-12 rounded-xl border bg-card p-6 shadow-sm">
+              <div className="mb-5 flex items-center gap-2">
+                <Image className="size-5 text-primary" />
+                <h3 className="text-xl font-semibold">Core assets</h3>
+              </div>
+              <div className="grid gap-6 md:grid-cols-2">
+                <div className="rounded-xl border bg-background p-5">
+                  <p className="mb-4 text-sm font-bold">Organisation logo</p>
+                  <label className="flex h-44 cursor-pointer items-center justify-center rounded-lg border border-dashed bg-card p-6 transition-colors hover:border-primary">
+                    {h.logo ? (
+                      <img src={h.logo} alt="logo" className="max-h-full max-w-full object-contain" />
+                    ) : (
+                      <span className="flex flex-col items-center gap-2 text-sm text-muted-foreground">
+                        <Upload className="size-6" /> Upload logo
+                      </span>
+                    )}
+                    <input
+                      type="file"
+                      accept="image/*"
+                      hidden
+                      onChange={(e) => {
+                        const f = e.target.files?.[0]
+                        if (!f) return
+                        const r = new FileReader()
+                        r.onload = () => h.setLogo(String(r.result))
+                        r.readAsDataURL(f)
+                      }}
+                    />
+                  </label>
+                  {h.logo && (
+                    <button className="mt-3 text-sm text-destructive hover:underline" onClick={() => h.setLogo(null)}>
+                      Remove logo
+                    </button>
+                  )}
+                </div>
+                <div className="rounded-xl border bg-background p-5">
+                  <p className="mb-4 text-sm font-bold">Achievement seal</p>
+                  <div className="grid h-44 place-items-center rounded-lg border border-dashed bg-card">
+                    <div className="text-center text-sm text-muted-foreground">
+                      <Sparkles className="mx-auto mb-1 size-6 text-primary" />
+                      Built-in seal applied to every certificate
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+        </TabsContent>
+
+        {/* ---------------- Assets ---------------- */}
+        <TabsContent value="assets" className="mt-6">
+          <EmptyState icon={Image} title="No custom assets yet" body="Upload logos, signatures and backgrounds to reuse across recognitions." cta="Upload an asset" />
+        </TabsContent>
+
+        {/* ---------------- Marketplace ---------------- */}
+        <TabsContent value="marketplace" className="mt-6">
+          <div className="mb-6">
+            <h1 className="text-3xl font-semibold tracking-tight">Marketplace</h1>
+            <p className="mt-1 text-muted-foreground">Premium collections and packs — included in higher tiers or bought à la carte.</p>
+          </div>
+          <div className="grid gap-4 md:grid-cols-3">
+            {PREMIUM_COLLECTIONS.map((c) => (
+              <div key={c.key} className="flex flex-col rounded-xl border bg-card p-6 shadow-sm">
+                <ShoppingBag className="size-6 text-primary" />
+                <h3 className="mt-3 font-semibold">{c.name}</h3>
+                <p className="mt-1 text-sm text-muted-foreground">{c.count} premium templates</p>
+                <div className="mt-4 flex items-center justify-between">
+                  <span className="text-2xl font-extrabold">{c.price}</span>
+                  <Button variant="outline">Preview</Button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </TabsContent>
+      </Tabs>
+    </div>
+  )
+}

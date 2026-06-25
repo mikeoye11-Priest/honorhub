@@ -1,0 +1,327 @@
+/* ================================================================
+   THE CERTIFICATE — ported from the HonorHub prototype.
+   Everything scales from container width (cqw), so the same markup
+   is crisp in a small preview and on full A4. Each template just
+   swaps paper, font, accent default and ornaments.
+================================================================= */
+.cert {
+  --serif: "Fraunces", Georgia, "Times New Roman", serif;
+  --round: "Quicksand", "Trebuchet MS", system-ui, sans-serif;
+  --ui: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --cert-ink: #2a2622;
+  --cert-ink-soft: #6e665c;
+  --cert-ink-faint: #a39a8d;
+  position: relative;
+  width: 100%;
+  aspect-ratio: 297 / 210;
+  container-type: inline-size;
+  background: var(--paper, #fff);
+  color: var(--cert-ink);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  --accent: #f58220;
+}
+.cert .frame {
+  position: absolute;
+  inset: 2.6cqw;
+  border: 0.16cqw solid var(--accent);
+  border-radius: 0.6cqw;
+  pointer-events: none;
+  opacity: 0.85;
+}
+.cert .frame.inner {
+  inset: 3.5cqw;
+  border-width: 0.08cqw;
+  opacity: 0.55;
+}
+.cert .cert-orn {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  color: var(--accent);
+}
+.cert .body {
+  position: relative;
+  width: 78%;
+  z-index: 2;
+}
+.cert .logo {
+  display: block;
+  max-height: 13cqw;
+  max-width: 42%;
+  margin: 0 auto 2.6cqw;
+  object-fit: contain;
+}
+.cert .eyebrow {
+  font-family: var(--ui);
+  font-size: 1.9cqw;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--cert-ink-soft);
+  font-weight: 600;
+  margin-bottom: 2.4cqw;
+}
+.cert .award {
+  font-family: var(--cert-display, var(--serif));
+  font-weight: 500;
+  font-size: 5.4cqw;
+  line-height: 1.05;
+  margin: 0 0 3.4cqw;
+  color: var(--cert-ink);
+}
+.cert .preposition {
+  font-family: var(--ui);
+  font-size: 2.1cqw;
+  color: var(--cert-ink-soft);
+  letter-spacing: 0.04em;
+  margin-bottom: 1.2cqw;
+}
+.cert .name {
+  font-family: var(--cert-display, var(--serif));
+  font-weight: 600;
+  font-size: 8.6cqw;
+  line-height: 1;
+  color: var(--accent);
+  margin: 0 0 1.6cqw;
+  letter-spacing: -0.01em;
+}
+.cert .rule {
+  width: 34%;
+  height: 0.14cqw;
+  background: var(--accent);
+  opacity: 0.5;
+  margin: 1.6cqw auto 3cqw;
+}
+.cert .reason {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 2.7cqw;
+  line-height: 1.5;
+  color: var(--cert-ink);
+  max-width: 80%;
+  margin: 0 auto;
+}
+.cert .foot {
+  position: absolute;
+  left: 9cqw;
+  right: 9cqw;
+  bottom: 6.6cqw;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  z-index: 2;
+}
+.cert .sig {
+  text-align: left;
+}
+.cert .sig .v,
+.cert .date .v {
+  font-family: var(--serif);
+  font-size: 2.6cqw;
+  color: var(--cert-ink);
+  border-bottom: 0.1cqw solid var(--cert-ink-faint);
+  padding-bottom: 0.6cqw;
+  min-width: 22cqw;
+}
+.cert .sig .k,
+.cert .date .k {
+  font-family: var(--ui);
+  font-size: 1.55cqw;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--cert-ink-faint);
+  margin-top: 0.9cqw;
+}
+.cert .date {
+  text-align: right;
+}
+.cert .cert-seal {
+  position: absolute;
+  z-index: 3;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 5.2cqw;
+  width: 13cqw;
+  height: 13cqw;
+}
+
+/* ----- Templates ----- */
+.t-laurel {
+  --paper: #fcf9f2;
+  --cert-display: var(--serif);
+}
+.t-sunbeam {
+  --paper: #fff7ee;
+  --cert-display: var(--round);
+}
+.t-sunbeam .frame {
+  border-radius: 2cqw;
+}
+.t-sunbeam .award {
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+.t-sunbeam .name {
+  font-weight: 700;
+}
+.t-sunbeam .reason {
+  font-style: normal;
+  font-family: var(--round);
+  font-weight: 500;
+}
+.t-meadow {
+  --paper: #f5faf5;
+  --cert-display: var(--serif);
+}
+.t-meadow .frame {
+  inset: 0;
+  border: none;
+  border-left: 0.5cqw solid var(--accent);
+  border-radius: 0;
+}
+.t-meadow .frame.inner {
+  display: none;
+}
+.t-meadow .eyebrow {
+  letter-spacing: 0.42em;
+}
+.t-regal {
+  --paper: #fbf8f0;
+  --cert-display: var(--serif);
+  background-image: radial-gradient(120% 80% at 50% 0%, rgba(184, 137, 58, 0.05), transparent 60%);
+}
+.t-regal .frame {
+  inset: 2.2cqw;
+  border-width: 0.3cqw;
+  border-radius: 0;
+  opacity: 0.9;
+}
+.t-regal .frame.inner {
+  inset: 3.1cqw;
+  border-width: 0.1cqw;
+  opacity: 0.7;
+}
+.t-regal .eyebrow {
+  letter-spacing: 0.42em;
+}
+.t-confetti {
+  --paper: #ffffff;
+  --cert-display: var(--round);
+}
+.t-confetti .frame {
+  inset: 2.4cqw;
+  border-style: dashed;
+  border-width: 0.16cqw;
+  border-radius: 3cqw;
+  opacity: 0.5;
+}
+.t-confetti .frame.inner {
+  display: none;
+}
+.t-confetti .award {
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+.t-confetti .name {
+  font-weight: 700;
+}
+.t-confetti .reason {
+  font-style: normal;
+  font-family: var(--round);
+  font-weight: 500;
+}
+.t-botanical {
+  --paper: #f6faf2;
+  --cert-display: var(--serif);
+}
+.t-botanical .frame {
+  inset: 2.8cqw;
+  border-width: 0.1cqw;
+  border-radius: 0;
+  opacity: 0.55;
+}
+.t-botanical .frame.inner {
+  display: none;
+}
+.t-botanical .eyebrow {
+  letter-spacing: 0.36em;
+}
+.t-botanical .reason {
+  max-width: 74%;
+}
+.t-midnight {
+  --paper: #1b2230;
+  --cert-display: var(--serif);
+  --cert-ink: #ece7da;
+  --cert-ink-soft: #aea89a;
+  --cert-ink-faint: #6b6657;
+  background-image: radial-gradient(120% 90% at 50% -10%, rgba(255, 255, 255, 0.06), transparent 55%);
+}
+.t-midnight .frame {
+  inset: 2.6cqw;
+  border-width: 0.12cqw;
+  opacity: 0.75;
+}
+.t-midnight .frame.inner {
+  inset: 3.4cqw;
+  opacity: 0.4;
+}
+
+/* Animate certificate swaps unless reduced motion is requested */
+@media (prefers-reduced-motion: no-preference) {
+  .cert {
+    animation: cert-fade 0.35s ease;
+  }
+  @keyframes cert-fade {
+    from {
+      opacity: 0;
+      transform: translateY(4px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+}
+
+/* ---------- Print: one A4 landscape page per recipient ---------- */
+.print-area {
+  display: none;
+}
+@media print {
+  @page {
+    size: A4 landscape;
+    margin: 0;
+  }
+  body * {
+    visibility: hidden;
+  }
+  .print-area,
+  .print-area * {
+    visibility: visible;
+  }
+  .print-area {
+    display: block;
+    position: absolute;
+    inset: 0;
+  }
+  .print-page {
+    width: 297mm;
+    height: 210mm;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    page-break-after: always;
+    background: #fff;
+  }
+  .print-page:last-child {
+    page-break-after: auto;
+  }
+  .print-page .cert {
+    width: 273mm;
+  }
+}

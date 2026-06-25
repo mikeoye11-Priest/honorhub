@@ -1,6 +1,14 @@
 node_modules/
+dist/
 .vercel/
 .env
 .env.*
 *.log
+*.local
 *:Zone.Identifier
+.DS_Store
+
+# Local design reference & binaries (not needed for deploy)
+/stitch_markdown_design_system/
+*.docx
+*.zip

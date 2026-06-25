@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>HonorHub by Zequence</title>
+<title>HonorHub — AI-Powered Recognition Platform</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Quicksand:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -69,7 +69,7 @@
   .ai-row{display:flex;flex-wrap:wrap;gap:9px;margin-top:12px;align-items:center}
   .btn-ai{display:inline-flex;align-items:center;gap:8px;font-family:var(--ui);font-size:13.5px;
     font-weight:500;border:none;border-radius:9px;padding:9px 15px;cursor:pointer;color:#fff;
-    background:#5B57B0;transition:filter .12s}
+    background:#F58220;transition:filter .12s}
   .btn-ai:hover{filter:brightness(1.12)} .btn-ai:disabled{opacity:.6;cursor:default}
   .spin{width:13px;height:13px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;
     border-radius:50%;display:inline-block;animation:spin .7s linear infinite}
@@ -283,17 +283,38 @@
   }
 
   /* ---------- HonorHub SaaS board ---------- */
-  .product-board{display:grid;grid-template-columns:220px 1fr;gap:0;padding:0;background:#F7F8FC;
-    border-bottom:1px solid #D9D8FB;min-height:100vh}
+  .product-board{display:grid;grid-template-columns:238px 1fr;gap:0;padding:0;background:#F8F9FD;
+    border-bottom:1px solid #EFE6DE;min-height:100vh}
   .product-board + .layout{display:none}
-  .app-sidebar{background:#080F2A;color:#fff;padding:22px 14px;min-height:100vh;
+  .app-sidebar{background:#080F2A;color:#fff;padding:26px 18px;min-height:100vh;
     display:flex;flex-direction:column;justify-content:space-between}
-  .app-logo{font-size:24px;font-weight:800;line-height:1}
-  .app-logo small{display:block;font-size:11px;font-weight:500;opacity:.75;margin:5px 0 18px 30px}
-  .side-nav{display:grid;gap:7px}
+  .app-logo{font-size:27px;font-weight:800;line-height:1;color:#fff}
+  .app-logo small{display:block;font-size:12px;font-weight:500;opacity:.78;margin:6px 0 24px 38px}
+  .side-nav{display:grid;gap:8px}
   .side-nav a{display:flex;align-items:center;gap:9px;color:#D8DEF8;text-decoration:none;
-    font-size:13px;font-weight:700;border-radius:7px;padding:10px 11px}
-  .side-nav a.active{background:#6545E8;color:#fff}
+    font-size:14px;font-weight:800;border-radius:8px;padding:12px 11px}
+  .side-nav a.active{background:#F58220;color:#fff;box-shadow:0 10px 22px rgba(245,130,32,.22)}
+  .app-logo span{font-weight:500;opacity:.82}
+  .vertical-switcher{margin:16px 0 18px}
+  .vertical-switcher label{display:block;font-size:10px;letter-spacing:.13em;text-transform:uppercase;
+    color:#8893C4;font-weight:800;margin:0 0 6px 2px}
+  .vertical-select{width:100%;background:#10183A;color:#fff;border:1px solid #2A3566;border-radius:9px;
+    padding:11px 12px;font-family:var(--ui);font-size:13.5px;font-weight:700;cursor:pointer}
+  .vertical-select:focus{outline:none;border-color:#F58220;box-shadow:0 0 0 3px rgba(245,130,32,.25)}
+  .nav-top{display:flex;align-items:center;gap:9px;color:#D8DEF8;text-decoration:none;font-family:var(--ui);
+    font-size:14px;font-weight:800;border:0;background:transparent;width:100%;text-align:left;
+    border-radius:8px;padding:11px 11px;cursor:pointer}
+  .nav-top.active{background:#F58220;color:#fff;box-shadow:0 10px 22px rgba(245,130,32,.22)}
+  .nav-group{margin:1px 0}
+  .nav-head{display:flex;align-items:center;gap:9px;color:#D8DEF8;font-family:var(--ui);font-size:14px;
+    font-weight:800;border:0;background:transparent;width:100%;text-align:left;padding:11px 11px;
+    border-radius:8px;cursor:pointer}
+  .nav-head.active{background:#F58220;color:#fff;box-shadow:0 10px 22px rgba(245,130,32,.22)}
+  .nav-sub{display:grid;gap:1px;margin:1px 0 6px 30px}
+  .nav-sub a{color:#A9B2D8;text-decoration:none;font-size:12.5px;font-weight:600;padding:7px 10px;border-radius:7px}
+  .nav-sub a:hover{color:#fff;background:rgba(255,255,255,.07)}
+  .nav-sub a.active{color:#fff;background:rgba(245,130,32,.32)}
+  .nav-ico{width:18px;text-align:center;flex:none}
   .user-chip{display:flex;align-items:center;gap:10px;border-top:1px solid rgba(255,255,255,.14);
     padding-top:16px;color:#fff;font-size:12px}
   .avatar{width:32px;height:32px;border-radius:50%;background:#F4B35F;display:grid;place-items:center;color:#12182B;font-weight:800}
@@ -307,22 +328,22 @@
     width:15px;height:15px;display:grid;place-items:center;font-weight:800}
   .profile-chip{display:flex;align-items:center;gap:10px;border-left:1px solid #E5E7F1;padding-left:14px;font-size:12px;color:#344054}
   .profile-chip .avatar{background:#E7A05D;color:#111827}
-  .board-grid{display:grid;grid-template-columns:repeat(12,1fr);gap:18px;align-content:start;padding:24px 28px}
-  .board-card{display:none;background:#fff;border:1px solid #DAD8FA;border-radius:10px;padding:16px;
+  .board-grid{display:grid;grid-template-columns:repeat(12,1fr);gap:18px;align-content:start;padding:28px 30px 40px;max-width:1510px}
+  .board-card{display:none;background:#fff;border:1px solid #EFE6DE;border-radius:10px;padding:16px;
     box-shadow:0 12px 32px rgba(42,38,90,.06)}
   .board-card.page-active{display:block}
   .board-card[data-page="dashboard"]{background:transparent;border:0;box-shadow:none;padding:0}
   .span-3{grid-column:span 3}.span-4{grid-column:span 4}.span-5{grid-column:span 5}
   .span-6{grid-column:span 6}.span-7{grid-column:span 7}.span-8{grid-column:span 8}.span-12{grid-column:span 12}
-  .step-title{display:inline-flex;align-items:center;border:1px solid #DAD8FA;background:#fff;border-radius:10px;
-    color:#3019A5;font-size:16px;font-weight:800;padding:5px 13px;margin:-6px 0 14px;box-shadow:0 4px 14px rgba(48,25,165,.08)}
+  .step-title{display:inline-flex;align-items:center;border:1px solid #EFE6DE;background:#fff;border-radius:10px;
+    color:#6A4A3C;font-size:16px;font-weight:800;padding:5px 13px;margin:-6px 0 14px;box-shadow:0 4px 14px rgba(48,25,165,.08)}
   .board-card[data-page="dashboard"]>.step-title{display:none}
-  .board-card h3{font-size:20px;line-height:1.1;margin:0 0 6px;color:#111827}
-  .board-card p{font-size:12px;color:#667085;margin:0 0 13px}
+  .board-card h3{font-size:22px;line-height:1.1;margin:0 0 6px;color:#111827}
+  .board-card p{font-size:13px;color:#667085;margin:0 0 13px}
   .top-row{display:flex;align-items:center;justify-content:space-between;gap:12px}
   .wizard-steps{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin:0 0 18px;color:#98A2B3;font-size:11px}
   .wizard-steps span{display:flex;align-items:center;gap:6px}.wizard-steps b{width:22px;height:22px;border-radius:50%;
-    background:#EEF0F5;display:grid;place-items:center;color:#667085}.wizard-steps span.active b{background:#6545E8;color:#fff}
+    background:#EEF0F5;display:grid;place-items:center;color:#667085}.wizard-steps span.active b{background:#F58220;color:#fff}
   .wizard-steps span.done b{background:#E7F8EE;color:#0F9B5F}
   .org-select{border:1px solid #DADDE8;border-radius:7px;background:#fff;padding:8px 12px;font-size:12px;color:#374151}
   .stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:14px 0}
@@ -330,25 +351,28 @@
   .stat-box strong{display:block;font-size:26px;line-height:1;color:#111827;margin:8px 0}
   .stat-box span{font-size:11px;color:#667085}.up{color:#12A765!important}
   .activity-grid{display:grid;grid-template-columns:1.2fr 1fr 1.05fr;gap:12px}
-  .list-card{border:1px solid #EAECF0;border-radius:10px;padding:13px}
-  .activity-item{display:flex;gap:9px;align-items:center;border-bottom:1px solid #F0F1F5;padding:8px 0;font-size:12px}
-  .activity-item:last-child{border-bottom:0}.mini-avatar{width:26px;height:26px;border-radius:50%;background:#F8C8C1}
+  .list-card{border:1px solid #EAECF0;border-radius:12px;padding:20px;background:#fff;box-shadow:0 10px 26px rgba(15,23,42,.035)}
+  .activity-item{display:grid;grid-template-columns:38px 1fr auto;gap:10px;align-items:center;border-bottom:1px solid #F0F1F5;padding:10px 0;font-size:12px}
+  .activity-item:last-child{border-bottom:0}.mini-avatar{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:#FDEBDD;color:#F58220;font-size:17px}
   .action-stack{display:grid;gap:9px}.action-stack button,.solid-action{border:0;border-radius:8px;padding:12px;
-    color:#fff;font-weight:800;font-size:13px;cursor:pointer}.purple{background:#6545E8}.green{background:#18B875}
+    color:#fff;font-weight:800;font-size:13px;cursor:pointer}.purple{background:#F58220}.green{background:#18B875}
   .orange{background:#FF951A}.blue{background:#356CF6}
-  .template-row{display:grid;grid-template-columns:56px 1fr;gap:9px;align-items:center;font-size:12px;margin:8px 0}
-  .template-mini{height:36px;border:1px solid #E1C27A;border-radius:4px;background:#FFF9EC}
+  .template-row{display:grid;grid-template-columns:58px 1fr 12px;gap:10px;align-items:center;font-size:12px;border-bottom:1px solid #EAECF0;padding:8px 0;margin:0}
+  .template-row::after{content:"›";font-size:20px;color:#667085}
+  .template-row:last-child{border-bottom:0}
+  .template-mini{height:38px;border:1px solid #E1C27A;border-radius:4px;background:#FFF9EC;
+    background-image:linear-gradient(135deg,#F5C765 0 8%,#fff0 8% 92%,#F5C765 92%),linear-gradient(#fff,#FFF8EA)}
   .org-type-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:13px;margin-top:18px}
   .org-type{border:1px solid #E3E6EF;border-radius:10px;height:86px;display:grid;place-items:center;text-align:center;
-    font-size:12px;font-weight:800;color:#111827}.org-type.active{border-color:#6545E8;background:#F4F1FF}
+    font-size:12px;font-weight:800;color:#111827}.org-type.active{border-color:#F58220;background:#FFF4EC}
   .org-type b{display:block;font-size:24px;margin-bottom:6px}
   .category-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
   .category-tile{border:1px solid #E3E6EF;border-radius:10px;min-height:88px;display:grid;place-items:center;text-align:center;
-    padding:10px;font-size:12px;font-weight:800;color:#111827}.category-tile.active{border-color:#6545E8;background:#F4F1FF}
+    padding:10px;font-size:12px;font-weight:800;color:#111827}.category-tile.active{border-color:#F58220;background:#FFF4EC}
   .category-tile b{display:block;font-size:24px;margin-bottom:6px}
   .category-layout{display:grid;grid-template-columns:170px 1fr;gap:22px;align-items:start}
   .category-list{display:grid;gap:5px}.category-list button{border:0;background:#fff;text-align:left;padding:10px 12px;
-    border-radius:7px;font-weight:700;color:#374151}.category-list button.active{background:#6545E8;color:#fff}
+    border-radius:7px;font-weight:700;color:#374151}.category-list button.active{background:#F58220;color:#fff}
   .certificate-shot{aspect-ratio:297/210;border:1px solid #F2B544;border-radius:6px;background:#FFFDF8;
     display:grid;place-items:center;text-align:center;padding:28px;color:#854D0E;box-shadow:0 8px 20px rgba(92,61,15,.12)}
   .certificate-shot h4{font-family:var(--serif);font-size:24px;margin:0 0 18px}.certificate-shot .recipient{font-family:var(--serif);font-size:30px;color:#B9821D}
@@ -356,39 +380,46 @@
   .template-card .thumb{aspect-ratio:1.58;border:1px solid #E7C26F;border-radius:5px;background:#FFF8EA;margin-bottom:7px}
   .import-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}.import-option{border:1px solid #EAECF0;border-radius:10px;
     min-height:170px;display:grid;place-items:center;text-align:center;padding:18px}
-  .drop-zone{border:1px dashed #6545E8;border-radius:8px;background:#FBFAFF;padding:22px;text-align:center;margin-top:16px}
+  .drop-zone{border:1px dashed #F58220;border-radius:8px;background:#FFFBF7;padding:22px;text-align:center;margin-top:16px}
   .editor-layout{display:grid;grid-template-columns:135px 1fr 190px;gap:15px}.tool-list{display:grid;gap:8px}
   .tool-list button{border:0;background:#fff;text-align:left;padding:9px 10px;border-radius:7px;color:#344054}
   .recipient-list{border:1px solid #EAECF0;border-radius:10px;padding:12px}.recipient-list ol{font-size:12px;line-height:2;margin:0;padding-left:20px}
   .dark-cert{aspect-ratio:297/210;background:#071E3D;color:#F8D783;border-radius:4px;display:grid;place-items:center;text-align:center;
     border:1px solid #C99B35}.dark-cert h4{font-family:var(--serif);font-size:26px;margin:0}.dark-cert .recipient{font-family:var(--serif);font-size:31px;color:#fff;margin:12px 0}
-  .ai-layout{display:grid;grid-template-columns:1fr 1fr;gap:18px}.ai-box{border:1px solid #DAD8FA;border-radius:10px;padding:16px}
+  .ai-layout{display:grid;grid-template-columns:1fr 1fr;gap:18px}.ai-box{border:1px solid #EFE6DE;border-radius:10px;padding:16px}
   .export-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.export-card{border:1px solid #EAECF0;border-radius:10px;padding:15px;font-size:12px}
   .brand-layout{display:grid;grid-template-columns:130px 1fr 1fr;gap:14px}.brand-menu button{display:block;width:100%;border:0;text-align:left;background:#fff;
-    border-radius:7px;padding:9px 10px}.brand-menu button.active{background:#ECE8FF;color:#3019A5;font-weight:800}
+    border-radius:7px;padding:9px 10px}.brand-menu button.active{background:#FDEBDD;color:#6A4A3C;font-weight:800}
   .table{width:100%;border-collapse:collapse;font-size:12px}.table th,.table td{border-bottom:1px solid #EAECF0;padding:9px;text-align:left}.table th{color:#667085}
   .signature-row{display:grid;grid-template-columns:48px 1fr 180px 50px;gap:12px;align-items:center;border-bottom:1px solid #EAECF0;padding:13px 0}
   .sig-script{font-family:var(--serif);font-style:italic;color:#6B7280;font-size:20px}
   .toggle{width:36px;height:20px;border-radius:999px;background:#D0D5DD;position:relative}.toggle::after{content:"";position:absolute;width:16px;height:16px;left:2px;top:2px;border-radius:50%;background:#fff}.toggle.on{background:#22C55E}.toggle.on::after{left:18px}
-  .help-layout{display:grid;grid-template-columns:1.3fr 1fr;gap:20px}.article-list a{display:block;border-bottom:1px solid #EAECF0;padding:10px 0;color:#3019A5;text-decoration:none;font-size:13px}
+  .help-layout{display:grid;grid-template-columns:1.3fr 1fr;gap:20px}.article-list a{display:block;border-bottom:1px solid #EAECF0;padding:10px 0;color:#6A4A3C;text-decoration:none;font-size:13px}
   .chart-line{height:88px;border:1px solid #EAECF0;border-radius:8px;background:
-    linear-gradient(180deg,rgba(101,69,232,.18),rgba(101,69,232,.03)),
+    linear-gradient(180deg,rgba(245,130,32,.18),rgba(245,130,32,.03)),
     linear-gradient(90deg,#fff0 0 11%,#EAECF0 11% 11.4%,#fff0 11.4% 22%,#EAECF0 22% 22.4%,#fff0 22.4% 33%,#EAECF0 33% 33.4%,#fff0 33.4% 44%,#EAECF0 44% 44.4%,#fff0 44.4% 55%,#EAECF0 55% 55.4%,#fff0 55.4% 66%,#EAECF0 66% 66.4%,#fff0 66.4% 77%,#EAECF0 77% 77.4%,#fff0 77.4%),
     linear-gradient(0deg,#fff0 0 24%,#EAECF0 24% 24.5%,#fff0 24.5% 49%,#EAECF0 49% 49.5%,#fff0 49.5% 74%,#EAECF0 74% 74.5%,#fff0 74.5%)}
   .line-chart{height:240px;margin-top:18px;border:1px solid #EAECF0;border-radius:8px;background:#fff}
   .line-chart svg{display:block;width:100%;height:100%}
   .line-chart text{font-family:var(--ui);font-size:10px;fill:#5C6685}
   .dashboard-lower{display:grid;grid-template-columns:1.3fr 1fr 1.15fr;gap:18px;margin-top:18px}
-  .dashboard-top{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;margin-bottom:20px}
+  .dashboard-top{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;margin-bottom:22px}
   .date-range{border:1px solid #E3E6EF;background:#fff;border-radius:10px;padding:11px 14px;color:#111827;font-size:13px;font-weight:700}
-  .dashboard-stats{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;margin-bottom:20px}
-  .dash-stat{display:flex;gap:14px;align-items:center;border:1px solid #EAECF0;background:#fff;border-radius:12px;padding:20px}
-  .stat-icon{width:64px;height:64px;border-radius:10px;display:grid;place-items:center;font-size:26px}
-  .stat-icon.purple{background:#F0EAFE;color:#6545E8}.stat-icon.green{background:#E8F8EF;color:#0F9B5F}
+  .dashboard-stats{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;margin-bottom:22px}
+  .dash-stat{display:flex;gap:16px;align-items:center;border:1px solid #EAECF0;background:#fff;border-radius:12px;padding:22px 20px;box-shadow:0 10px 26px rgba(15,23,42,.035)}
+  .stat-icon{width:68px;height:68px;border-radius:10px;display:grid;place-items:center;font-size:30px;line-height:1}
+  .stat-icon svg{width:34px;height:34px;stroke:currentColor;fill:none;stroke-width:2.1;stroke-linecap:round;stroke-linejoin:round}
+  .stat-icon.purple{background:#FDEBDD;color:#F58220}.stat-icon.green{background:#E8F8EF;color:#0F9B5F}
   .stat-icon.orange{background:#FFF1D8;color:#F59E0B}.stat-icon.blue{background:#EAF1FF;color:#356CF6}.stat-icon.pink{background:#FDE8EF;color:#E5487A}
-  .dash-stat strong{display:block;font-size:26px;color:#0B1026;line-height:1;margin:6px 0}.dash-stat span{font-size:12px;color:#667085}.dash-stat em{font-style:normal;font-size:12px;color:#667085}
-  .dashboard-main-grid{display:grid;grid-template-columns:1.2fr 1fr 1.2fr;gap:18px;margin-bottom:18px}
-  .dashboard-bottom-grid{display:grid;grid-template-columns:1.2fr 1fr 1.2fr;gap:18px}
+  .dash-stat strong{display:block;font-size:28px;color:#0B1026;line-height:1;margin:6px 0}.dash-stat span{font-size:12px;color:#667085}.dash-stat em{font-style:normal;font-size:12px;color:#667085}.dash-stat small{font-size:12px;color:#475467}
+  .dashboard-main-grid{display:grid;grid-template-columns:1.15fr 1fr 1.15fr;gap:18px;margin-bottom:18px}
+  .dashboard-bottom-grid{display:grid;grid-template-columns:1.15fr 1fr 1.15fr;gap:18px}
+  .dashboard-main-grid>.list-card{min-height:326px}.dashboard-bottom-grid>.list-card{min-height:318px}
+  .donut-wrap{display:flex;align-items:center;justify-content:center;gap:38px;margin-top:34px}
+  .donut{width:176px;height:176px;border-radius:50%;background:conic-gradient(#F58220 0 40%,#356CF6 0 60%,#18B875 0 75%,#FF951A 0 85%,#EF4770 0 95%,#C8CDD6 0);position:relative;flex:none}
+  .donut::after{content:"";position:absolute;inset:50px;background:#fff;border-radius:50%;box-shadow:inset 0 0 0 1px #F2F4F7}
+  .legend-list{display:grid;gap:13px;min-width:150px}.legend-list div{display:grid;grid-template-columns:12px 1fr auto;gap:9px;align-items:center;font-size:12px;color:#344054}.legend-list i{width:10px;height:10px;border-radius:3px}
+  .quick-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.quick-tile{border:1px solid #EAECF0!important;background:#fff!important;color:#0B1026!important;border-radius:10px!important;min-height:74px;font-weight:800!important;display:grid!important;place-items:center!important;text-align:center}.quick-tile.wide{grid-column:1/-1}.quick-tile b{display:block;font-size:24px;margin-bottom:6px}
   .event-list{display:grid;gap:11px}
   .event-item{display:grid;grid-template-columns:48px 1fr auto;gap:12px;align-items:center;border-bottom:1px solid #EAECF0;padding-bottom:11px}
   .event-date{border:1px solid #E4E7EC;border-radius:8px;text-align:center;padding:5px 0;font-weight:800;color:#111827}
@@ -396,7 +427,7 @@
   .badge{border-radius:8px;padding:6px 12px;font-size:12px;font-weight:800}.badge.green{background:#DDF8E9;color:#0F7A43}.badge.amber{background:#FFF0D8;color:#A14D00}.badge.blue{background:#E4EEFF;color:#1857D1}
   .plan-card{margin-top:18px;border-top:1px solid rgba(255,255,255,.12);padding-top:18px}
   .plan-card>span{display:block;color:#AEB8DA;font-size:12px;margin-bottom:8px}
-  .plan-box{background:linear-gradient(135deg,#3A1B91,#231063);border-radius:9px;padding:14px;color:#fff}
+  .plan-box{background:linear-gradient(135deg,#6A4A3C,#4A3328);border-radius:9px;padding:14px;color:#fff}
   .plan-box strong{display:block;font-size:17px;margin-bottom:6px}.plan-box small{display:block;color:#D8DEF8;margin-bottom:12px}
   .plan-box button{width:100%;border:0;border-radius:7px;background:rgba(255,255,255,.14);color:#fff;padding:9px;font-weight:800}
   .help-chip{border:0;border-top:1px solid rgba(255,255,255,.12);background:transparent;padding-top:16px;display:flex;align-items:center;gap:10px;color:#fff;font-size:12px;text-align:left;cursor:pointer}
@@ -409,7 +440,7 @@
   <div class="topbar">
     <div class="brand">
       <h1>HonorHub</h1>
-      <span>by Zequence · Recognise. Celebrate. Inspire.</span>
+      <span>AI-Powered Recognition Platform · Zequence Digital</span>
     </div>
     <div class="top-actions">
       <span class="privacy-pill">No recipient records stored by default</span>
@@ -420,20 +451,62 @@
   <section class="product-board" aria-label="HonorHub product dashboard">
     <aside class="app-sidebar">
       <div>
-        <div class="app-logo">🌟 HonorHub<small>by Zequence</small></div>
+        <div class="app-logo">✦ Honor<span>Hub</span></div>
+        <div class="vertical-switcher">
+          <label for="verticalSelect">Workspace</label>
+          <select id="verticalSelect" class="vertical-select" aria-label="Switch HonorHub workspace">
+            <option value="school">HonorHub Schools</option>
+            <option value="church">HonorHub Churches</option>
+            <option value="sports">HonorHub Sports</option>
+            <option value="company">HonorHub Corporate</option>
+            <option value="charity">HonorHub Charity</option>
+            <option value="event">HonorHub Events</option>
+          </select>
+        </div>
         <nav class="side-nav" aria-label="Main navigation">
-          <a class="active" href="#dashboard" data-page-link="dashboard">▣ Dashboard</a>
-          <a href="#certificates" data-page-link="certificates">▤ Certificates</a>
-          <a href="#templates" data-page-link="templates">▧ Templates</a>
-          <a href="#recipients" data-page-link="recipients">◇ Recipients</a>
-          <a href="#signatories" data-page-link="signatories">✎ Signatories</a>
-          <a href="#branding" data-page-link="branding">◎ Branding</a>
-          <a href="#users" data-page-link="users">♙ Users</a>
-          <a href="#reports" data-page-link="reports">▥ Reports</a>
-          <a href="#events" data-page-link="dashboard">▥ Events</a>
-          <a href="#settings" data-page-link="settings">⚙ Settings</a>
+          <a class="nav-top" href="#dashboard" data-workspace="home" data-page-jump="dashboard"><span class="nav-ico">🏠</span>Home</a>
+
+          <div class="nav-group">
+            <button class="nav-head" type="button" data-workspace="create" data-page-jump="certificates"><span class="nav-ico">✨</span>Create</button>
+            <div class="nav-sub">
+              <a href="#certificates" data-page-jump="certificates">Recognition Wizard</a>
+              <a href="#recipients" data-page-jump="recipients">Recipients</a>
+              <a href="#ai" data-page-jump="ai">AI Writer</a>
+              <a href="#preview" data-page-jump="preview">Preview</a>
+              <a href="#export" data-page-jump="export">Generate</a>
+            </div>
+          </div>
+
+          <div class="nav-group">
+            <button class="nav-head" type="button" data-workspace="library" data-page-jump="templates"><span class="nav-ico">📚</span>Library</button>
+            <div class="nav-sub">
+              <a href="#templates" data-page-jump="templates">Templates</a>
+              <a href="#branding" data-page-jump="branding">Brand Kit</a>
+              <a href="#branding" data-page-jump="branding">Assets</a>
+            </div>
+          </div>
+
+          <div class="nav-group">
+            <button class="nav-head" type="button" data-workspace="organisation" data-page-jump="users"><span class="nav-ico">👥</span>Organisation</button>
+            <div class="nav-sub">
+              <a href="#users" data-page-jump="users">Users &amp; Roles</a>
+              <a href="#signatories" data-page-jump="signatories">Signatories</a>
+              <a href="#branding" data-page-jump="branding">Branding</a>
+            </div>
+          </div>
+
+          <div class="nav-group">
+            <button class="nav-head" type="button" data-workspace="reports" data-page-jump="reports"><span class="nav-ico">📊</span>Reports</button>
+            <div class="nav-sub">
+              <a href="#reports" data-page-jump="reports">Recognition</a>
+              <a href="#reports" data-page-jump="reports">Analytics</a>
+              <a href="#export" data-page-jump="export">Exports</a>
+            </div>
+          </div>
+
+          <a class="nav-top" href="#settings" data-workspace="settings" data-page-jump="settings"><span class="nav-ico">⚙</span>Settings</a>
         </nav>
-        <button class="solid-action purple" type="button" data-page-jump="certificates" style="width:100%;margin-top:28px">+ Create Certificate</button>
+        <button class="solid-action purple" type="button" data-page-jump="certificates" style="width:100%;margin-top:22px">+ Create Recognition</button>
         <div class="plan-card">
           <span>Current Plan</span>
           <div class="plan-box"><strong>Professional</strong><small>Valid until 24 May 2026</small><button type="button">View Plan</button></div>
@@ -457,45 +530,45 @@
         <div class="step-title">1. Dashboard</div>
         <div class="dashboard-top"><div><h3>Good morning, Michael! 👋</h3><p>Here's what's happening with your organisation today.</p></div><div class="date-range">📅 20 May - 26 May 2026 ˅</div></div>
         <div class="dashboard-stats">
-          <div class="dash-stat"><span class="stat-icon purple">▤</span><span><small>Certificates Created</small><strong>1,240</strong><em class="up">↑ 12% from last month</em></span></div>
-          <div class="dash-stat"><span class="stat-icon green">▣</span><span><small>This Month</small><strong>186</strong><em class="up">↑ 8% from last month</em></span></div>
-          <div class="dash-stat"><span class="stat-icon orange">▧</span><span><small>Templates</small><strong>14</strong><em>2 new this month</em></span></div>
-          <div class="dash-stat"><span class="stat-icon blue">♙</span><span><small>Users</small><strong>8</strong><em>1 active invite</em></span></div>
-          <div class="dash-stat"><span class="stat-icon pink">♙</span><span><small>Recipients</small><strong>1,356</strong><em>Total in your contacts</em></span></div>
+          <div class="dash-stat"><span class="stat-icon purple"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h7l4 4v14H7z"/><path d="M14 3v5h5"/><path d="M10 13h5M10 17h5"/></svg></span><span><small>Certificates Created</small><strong>1,240</strong><em class="up">↑ 12% from last month</em></span></div>
+          <div class="dash-stat"><span class="stat-icon green"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M8 3v4M16 3v4M4 10h16"/><path d="M9 15l2 2 4-5"/></svg></span><span><small>This Month</small><strong>186</strong><em class="up">↑ 8% from last month</em></span></div>
+          <div class="dash-stat"><span class="stat-icon orange"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8 8h8M8 12h8M8 16h4"/></svg></span><span><small>Templates</small><strong>14</strong><em>2 new this month</em></span></div>
+          <div class="dash-stat"><span class="stat-icon blue"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 20v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="10" cy="7" r="4"/><path d="M22 20v-2a4 4 0 0 0-3-3.87"/><path d="M17 3.13a4 4 0 0 1 0 7.75"/></svg></span><span><small>Users</small><strong>8</strong><em>1 active invite</em></span></div>
+          <div class="dash-stat"><span class="stat-icon pink"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 20v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="10" cy="7" r="4"/><path d="M20 8v6M17 11h6"/></svg></span><span><small>Recipients</small><strong>1,356</strong><em>Total in your contacts</em></span></div>
         </div>
         <div class="dashboard-main-grid">
           <div class="list-card"><div class="top-row"><strong>Certificates Over Time</strong><select class="org-select"><option>Last 6 Months</option></select></div><div class="line-chart"><svg viewBox="0 0 520 240" role="img" aria-label="Certificates over time">
-            <defs><linearGradient id="lineFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6545E8" stop-opacity=".22"/><stop offset="1" stop-color="#6545E8" stop-opacity=".03"/></linearGradient></defs>
+            <defs><linearGradient id="lineFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F58220" stop-opacity=".22"/><stop offset="1" stop-color="#F58220" stop-opacity=".03"/></linearGradient></defs>
             <g stroke="#EAECF0" stroke-width="1"><path d="M46 20V196M126 20V196M206 20V196M286 20V196M366 20V196M446 20V196M32 52H488M32 88H488M32 124H488M32 160H488M32 196H488"/></g>
             <g><text x="8" y="56">250</text><text x="8" y="92">200</text><text x="8" y="128">150</text><text x="14" y="164">100</text><text x="20" y="200">50</text></g>
             <path d="M46 174 L86 158 L126 124 L166 132 L206 96 L246 116 L286 102 L326 118 L366 84 L406 56 L446 38 L488 24 L488 196 L46 196 Z" fill="url(#lineFill)"/>
-            <path d="M46 174 L86 158 L126 124 L166 132 L206 96 L246 116 L286 102 L326 118 L366 84 L406 56 L446 38 L488 24" fill="none" stroke="#6545E8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-            <g fill="#6545E8"><circle cx="46" cy="174" r="4"/><circle cx="86" cy="158" r="4"/><circle cx="126" cy="124" r="4"/><circle cx="166" cy="132" r="4"/><circle cx="206" cy="96" r="4"/><circle cx="246" cy="116" r="4"/><circle cx="286" cy="102" r="4"/><circle cx="326" cy="118" r="4"/><circle cx="366" cy="84" r="4"/><circle cx="406" cy="56" r="4"/><circle cx="446" cy="38" r="4"/><circle cx="488" cy="24" r="4"/></g>
+            <path d="M46 174 L86 158 L126 124 L166 132 L206 96 L246 116 L286 102 L326 118 L366 84 L406 56 L446 38 L488 24" fill="none" stroke="#F58220" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+            <g fill="#F58220"><circle cx="46" cy="174" r="4"/><circle cx="86" cy="158" r="4"/><circle cx="126" cy="124" r="4"/><circle cx="166" cy="132" r="4"/><circle cx="206" cy="96" r="4"/><circle cx="246" cy="116" r="4"/><circle cx="286" cy="102" r="4"/><circle cx="326" cy="118" r="4"/><circle cx="366" cy="84" r="4"/><circle cx="406" cy="56" r="4"/><circle cx="446" cy="38" r="4"/><circle cx="488" cy="24" r="4"/></g>
             <g><text x="36" y="224">Dec 2025</text><text x="124" y="224">Jan 2026</text><text x="204" y="224">Feb 2026</text><text x="284" y="224">Mar 2026</text><text x="364" y="224">Apr 2026</text><text x="444" y="224">May 2026</text></g>
           </svg></div></div>
-          <div class="list-card"><strong>Certificates by Category</strong><div style="display:flex;align-items:center;gap:22px;margin-top:26px"><div style="width:170px;height:170px;border-radius:50%;background:conic-gradient(#6545E8 0 40%,#356CF6 0 60%,#18B875 0 75%,#FF951A 0 85%,#EF4770 0 95%,#C8CDD6 0);"></div><div class="module-tags"><span>Weekly Awards 40%</span><span>Sports 20%</span><span>Reading 15%</span><span>Attendance 10%</span><span>Behaviour 10%</span><span>Other 5%</span></div></div></div>
-          <div class="list-card"><div class="top-row"><strong>Recent Activity</strong><a href="#" style="font-size:12px;color:#3019A5;text-decoration:none">View all</a></div>
-            <div class="activity-item"><span class="mini-avatar"></span><span><strong>Star of the Week Certificates</strong><br><small>Created by Sarah Johnson</small></span><small>2 hours ago</small></div>
-            <div class="activity-item"><span class="mini-avatar"></span><span><strong>Recipients Imported</strong><br><small>From students_may.csv</small></span><small>5 hours ago</small></div>
-            <div class="activity-item"><span class="mini-avatar"></span><span><strong>New Template Added</strong><br><small>Sports Day Achievement</small></span><small>1 day ago</small></div>
-            <div class="activity-item"><span class="mini-avatar"></span><span><strong>User Added</strong><br><small>David Wilson</small></span><small>2 days ago</small></div>
-            <div class="activity-item"><span class="mini-avatar"></span><span><strong>Certificates Emailed</strong><br><small>Reading Champion Awards</small></span><small>2 days ago</small></div>
+          <div class="list-card"><strong>Certificates by Category</strong><div class="donut-wrap"><div class="donut"></div><div class="legend-list"><div><i style="background:#F58220"></i><span>Weekly Awards</span><strong>40%</strong></div><div><i style="background:#356CF6"></i><span>Sports</span><strong>20%</strong></div><div><i style="background:#18B875"></i><span>Reading</span><strong>15%</strong></div><div><i style="background:#FF951A"></i><span>Attendance</span><strong>10%</strong></div><div><i style="background:#EF4770"></i><span>Behaviour</span><strong>10%</strong></div><div><i style="background:#C8CDD6"></i><span>Other</span><strong>5%</strong></div></div></div></div>
+          <div class="list-card"><div class="top-row"><strong>Recent Activity</strong><a href="#" style="font-size:12px;color:#6A4A3C;text-decoration:none">View all</a></div>
+            <div class="activity-item"><span class="mini-avatar">📄</span><span><strong>Star of the Week Certificates</strong><br><small>Created by Sarah Johnson</small></span><small>2 hours ago</small></div>
+            <div class="activity-item"><span class="mini-avatar" style="background:#E8F8EF;color:#0F9B5F">⇧</span><span><strong>Recipients Imported</strong><br><small>From students_may.csv</small></span><small>5 hours ago</small></div>
+            <div class="activity-item"><span class="mini-avatar" style="background:#FFF1D8;color:#F59E0B">▦</span><span><strong>New Template Added</strong><br><small>Sports Day Achievement</small></span><small>1 day ago</small></div>
+            <div class="activity-item"><span class="mini-avatar">👥</span><span><strong>User Added</strong><br><small>David Wilson</small></span><small>2 days ago</small></div>
+            <div class="activity-item"><span class="mini-avatar" style="background:#FDE8EF;color:#E5487A">✉</span><span><strong>Certificates Emailed</strong><br><small>Reading Champion Awards</small></span><small>2 days ago</small></div>
           </div>
         </div>
         <div class="dashboard-bottom-grid">
-          <div class="list-card"><div class="top-row"><strong>Upcoming Events</strong><a href="#" style="font-size:12px;color:#3019A5;text-decoration:none">View calendar</a></div><div class="event-list" style="margin-top:14px"><div class="event-item"><span class="event-date"><small>MAY</small>28</span><span><strong>Sports Day</strong><br><small>28 May 2026 · 09:00 AM</small></span><span class="badge green">Registered</span></div><div class="event-item"><span class="event-date"><small>JUN</small>05</span><span><strong>End of Term Awards</strong><br><small>5 Jun 2026 · 10:00 AM</small></span><span class="badge amber">Pending</span></div><div class="event-item"><span class="event-date"><small>JUN</small>20</span><span><strong>Graduation Ceremony</strong><br><small>20 Jun 2026 · 11:00 AM</small></span><span class="badge blue">Upcoming</span></div></div></div>
-          <div class="list-card"><div class="top-row"><strong>Top Templates</strong><a href="#" style="font-size:12px;color:#3019A5;text-decoration:none">View all</a></div><div class="template-row"><span class="template-mini"></span><span>Star of the Week<br><small>156 used</small></span></div><div class="template-row"><span class="template-mini"></span><span>Reading Champion<br><small>134 used</small></span></div><div class="template-row"><span class="template-mini"></span><span>Perfect Attendance<br><small>98 used</small></span></div><div class="template-row"><span class="template-mini"></span><span>Good Behaviour<br><small>76 used</small></span></div><div class="template-row"><span class="template-mini"></span><span>Sports Achievement<br><small>65 used</small></span></div></div>
-          <div class="list-card action-stack"><strong>Quick Actions</strong><button class="purple" type="button" data-page-jump="certificates">Create Certificate</button><button class="green" type="button" data-page-jump="recipients">Upload Recipients</button><button class="orange" type="button" data-page-jump="templates">Browse Templates</button><button class="blue" type="button" data-page-jump="signatories">Manage Signatories</button><button class="purple" type="button" data-page-jump="branding">Manage Branding</button></div>
+          <div class="list-card"><div class="top-row"><strong>Upcoming Events</strong><a href="#" style="font-size:12px;color:#6A4A3C;text-decoration:none">View calendar</a></div><div class="event-list" style="margin-top:14px"><div class="event-item"><span class="event-date"><small>MAY</small>28</span><span><strong>Sports Day</strong><br><small>28 May 2026 · 09:00 AM</small></span><span class="badge green">Registered</span></div><div class="event-item"><span class="event-date"><small>JUN</small>05</span><span><strong>End of Term Awards</strong><br><small>5 Jun 2026 · 10:00 AM</small></span><span class="badge amber">Pending</span></div><div class="event-item"><span class="event-date"><small>JUN</small>20</span><span><strong>Graduation Ceremony</strong><br><small>20 Jun 2026 · 11:00 AM</small></span><span class="badge blue">Upcoming</span></div></div></div>
+          <div class="list-card"><div class="top-row"><strong>Top Templates</strong><a href="#" style="font-size:12px;color:#6A4A3C;text-decoration:none">View all</a></div><div class="template-row"><span class="template-mini"></span><span>Star of the Week<br><small>156 used</small></span></div><div class="template-row"><span class="template-mini"></span><span>Reading Champion<br><small>134 used</small></span></div><div class="template-row"><span class="template-mini"></span><span>Perfect Attendance<br><small>98 used</small></span></div><div class="template-row"><span class="template-mini"></span><span>Good Behaviour<br><small>76 used</small></span></div><div class="template-row"><span class="template-mini"></span><span>Sports Achievement<br><small>65 used</small></span></div></div>
+          <div class="list-card"><strong>Quick Actions</strong><div class="quick-grid" style="margin-top:18px"><button class="quick-tile" type="button" data-page-jump="certificates"><span><b style="color:#F58220">🏆</b>Create Recognition</span></button><button class="quick-tile" type="button" data-page-jump="recipients"><span><b style="color:#0F9B5F">⇧</b>Upload Recipients</span></button><button class="quick-tile" type="button" data-page-jump="templates"><span><b style="color:#F59E0B">▦</b>Browse Templates</span></button><button class="quick-tile" type="button" data-page-jump="signatories"><span><b style="color:#356CF6">✍</b>Manage Signatories</span></button><button class="quick-tile wide" type="button" data-page-jump="branding"><span><b style="color:#EF4770">♡</b>Manage Branding</span></button></div></div>
         </div>
       </article>
 
       <article class="board-card span-12" data-page="certificates">
-        <div class="step-title">2. Create Certificate</div>
+        <div class="step-title">Recognition · Step 1</div>
         <div class="wizard-steps">
-          <span class="active"><b>1</b>Category</span><span><b>2</b>Template</span><span><b>3</b>Recipients</span><span><b>4</b>Customise</span><span><b>5</b>Preview</span>
+          <span class="active"><b>1</b>Award</span><span><b>2</b>Template</span><span><b>3</b>Recipients</span><span><b>4</b>Customise</span><span><b>5</b>Generate</span>
         </div>
-        <h3>Choose a category</h3>
-        <p>What type of certificate would you like to create?</p>
+        <h3>What are you recognising?</h3>
+        <p>Choose an award type — the certificate is simply the result.</p>
         <div class="category-grid">
           <div class="category-tile active"><span><b>⭐</b>Weekly Awards<br><small>Recognise everyday achievement</small></span></div>
           <div class="category-tile"><span><b>📖</b>Reading<br><small>Celebrate reading progress</small></span></div>
@@ -532,7 +605,7 @@
           <div class="import-option"><div><h3>▤</h3><strong>Upload CSV File</strong><p>Upload a CSV file with recipient details.</p><div class="drop-zone">Drag & drop your file here<br><br><button class="solid-action purple" type="button">Choose File</button><br><small>honorhub_recipients.csv · 2.4 KB ✓</small></div></div></div>
           <div class="import-option"><div><h3>♙</h3><strong>Enter Manually</strong><p>Add recipients one by one or paste from Excel.</p><button class="btn btn-ghost" type="button">Enter Manually</button></div></div>
         </div>
-        <p class="hint" style="background:#F4F1FF;border:1px solid #DAD8FA;border-radius:8px;padding:10px;margin-top:12px">CSV Template Columns: Name, Award/Reason, Class/Team, Date (optional), Email (optional)<br><strong>Total recipients: 25</strong></p>
+        <p class="hint" style="background:#FFF4EC;border:1px solid #EFE6DE;border-radius:8px;padding:10px;margin-top:12px">CSV Template Columns: Name, Award/Reason, Class/Team, Date (optional), Email (optional)<br><strong>Total recipients: 25</strong></p>
         <div class="top-row" style="margin-top:14px"><button class="btn btn-ghost" type="button" data-page-jump="templates">← Back</button><button class="solid-action purple" type="button" data-page-jump="editor">Next →</button></div>
       </article>
 
@@ -792,7 +865,7 @@ Grace Owusu — for reading with wonderful expression</textarea>
             <h2>Good morning Michael</h2>
             <p>Recognition made simple across schools, clubs, churches, charities and companies.</p>
           </div>
-          <button class="btn btn-primary" type="button" id="createBtn">Create Certificate</button>
+          <button class="btn btn-primary" type="button" id="createBtn">Create Recognition</button>
         </div>
         <div class="metrics">
           <div class="metric"><div class="n">1,240</div><div class="k">Certificates Created</div></div>
@@ -1143,34 +1216,43 @@ function render(){
   $('next').disabled=state.index>=n-1;
 }
 
+/* which of the six workspaces each page belongs to (drives nav highlight) */
+const PAGE_WORKSPACE={
+  dashboard:'home',
+  certificates:'create',recipients:'create',editor:'create',preview:'create',export:'create',ai:'create',
+  templates:'library',branding:'library',
+  users:'organisation',signatories:'organisation',
+  reports:'reports',
+  settings:'settings',help:'settings'
+};
 function showAppPage(page){
   const exists=Array.from(document.querySelectorAll('[data-page]')).some(card=>card.dataset.page===page);
   const selected=exists?page:'dashboard';
-  const navPage=['editor','preview','export','ai'].includes(selected)?'certificates':selected;
+  const workspace=PAGE_WORKSPACE[selected]||'home';
   const titles={
-    dashboard:'Dashboard',
-    certificates:'Create Certificate - Step 1: Choose Category',
-    templates:'Choose Template',
-    recipients:'Import Recipients',
-    editor:'Customise Certificate',
-    preview:'Certificate Preview',
-    export:'Generate & Export',
-    ai:'AI Recognition Writer',
-    branding:'Organisation Branding',
-    signatories:'Signatories',
-    users:'Users',
-    reports:'Reports & Analytics',
+    dashboard:'Home',
+    certificates:'Create · Choose an Award',
+    templates:'Library · Templates',
+    recipients:'Create · Recipients',
+    editor:'Create · Customise',
+    preview:'Create · Preview',
+    export:'Create · Generate',
+    ai:'Create · AI Writer',
+    branding:'Library · Brand Kit',
+    signatories:'Organisation · Signatories',
+    users:'Organisation · Users',
+    reports:'Reports',
     settings:'Settings',
     help:'Help Centre'
   };
   document.querySelectorAll('[data-page]').forEach(card=>{
     card.classList.toggle('page-active',card.dataset.page===selected);
   });
-  document.querySelectorAll('[data-page-link]').forEach(link=>{
-    link.classList.toggle('active',link.dataset.pageLink===navPage);
+  document.querySelectorAll('[data-workspace]').forEach(el=>{
+    el.classList.toggle('active',el.dataset.workspace===workspace);
   });
   const title=$('appPageTitle');
-  if(title)title.textContent=titles[selected] || 'Dashboard';
+  if(title)title.textContent=titles[selected] || 'Home';
 }
 
 function navigateApp(page){
@@ -1222,11 +1304,21 @@ $('prev').onclick=()=>{if(state.index>0){state.index--;render()}};
 $('next').onclick=()=>{if(state.index<state.pupils.length-1){state.index++;render()}};
 $('clearSessionBtn').onclick=clearPupilSession;
 $('createBtn').onclick=()=>$('award').focus();
-document.querySelectorAll('[data-page-link]').forEach(link=>link.addEventListener('click',e=>{
+document.querySelectorAll('[data-page-jump]').forEach(el=>el.addEventListener('click',e=>{
   e.preventDefault();
-  navigateApp(link.dataset.pageLink);
+  navigateApp(el.dataset.pageJump);
 }));
-document.querySelectorAll('[data-page-jump]').forEach(btn=>btn.addEventListener('click',()=>navigateApp(btn.dataset.pageJump)));
+const VERTICAL_KEYS=['school','church','sports','company','charity','event'];
+function syncVerticalSelect(){
+  const sel=$('verticalSelect');
+  if(sel)sel.value=VERTICAL_KEYS.includes(state.sector)?state.sector:'school';
+}
+if($('verticalSelect'))$('verticalSelect').addEventListener('change',e=>{
+  state.sector=e.target.value;
+  applySectorDefaults(true);
+  saveSchoolSettings();
+  render();
+});
 
 $('printBtn').onclick=()=>{
   parsePupils();
@@ -1342,6 +1434,7 @@ applySectorDefaults(false);
 $('date').value=todayUK();
 buildSwatches();
 $('customColor').value=state.accent;
+syncVerticalSelect();
 $('templates').querySelectorAll('.tpl').forEach(t=>t.classList.toggle('active',t.dataset.tpl===state.template));
 $('swatches').querySelectorAll('.sw').forEach(s=>s.classList.toggle('active',s.dataset.hex===state.accent));
 showLogoMeta();
