@@ -25,7 +25,7 @@
     -webkit-font-smoothing:antialiased;line-height:1.5}
 
   /* ---------- App shell ---------- */
-  .topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;
+  .topbar{display:none;align-items:center;justify-content:space-between;gap:16px;
     padding:18px 26px;background:var(--panel);border-bottom:1px solid var(--line)}
   .brand{display:flex;align-items:baseline;gap:12px}
   .brand h1{font-family:var(--serif);font-weight:600;font-size:22px;margin:0;letter-spacing:-.01em}
@@ -283,8 +283,9 @@
   }
 
   /* ---------- HonorHub SaaS board ---------- */
-  .product-board{display:grid;grid-template-columns:210px 1fr;gap:12px;padding:10px;background:#F7F8FC;
-    border-bottom:1px solid #D9D8FB}
+  .product-board{display:grid;grid-template-columns:190px 1fr;gap:10px;padding:8px;background:#F7F8FC;
+    border-bottom:1px solid #D9D8FB;min-height:100vh}
+  .product-board + .layout{display:none}
   .app-sidebar{background:#101A33;color:#fff;border-radius:10px;padding:18px 14px;min-height:620px;
     display:flex;flex-direction:column;justify-content:space-between}
   .app-logo{font-size:24px;font-weight:800;line-height:1}
@@ -302,10 +303,13 @@
   .span-3{grid-column:span 3}.span-4{grid-column:span 4}.span-5{grid-column:span 5}
   .span-6{grid-column:span 6}.span-7{grid-column:span 7}.span-8{grid-column:span 8}.span-12{grid-column:span 12}
   .step-title{display:inline-flex;align-items:center;border:1px solid #DAD8FA;background:#fff;border-radius:10px;
-    color:#3019A5;font-size:18px;font-weight:800;padding:5px 13px;margin:-6px 0 14px;box-shadow:0 4px 14px rgba(48,25,165,.08)}
+    color:#3019A5;font-size:16px;font-weight:800;padding:5px 13px;margin:-6px 0 14px;box-shadow:0 4px 14px rgba(48,25,165,.08)}
   .board-card h3{font-size:20px;line-height:1.1;margin:0 0 6px;color:#111827}
   .board-card p{font-size:12px;color:#667085;margin:0 0 13px}
   .top-row{display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .wizard-steps{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin:0 0 18px;color:#98A2B3;font-size:11px}
+  .wizard-steps span{display:flex;align-items:center;gap:6px}.wizard-steps b{width:22px;height:22px;border-radius:50%;
+    background:#EEF0F5;display:grid;place-items:center;color:#667085}.wizard-steps span.active b{background:#6545E8;color:#fff}
   .org-select{border:1px solid #DADDE8;border-radius:7px;background:#fff;padding:8px 12px;font-size:12px;color:#374151}
   .stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:14px 0}
   .stat-box{border:1px solid #EAECF0;border-radius:10px;padding:14px;background:#fff}
@@ -324,6 +328,10 @@
   .org-type{border:1px solid #E3E6EF;border-radius:10px;height:86px;display:grid;place-items:center;text-align:center;
     font-size:12px;font-weight:800;color:#111827}.org-type.active{border-color:#6545E8;background:#F4F1FF}
   .org-type b{display:block;font-size:24px;margin-bottom:6px}
+  .category-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+  .category-tile{border:1px solid #E3E6EF;border-radius:10px;min-height:88px;display:grid;place-items:center;text-align:center;
+    padding:10px;font-size:12px;font-weight:800;color:#111827}.category-tile.active{border-color:#6545E8;background:#F4F1FF}
+  .category-tile b{display:block;font-size:24px;margin-bottom:6px}
   .category-layout{display:grid;grid-template-columns:170px 1fr;gap:22px;align-items:start}
   .category-list{display:grid;gap:5px}.category-list button{border:0;background:#fff;text-align:left;padding:10px 12px;
     border-radius:7px;font-weight:700;color:#374151}.category-list button.active{background:#6545E8;color:#fff}
@@ -346,6 +354,7 @@
   .table{width:100%;border-collapse:collapse;font-size:12px}.table th,.table td{border-bottom:1px solid #EAECF0;padding:9px;text-align:left}.table th{color:#667085}
   .chart-line{height:88px;border:1px solid #EAECF0;border-radius:8px;background:linear-gradient(180deg,#F5F1FF,#fff)}
   @media (max-width:1200px){.product-board{grid-template-columns:1fr}.app-sidebar{min-height:auto}.board-grid{grid-template-columns:1fr}.board-card{grid-column:1!important}.stat-grid,.activity-grid,.org-type-grid,.template-gallery,.editor-layout,.brand-layout{grid-template-columns:1fr}}
+  @media print{.product-board{display:none!important}.product-board + .layout{display:block}}
 </style>
 </head>
 <body>
@@ -380,7 +389,7 @@
     </aside>
 
     <div class="board-grid">
-      <article class="board-card span-6">
+      <article class="board-card span-4">
         <div class="step-title">1. Dashboard</div>
         <div class="top-row">
           <div><h3>Good morning, Michael! 👋</h3><p>Here's what's happening with your organisation.</p></div>
@@ -412,44 +421,42 @@
         </div>
       </article>
 
-      <article class="board-card span-3">
-        <div class="step-title">2. Choose Organisation Type</div>
-        <h3 style="text-align:center">Who are you recognising?</h3>
-        <p style="text-align:center">Choose your organisation type and we'll personalise your experience.</p>
-        <div class="org-type-grid">
-          <div class="org-type active"><span><b>🏫</b>School</span></div><div class="org-type"><span><b>⚽</b>Football Club</span></div>
-          <div class="org-type"><span><b>🏆</b>Sports Club</span></div><div class="org-type"><span><b>✝</b>Church</span></div>
-          <div class="org-type"><span><b>💞</b>Charity</span></div><div class="org-type"><span><b>💼</b>Company</span></div>
-          <div class="org-type"><span><b>🎓</b>Training Provider</span></div><div class="org-type"><span><b>🎟</b>Event</span></div>
+      <article class="board-card span-4">
+        <div class="step-title">2. Create Certificate</div>
+        <div class="wizard-steps">
+          <span class="active"><b>1</b>Category</span><span><b>2</b>Template</span><span><b>3</b>Recipients</span><span><b>4</b>Customise</span><span><b>5</b>Preview</span>
         </div>
-      </article>
-
-      <article class="board-card span-3">
-        <div class="step-title">3. Certificate Categories (School)</div>
-        <h3 style="text-align:center">Select a category</h3>
-        <div class="category-layout">
-          <div class="category-list">
-            <button class="active" type="button">★ Weekly Awards</button><button type="button">Reading</button><button type="button">Attendance</button>
-            <button type="button">Behaviour</button><button type="button">Sports Day</button><button type="button">Graduation</button>
-          </div>
-          <div class="certificate-shot"><div><h4>STAR OF THE WEEK</h4><small>Presented to</small><div class="recipient">Emma Johnson</div><p>For showing kindness, great effort and a positive attitude all week.</p></div></div>
+        <h3>Choose a category</h3>
+        <p>What type of certificate would you like to create?</p>
+        <div class="category-grid">
+          <div class="category-tile active"><span><b>⭐</b>Weekly Awards<br><small>Recognise everyday achievement</small></span></div>
+          <div class="category-tile"><span><b>📖</b>Reading<br><small>Celebrate reading progress</small></span></div>
+          <div class="category-tile"><span><b>🗓</b>Attendance<br><small>Award good attendance</small></span></div>
+          <div class="category-tile"><span><b>🏅</b>Behaviour<br><small>Positive behaviour awards</small></span></div>
+          <div class="category-tile"><span><b>⚙</b>Sports Day<br><small>Sports day and events</small></span></div>
+          <div class="category-tile"><span><b>🎓</b>Graduation<br><small>Graduation and completion</small></span></div>
+          <div class="category-tile"><span><b>⚖</b>Teacher Awards<br><small>Teacher appreciation</small></span></div>
+          <div class="category-tile"><span><b>▤</b>Other Awards<br><small>All other certificates</small></span></div>
         </div>
+        <div class="top-row" style="margin-top:16px"><button class="btn btn-ghost" type="button">Cancel</button><button class="solid-action purple" type="button">Next →</button></div>
       </article>
 
       <article class="board-card span-4">
-        <div class="step-title">4. Templates</div>
-        <h3>Choose a template</h3>
-        <div class="module-tags"><span>All</span><span>Classic</span><span>Modern</span><span>Children</span><span>Sports</span><span>Corporate</span><span>Church</span></div>
+        <div class="step-title">3. Templates</div>
+        <h3>Templates</h3>
+        <p>Choose a template for your certificate</p>
+        <div class="module-tags"><span>All</span><span>Classic</span><span>Modern</span><span>Children</span><span>Premium</span><span>Sports</span><span>Corporate</span><span>Church</span></div>
         <div class="template-gallery" style="margin-top:14px">
           <div class="template-card"><div class="thumb"></div>Classic Gold</div><div class="template-card"><div class="thumb"></div>Modern Achievement</div>
           <div class="template-card"><div class="thumb"></div>Colourful Kids</div><div class="template-card"><div class="thumb"></div>Elegant Leaves</div>
           <div class="template-card"><div class="thumb"></div>Blue Excellence</div><div class="template-card"><div class="thumb" style="background:#071E3D"></div>Sport Star</div>
           <div class="template-card"><div class="thumb"></div>Corporate Premium</div><div class="template-card"><div class="thumb"></div>Church Appreciation</div>
         </div>
+        <div class="top-row" style="margin-top:14px"><button class="btn btn-ghost" type="button">Back</button><button class="solid-action purple" type="button">Next →</button></div>
       </article>
 
       <article class="board-card span-4">
-        <div class="step-title">5. Recipient Import</div>
+        <div class="step-title">4. Recipients Import</div>
         <h3>Add Recipients</h3><p>Import recipients to generate certificates in bulk.</p>
         <div class="import-grid">
           <div class="import-option"><div><h3>▤</h3><strong>Upload CSV File</strong><p>Upload a CSV file with recipient details.</p><button class="solid-action purple" type="button">Upload CSV</button></div></div>
@@ -459,13 +466,23 @@
       </article>
 
       <article class="board-card span-4">
-        <div class="step-title">6. Certificate Preview & Editor</div>
+        <div class="step-title">5. Certificate Editor</div>
         <div class="top-row"><div><h3>Preview & Edit</h3><p>Review and customise your certificate.</p></div><button class="solid-action purple" type="button">Save Changes</button></div>
         <div class="editor-layout">
           <div class="tool-list"><button>Text</button><button>Change Template</button><button>Colours & Fonts</button><button>Logo</button><button>Signatories</button><button>AI Writer</button></div>
           <div class="dark-cert"><div><h4>CERTIFICATE<br>OF ACHIEVEMENT</h4><small>PRESENTED TO</small><div class="recipient">Daniel Williams</div><p>For outstanding performance, dedication and excellent teamwork.</p></div></div>
           <div class="recipient-list"><strong>Recipients</strong><ol><li>Daniel Williams ✓</li><li>James Smith</li><li>Oliver Brown</li><li>Noah Johnson</li><li>Lucas Taylor</li></ol></div>
         </div>
+      </article>
+
+      <article class="board-card span-4">
+        <div class="step-title">6. Certificate Preview</div>
+        <div class="top-row"><div><h3>Certificate Preview</h3></div><div><strong style="font-size:12px">Recipient 1 of 25</strong> <button class="iconbtn" type="button">‹</button> <button class="iconbtn" type="button">›</button> <button class="solid-action purple" type="button">Export ▾</button></div></div>
+        <div class="editor-layout" style="grid-template-columns:1fr 170px">
+          <div class="certificate-shot"><div><h4>STAR OF THE WEEK</h4><small>Presented to</small><div class="recipient">Emma Johnson</div><p>For showing kindness, great effort and a positive attitude all week.</p></div></div>
+          <div class="recipient-list"><strong>Recipients</strong><ol><li>Emma Johnson ✓</li><li>Liam Smith</li><li>Olivia Brown</li><li>Noah Williams</li><li>Ava Davis</li><li>Lucas Taylor</li><li>Mia Wilson</li></ol></div>
+        </div>
+        <div class="module-tags" style="justify-content:center;margin-top:10px"><span>▦</span><span>⊞</span><span>−</span><span>100%</span><span>+</span></div>
       </article>
 
       <article class="board-card span-4">
