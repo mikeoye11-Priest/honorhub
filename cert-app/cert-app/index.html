@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>School Recognition Platform</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Quicksand:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* ----------------------------------------------------------------
+     DESIGN TOKENS — change these to re-skin the whole studio
+  ----------------------------------------------------------------- */
+  :root{
+    --ink:#2A2622; --ink-soft:#6E665C; --ink-faint:#A39A8D;
+    --workspace:#ECEAE3; --panel:#FFFFFF; --line:#E3DFD6;
+    --serif:'Fraunces',Georgia,'Times New Roman',serif;
+    --round:'Quicksand','Trebuchet MS',system-ui,sans-serif;
+    --ui:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+    --radius:14px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{font-family:var(--ui);background:var(--workspace);color:var(--ink);
+    -webkit-font-smoothing:antialiased;line-height:1.5}
+
+  /* ---------- App shell ---------- */
+  .topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;
+    padding:18px 26px;background:var(--panel);border-bottom:1px solid var(--line)}
+  .brand{display:flex;align-items:baseline;gap:12px}
+  .brand h1{font-family:var(--serif);font-weight:600;font-size:22px;margin:0;letter-spacing:-.01em}
+  .brand span{font-size:13px;color:var(--ink-soft)}
+  .btn{font-family:var(--ui);font-size:14px;font-weight:500;border:none;border-radius:10px;
+    padding:11px 18px;cursor:pointer;transition:transform .12s ease,filter .12s ease}
+  .btn:active{transform:translateY(1px)}
+  .btn-primary{background:var(--ink);color:#fff}
+  .btn-primary:hover{filter:brightness(1.15)}
+  .btn-ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+  .btn-ghost:hover{background:var(--workspace)}
+  .top-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+  .privacy-pill{font-size:12px;font-weight:600;color:#315B46;background:#EAF5EF;border:1px solid #C8E2D3;
+    border-radius:999px;padding:8px 12px;white-space:nowrap}
+
+  .layout{display:grid;grid-template-columns:355px 1fr;gap:0;min-height:calc(100vh - 67px)}
+
+  /* ---------- Controls ---------- */
+  .controls{background:var(--panel);border-right:1px solid var(--line);
+    padding:22px;overflow-y:auto;max-height:calc(100vh - 67px)}
+  .group{margin-bottom:22px}
+  .group > label,.group-label{display:block;font-size:11px;font-weight:600;letter-spacing:.08em;
+    text-transform:uppercase;color:var(--ink-faint);margin-bottom:9px}
+  .field{margin-bottom:13px}
+  .field label{display:block;font-size:12.5px;color:var(--ink-soft);margin-bottom:5px}
+  input[type=text],select,textarea{width:100%;font-family:var(--ui);font-size:14px;color:var(--ink);
+    background:#FBFAF7;border:1px solid var(--line);border-radius:9px;padding:10px 12px;outline:none;
+    transition:border-color .12s,box-shadow .12s}
+  input[type=text]:focus,select:focus,textarea:focus{border-color:var(--ink-soft);
+    box-shadow:0 0 0 3px rgba(110,102,92,.12)}
+  textarea{resize:vertical;min-height:118px;line-height:1.55}
+  .hint{font-size:11.5px;color:var(--ink-faint);margin-top:6px}
+  .filebtn{display:inline-flex;align-items:center;gap:6px;font-family:var(--ui);font-size:12.5px;
+    font-weight:500;border:1px solid var(--line);background:#FBFAF7;border-radius:8px;padding:6px 11px;
+    cursor:pointer;color:var(--ink-soft)}
+  .filebtn:hover{background:#fff;color:var(--ink)}
+  .filebtn input{display:none}
+  .ai-row{display:flex;flex-wrap:wrap;gap:9px;margin-top:12px;align-items:center}
+  .btn-ai{display:inline-flex;align-items:center;gap:8px;font-family:var(--ui);font-size:13.5px;
+    font-weight:500;border:none;border-radius:9px;padding:9px 15px;cursor:pointer;color:#fff;
+    background:#5B57B0;transition:filter .12s}
+  .btn-ai:hover{filter:brightness(1.12)} .btn-ai:disabled{opacity:.6;cursor:default}
+  .spin{width:13px;height:13px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;
+    border-radius:50%;display:inline-block;animation:spin .7s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .ai-note{font-size:11.5px;color:var(--ink-faint);margin-top:8px}
+  .ai-error{font-size:12px;color:#B5462C;margin-top:8px;display:none;line-height:1.45}
+  .privacy-panel{border:1px solid #C8E2D3;background:#F3FAF6;border-radius:10px;padding:12px 13px;
+    color:#315B46;font-size:12.5px;line-height:1.45}
+  .privacy-panel strong{display:block;font-size:13px;color:#244735;margin-bottom:4px}
+  .session-row{display:flex;gap:8px;align-items:center;justify-content:space-between;margin-top:10px}
+  .session-state{font-size:11.5px;color:#4E765F}
+  .backend-state{font-size:11.5px;color:#6B6657;margin-top:8px}
+  .backend-state.ok{color:#315B46}
+  .backend-state.warn{color:#9A5B2F}
+  .mini-map{border:1px solid var(--line);background:#FBFAF7;border-radius:10px;padding:12px 13px;
+    font-size:12.5px;color:var(--ink-soft);line-height:1.55}
+  .mini-map strong{display:block;color:var(--ink);font-size:13px;margin-bottom:5px}
+  .mini-map ul{list-style:none;margin:8px 0 0;padding:0}
+  .mini-map li{display:flex;align-items:flex-start;gap:7px;margin:3px 0}
+  .mini-map li::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--accent,#B8893A);
+    flex:0 0 auto;margin-top:7px}
+  .workflow{display:grid;grid-template-columns:1fr;gap:7px}
+  .workflow div{display:flex;align-items:center;justify-content:space-between;gap:10px;border:1px solid var(--line);
+    background:#FBFAF7;border-radius:8px;padding:8px 10px;font-size:12.5px;color:var(--ink)}
+  .workflow span{font-size:11px;color:var(--ink-faint);font-weight:600}
+  .module-tags{display:flex;flex-wrap:wrap;gap:7px}
+  .module-tags span{border:1px solid var(--line);background:#FBFAF7;border-radius:999px;
+    padding:6px 9px;font-size:12px;color:var(--ink-soft)}
+  .logo-up{display:flex;align-items:center;gap:12px}
+  .logo-thumb{width:46px;height:46px;border:1px solid var(--line);border-radius:9px;background:#FBFAF7;
+    display:flex;align-items:center;justify-content:center;overflow:hidden;flex:none}
+  .logo-thumb img{max-width:100%;max-height:100%;object-fit:contain}
+  .logo-meta{font-size:12px;color:var(--ink-soft);line-height:1.4}
+  .logo-meta a{color:#B5462C;cursor:pointer;text-decoration:none}
+  .logo-meta a:hover{text-decoration:underline}
+  .custom-color{display:inline-flex;align-items:center;gap:9px;font-size:12.5px;color:var(--ink-soft);cursor:pointer}
+  .custom-color input[type=color]{width:28px;height:28px;border:1px solid var(--line);border-radius:50%;
+    padding:0;background:none;cursor:pointer}
+  .custom-color input[type=color]::-webkit-color-swatch{border:none;border-radius:50%}
+  .custom-color input[type=color]::-webkit-color-swatch-wrapper{padding:0}
+
+  .templates{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+  .tpl{border:1px solid var(--line);border-radius:11px;background:#FBFAF7;padding:11px 6px 9px;
+    cursor:pointer;text-align:center;transition:border-color .12s,background .12s}
+  .tpl:hover{background:#fff}
+  .tpl.active{border-color:var(--ink);background:#fff;box-shadow:0 1px 0 var(--ink)}
+  .tpl .chip{height:30px;border-radius:7px;margin-bottom:7px}
+  .tpl span{font-size:12px;font-weight:500}
+  .chip-laurel{background:#FCF9F2;border:1px solid #E7D9B6}
+  .chip-sunbeam{background:#FFF6EC;border:1px solid #F3CBA6}
+  .chip-meadow{background:#F3F8F2;border:1px solid #C2DCC4}
+  .chip-regal{background:#FBF8F0;border:1px solid #C9B68A;
+    background-image:linear-gradient(#fff0 60%,#C9B68A55);background-size:100% 100%}
+  .chip-confetti{background:#fff;border:1px solid #E6D9F0;
+    background-image:radial-gradient(#E98C7A 1.6px,#fff0 1.6px),radial-gradient(#6FB1C9 1.6px,#fff0 1.6px),radial-gradient(#E3B748 1.6px,#fff0 1.6px);
+    background-size:11px 11px,15px 15px,9px 9px;background-position:1px 1px,6px 4px,3px 7px}
+  .chip-botanical{background:#F4F8EF;border:1px solid #BBD3A8}
+  .chip-midnight{background:#1F2738;border:1px solid #3A4356;
+    background-image:radial-gradient(#C9A14A 1.4px,#fff0 1.4px);background-size:12px 12px;background-position:3px 2px}
+
+  .swatches{display:flex;gap:9px;flex-wrap:wrap}
+  .sw{width:30px;height:30px;border-radius:50%;cursor:pointer;border:2px solid #fff;
+    box-shadow:0 0 0 1px var(--line);transition:transform .12s}
+  .sw:hover{transform:scale(1.08)}
+  .sw.active{box-shadow:0 0 0 2px var(--ink)}
+
+  /* ---------- Preview stage ---------- */
+  .stage{padding:30px 36px;display:flex;flex-direction:column;align-items:center;
+    justify-content:flex-start;overflow-y:auto;max-height:calc(100vh - 67px)}
+  .mount{width:100%;max-width:780px;filter:drop-shadow(0 18px 40px rgba(40,34,24,.16))}
+  .pager{display:flex;align-items:center;gap:18px;margin-top:22px;font-size:14px;color:var(--ink-soft)}
+  .pager .who{min-width:170px;text-align:center;font-weight:500;color:var(--ink)}
+  .iconbtn{width:38px;height:38px;border-radius:50%;border:1px solid var(--line);background:#fff;
+    cursor:pointer;font-size:16px;color:var(--ink);transition:background .12s}
+  .iconbtn:hover{background:var(--workspace)}
+  .iconbtn:disabled{opacity:.35;cursor:default}
+  .count-note{font-size:12.5px;color:var(--ink-faint);margin-top:4px}
+
+  /* ================================================================
+     THE CERTIFICATE — everything scales from container width (cqw),
+     so the same markup is crisp in the small preview and on full A4.
+     Each template (.t-laurel / .t-sunbeam / .t-meadow) below just
+     swaps paper, font, accent default and ornaments. Copy a block to
+     add your own.
+  ================================================================= */
+  .cert{position:relative;width:100%;aspect-ratio:297/210;container-type:inline-size;
+    background:var(--paper,#fff);color:var(--ink);overflow:hidden;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    text-align:center;--accent:#B8893A}
+  .cert .frame{position:absolute;inset:2.6cqw;border:0.16cqw solid var(--accent);border-radius:0.6cqw;
+    pointer-events:none;opacity:.85}
+  .cert .frame.inner{inset:3.5cqw;border-width:0.08cqw;opacity:.55}
+  .cert .orn{position:absolute;inset:0;pointer-events:none;color:var(--accent)}
+  .cert .body{position:relative;width:78%;z-index:2}
+  .cert .logo{display:block;max-height:13cqw;max-width:42%;margin:0 auto 2.6cqw;object-fit:contain}
+
+  .cert .eyebrow{font-family:var(--ui);font-size:1.9cqw;letter-spacing:.32em;text-transform:uppercase;
+    color:var(--ink-soft);font-weight:600;margin-bottom:2.4cqw}
+  .cert .award{font-family:var(--cert-display,var(--serif));font-weight:500;font-size:5.4cqw;
+    line-height:1.05;margin:0 0 3.4cqw;color:var(--ink)}
+  .cert .preposition{font-family:var(--ui);font-size:2.1cqw;color:var(--ink-soft);
+    letter-spacing:.04em;margin-bottom:1.2cqw}
+  .cert .name{font-family:var(--cert-display,var(--serif));font-weight:600;font-size:8.6cqw;
+    line-height:1;color:var(--accent);margin:0 0 1.6cqw;letter-spacing:-.01em}
+  .cert .rule{width:34%;height:0.14cqw;background:var(--accent);opacity:.5;margin:1.6cqw auto 3cqw}
+  .cert .reason{font-family:var(--serif);font-style:italic;font-size:2.7cqw;line-height:1.5;
+    color:var(--ink);max-width:80%;margin:0 auto}
+
+  .cert .foot{position:absolute;left:9cqw;right:9cqw;bottom:6.6cqw;display:flex;
+    align-items:flex-end;justify-content:space-between;z-index:2}
+  .cert .sig{text-align:left}
+  .cert .sig .v{font-family:var(--serif);font-size:2.6cqw;color:var(--ink);
+    border-bottom:0.1cqw solid var(--ink-faint);padding-bottom:.6cqw;min-width:22cqw}
+  .cert .sig .k,.cert .date .k{font-family:var(--ui);font-size:1.55cqw;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--ink-faint);margin-top:.9cqw}
+  .cert .date{text-align:right}
+  .cert .date .v{font-family:var(--serif);font-size:2.6cqw;color:var(--ink);
+    border-bottom:0.1cqw solid var(--ink-faint);padding-bottom:.6cqw;min-width:22cqw}
+
+  /* seal / rosette — the signature motif, carries the accent */
+  .cert .seal{position:absolute;z-index:3;left:50%;transform:translateX(-50%);
+    bottom:5.2cqw;width:13cqw;height:13cqw}
+
+  /* ----- Template: Laurel (classic, ceremonial) ----- */
+  .t-laurel{--paper:#FCF9F2;--cert-display:var(--serif)}
+  /* ----- Template: Sunbeam (warm, for younger years) ----- */
+  .t-sunbeam{--paper:#FFF7EE;--cert-display:var(--round)}
+  .t-sunbeam .frame{border-radius:2cqw}
+  .t-sunbeam .award{font-weight:700;letter-spacing:-.01em}
+  .t-sunbeam .name{font-weight:700}
+  .t-sunbeam .reason{font-style:normal;font-family:var(--round);font-weight:500}
+  /* ----- Template: Meadow (fresh, modern) ----- */
+  .t-meadow{--paper:#F5FAF5;--cert-display:var(--serif)}
+  .t-meadow .frame{inset:0;border:none;border-left:0.5cqw solid var(--accent);border-radius:0}
+  .t-meadow .frame.inner{display:none}
+  .t-meadow .eyebrow{letter-spacing:.42em}
+
+  /* ----- Template: Regal (formal — head teacher's award) ----- */
+  .t-regal{--paper:#FBF8F0;--cert-display:var(--serif);
+    background-image:radial-gradient(120% 80% at 50% 0%,rgba(184,137,58,.05),transparent 60%)}
+  .t-regal .frame{inset:2.2cqw;border-width:0.3cqw;border-radius:0;opacity:.9}
+  .t-regal .frame.inner{inset:3.1cqw;border-width:0.1cqw;opacity:.7}
+  .t-regal .eyebrow{letter-spacing:.42em}
+  .t-regal .award{letter-spacing:.005em}
+
+  /* ----- Template: Confetti (playful — celebration) ----- */
+  .t-confetti{--paper:#FFFFFF;--cert-display:var(--round)}
+  .t-confetti .frame{inset:2.4cqw;border-style:dashed;border-width:0.16cqw;border-radius:3cqw;opacity:.5}
+  .t-confetti .frame.inner{display:none}
+  .t-confetti .award{font-weight:700;letter-spacing:-.01em}
+  .t-confetti .name{font-weight:700}
+  .t-confetti .reason{font-style:normal;font-family:var(--round);font-weight:500}
+
+  /* ----- Template: Botanical (elegant — natural line art) ----- */
+  .t-botanical{--paper:#F6FAF2;--cert-display:var(--serif)}
+  .t-botanical .frame{inset:2.8cqw;border-width:0.1cqw;border-radius:0;opacity:.55}
+  .t-botanical .frame.inner{display:none}
+  .t-botanical .eyebrow{letter-spacing:.36em}
+  .t-botanical .reason{max-width:74%}
+
+  /* ----- Template: Midnight (premium dark — outstanding achievement) ----- */
+  .t-midnight{--paper:#1B2230;--cert-display:var(--serif);
+    --ink:#ECE7DA;--ink-soft:#AEA89A;--ink-faint:#6B6657;
+    background-image:radial-gradient(120% 90% at 50% -10%,rgba(255,255,255,.06),transparent 55%)}
+  .t-midnight .frame{inset:2.6cqw;border-width:0.12cqw;opacity:.75}
+  .t-midnight .frame.inner{inset:3.4cqw;opacity:.4}
+
+  /* ---------- Print: one A4 landscape page per pupil ---------- */
+  .print-area{display:none}
+  @media print{
+    @page{size:A4 landscape;margin:0}
+    .topbar,.controls,.stage{display:none!important}
+    .layout{display:block}
+    .print-area{display:block}
+    .print-page{width:297mm;height:210mm;display:flex;align-items:center;justify-content:center;
+      page-break-after:always;background:#fff}
+    .print-page:last-child{page-break-after:auto}
+    .print-page .cert{width:273mm}
+    .mount{filter:none}
+  }
+  @media (prefers-reduced-motion:no-preference){
+    .cert{animation:fade .35s ease}
+    @keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+  }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width:900px){
+    .layout{grid-template-columns:1fr}
+    .topbar{align-items:flex-start;flex-direction:column}
+    .controls{border-right:none;border-bottom:1px solid var(--line);max-height:none}
+    .stage{max-height:none}
+  }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="brand">
+      <h1>School Recognition Platform</h1>
+      <span>privacy-first certificates for UK schools</span>
+    </div>
+    <div class="top-actions">
+      <span class="privacy-pill">No pupil records stored by default</span>
+      <button class="btn btn-primary" id="printBtn">Print or save PDF</button>
+    </div>
+  </div>
+
+  <div class="layout">
+    <!-- ===================== CONTROLS ===================== -->
+    <aside class="controls">
+      <div class="group">
+        <div class="privacy-panel">
+          <strong>Session-only pupil data</strong>
+          Upload a weekly CSV, generate certificates, then clear the names and notes from this browser session. School branding can be saved; pupil records are not saved.
+          <div class="session-row">
+            <span class="session-state" id="sessionState">5 pupils in this session</span>
+            <button class="btn btn-ghost" id="clearSessionBtn" type="button">Clear pupils</button>
+          </div>
+          <div class="backend-state" id="backendState">Checking privacy backend...</div>
+        </div>
+      </div>
+
+      <div class="group">
+        <span class="group-label">School profile</span>
+        <div class="field"><label>Trust</label><input type="text" id="trust" value="Oakfield Learning Trust"></div>
+        <div class="field"><label>School name</label><input type="text" id="school" value="Oakfield Primary School"></div>
+        <div class="field"><label>Role</label>
+          <select id="role">
+            <option>Headteacher</option>
+            <option>Admin</option>
+            <option selected>Class Teacher</option>
+            <option>SENCO</option>
+            <option>Trust Leader</option>
+          </select>
+        </div>
+        <p class="hint">V1 keeps school settings separate from weekly pupil uploads, ready for trust and school tenancy.</p>
+      </div>
+
+      <div class="group">
+        <span class="group-label">Tenant boundary</span>
+        <div class="mini-map">
+          <strong id="tenantTrust">Oakfield Learning Trust</strong>
+          <ul id="tenantSchools">
+            <li>Oakfield Primary: logo, colours, signatures, templates, teachers</li>
+            <li>Brook Lane School: separate branding and teacher accounts</li>
+            <li>Hilltop Academy: isolated from every other school</li>
+          </ul>
+        </div>
+        <p class="hint">Production rule: every school record is scoped by trust and school membership.</p>
+      </div>
+
+      <div class="group">
+        <span class="group-label">Teacher workflow</span>
+        <div class="workflow">
+          <div><span>1</span>Log in</div>
+          <div><span>2</span>Choose certificate type</div>
+          <div><span>3</span>Upload weekly CSV</div>
+          <div><span>4</span>Preview and print or save PDF</div>
+          <div><span>5</span>Clear pupil session data</div>
+        </div>
+      </div>
+
+      <div class="group">
+        <span class="group-label">Template</span>
+        <div class="templates" id="templates">
+          <div class="tpl active" data-tpl="laurel" title="Classic, ceremonial"><div class="chip chip-laurel"></div><span>Laurel</span></div>
+          <div class="tpl" data-tpl="sunbeam" title="Warm, for younger years"><div class="chip chip-sunbeam"></div><span>Sunbeam</span></div>
+          <div class="tpl" data-tpl="meadow" title="Fresh, modern"><div class="chip chip-meadow"></div><span>Meadow</span></div>
+          <div class="tpl" data-tpl="regal" title="Formal — head teacher's award"><div class="chip chip-regal"></div><span>Regal</span></div>
+          <div class="tpl" data-tpl="confetti" title="Playful — celebration"><div class="chip chip-confetti"></div><span>Confetti</span></div>
+          <div class="tpl" data-tpl="botanical" title="Elegant — natural line art"><div class="chip chip-botanical"></div><span>Botanical</span></div>
+          <div class="tpl" data-tpl="midnight" title="Premium dark — outstanding achievement"><div class="chip chip-midnight"></div><span>Midnight</span></div>
+        </div>
+      </div>
+
+      <div class="group">
+        <span class="group-label">Accent colour</span>
+        <div class="swatches" id="swatches"></div>
+        <div style="margin-top:12px"><label class="custom-color">Custom colour <input type="color" id="customColor" value="#B8893A"></label></div>
+      </div>
+
+      <div class="group">
+        <span class="group-label">School logo</span>
+        <div class="logo-up">
+          <label class="filebtn">Add logo<input type="file" id="logo" accept="image/*"></label>
+          <div class="logo-meta" id="logoMeta">PNG or JPG · shown on every certificate</div>
+        </div>
+      </div>
+
+      <div class="group">
+        <span class="group-label">Wording</span>
+        <div class="field"><label>Award title</label><input type="text" id="award" value="Star of the Week"></div>
+        <div class="field"><label>Default reason (used when a pupil has none)</label><input type="text" id="reason" value="for brilliant effort and kindness this week"></div>
+        <div class="field"><label>Signed by</label><input type="text" id="signatory" value="Mrs Hart · Class 3"></div>
+        <div class="field"><label>Date</label><input type="text" id="date" value=""></div>
+      </div>
+
+      <div class="group">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:9px">
+          <span class="group-label" style="margin-bottom:0">Pupils</span>
+          <label class="filebtn">⬆ Upload CSV<input type="file" id="csv" accept=".csv,.txt"></label>
+        </div>
+        <textarea id="pupils" spellcheck="false">Amelia Cole — for beautiful, careful handwriting all week
+Noah Bryant — for being a kind and helpful friend
+Priya Shah — for fantastic ideas in our science lesson
+Leo Walsh — for never giving up on tricky maths
+Grace Owusu — for reading with wonderful expression</textarea>
+        <p class="hint">Session-only data. One pupil per line. Add a short note or finished reason after a dash:
+          <em>Name — kind, tidy, great ideas</em>. Skip the dash to use the default reason.</p>
+        <div class="ai-row">
+          <button class="btn-ai" id="aiBtn">✨ Write reasons with AI</button>
+        </div>
+        <p class="ai-note">Only your notes are sent to be rewritten — pupil names never leave this page. Clear the session when printing or downloading is done.</p>
+        <p class="ai-error" id="aiErr"></p>
+        <p class="count-note" id="count"></p>
+      </div>
+
+      <div class="group">
+        <span class="group-label">Future opt-in modules</span>
+        <div class="module-tags">
+          <span>Student database</span><span>Award history</span><span>House totals</span>
+          <span>Trust dashboard</span><span>Sports Day</span><span>Attendance</span>
+          <span>Reading awards</span><span>EYFS</span><span>Staff appreciation</span>
+        </div>
+        <p class="hint">These become paid modules because they add stored records, analytics, and trust-wide value.</p>
+      </div>
+    </aside>
+
+    <!-- ===================== PREVIEW ===================== -->
+    <main class="stage">
+      <div class="mount" id="mount"></div>
+      <div class="pager">
+        <button class="iconbtn" id="prev" aria-label="Previous pupil">‹</button>
+        <span class="who" id="who">Pupil 1 of 5</span>
+        <button class="iconbtn" id="next" aria-label="Next pupil">›</button>
+      </div>
+    </main>
+  </div>
+
+  <div class="print-area" id="printArea"></div>
+
+<script>
+/* ======================================================================
+   ORNAMENTS — one small SVG set per template. They inherit the accent
+   colour via currentColor. Add a key here to support a new template.
+====================================================================== */
+const ORN = {
+  laurel: `
+    <svg class="orn" viewBox="0 0 600 424" preserveAspectRatio="none" fill="none" aria-hidden="true">
+      <g stroke="currentColor" stroke-width="1.4" opacity=".7" fill="none" stroke-linecap="round">
+        <path d="M300 36 C 286 50, 282 66, 286 82 M300 36 C 314 50, 318 66, 314 82"/>
+        <path d="M292 52 q -10 -2 -16 4 M308 52 q 10 -2 16 4 M289 68 q -12 0 -18 7 M311 68 q 12 0 18 7"/>
+      </g>
+      <g stroke="currentColor" stroke-width="1" opacity=".5" fill="none">
+        <path d="M40 40 h26 M40 40 v26 M560 40 h-26 M560 40 v26 M40 384 h26 M40 384 v-26 M560 384 h-26 M560 384 v-26"/>
+      </g>
+    </svg>`,
+  sunbeam: `
+    <svg class="orn" viewBox="0 0 600 424" preserveAspectRatio="none" fill="none" aria-hidden="true">
+      <g stroke="currentColor" stroke-width="1.1" opacity=".22">
+        ${Array.from({length:18}).map((_,i)=>{const a=(i/18)*Math.PI*2;const x=300+Math.cos(a)*70,y=90+Math.sin(a)*70,x2=300+Math.cos(a)*120,y2=90+Math.sin(a)*120;return `<line x1="${x.toFixed(1)}" y1="${y.toFixed(1)}" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}"/>`}).join('')}
+      </g>
+      <g fill="currentColor" opacity=".5">
+        ${[[70,300],[535,300],[110,360],[500,355],[300,388]].map(([x,y])=>star(x,y,7)).join('')}
+      </g>
+    </svg>`,
+  meadow: `
+    <svg class="orn" viewBox="0 0 600 424" preserveAspectRatio="none" fill="none" aria-hidden="true">
+      <g stroke="currentColor" stroke-width="1.3" opacity=".6" fill="none" stroke-linecap="round">
+        <path d="M70 70 q 38 -30 70 -8 q -34 8 -70 8 q 30 14 64 4 q -28 16 -64 -4Z" transform="translate(-30,-30)"/>
+        <path d="M530 354 q -38 30 -70 8 q 34 -8 70 -8 q -30 -14 -64 -4 q 28 -16 64 4Z" transform="translate(30,30)"/>
+      </g>
+    </svg>`,
+  regal: `
+    <svg class="orn" viewBox="0 0 600 424" preserveAspectRatio="none" fill="none" aria-hidden="true">
+      ${[['translate(26,26)'],['translate(574,26) scale(-1,1)'],['translate(26,398) scale(1,-1)'],['translate(574,398) scale(-1,-1)']].map(([t])=>
+        `<g transform="${t}" stroke="currentColor" stroke-width="1.3" opacity=".7" fill="none" stroke-linecap="round">
+          <path d="M0 42 C 0 16 16 0 42 0"/>
+          <path d="M9 31 q 12 14 30 16 q -7 -19 -25 -25 q 18 -1 31 9"/>
+        </g>`).join('')}
+      <g transform="translate(300,30)" stroke="currentColor" stroke-width="1.2" opacity=".6" fill="none" stroke-linecap="round">
+        <path d="M0 -2 V 20 M-17 9 q17 -13 34 0 M-27 17 q27 -17 54 0"/>
+      </g>
+      <g fill="currentColor" opacity=".55">${star(300,8,5)}</g>
+    </svg>`,
+  confetti: `
+    <svg class="orn" viewBox="0 0 600 424" preserveAspectRatio="none" fill="none" aria-hidden="true">
+      <g fill="currentColor">
+        ${[[60,72,.62],[124,42,.4],[300,34,.5],[500,58,.58],[548,112,.4],[40,206,.42],[566,212,.5],[72,330,.5],[152,382,.38],[470,360,.58],[540,332,.44]]
+          .map(([x,y,o],i)=> i%3===0?`<circle cx="${x}" cy="${y}" r="4.2" opacity="${o}"/>`
+            : i%3===1?`<g opacity="${o}">${star(x,y,7)}</g>`
+            : `<rect x="${x-3.2}" y="${y-3.2}" width="6.4" height="6.4" rx="1.5" opacity="${o}" transform="rotate(22 ${x} ${y})"/>`).join('')}
+      </g>
+    </svg>`,
+  botanical: `
+    <svg class="orn" viewBox="0 0 600 424" preserveAspectRatio="none" fill="none" aria-hidden="true">
+      <g stroke="currentColor" stroke-width="1.3" opacity=".6" fill="none" stroke-linecap="round">
+        <path d="M300 26 q -30 16 -38 44 M300 26 q 30 16 38 44"/>
+        ${[-1,1].map(s=>`<g transform="translate(300,28) scale(${s},1)">
+          ${[8,20,32].map(d=>`<path d="M-${4+d*0.5} ${16+d} q -12 -7 -19 -2 q 9 5 19 2"/>`).join('')}
+        </g>`).join('')}
+      </g>
+      <g stroke="currentColor" stroke-width="1.1" opacity=".45" fill="none" stroke-linecap="round">
+        <path d="M44 388 q 30 -12 44 -38 M88 350 q 9 14 1 27 M88 350 q 17 6 28 1"/>
+        <path d="M556 388 q -30 -12 -44 -38 M512 350 q -9 14 -1 27 M512 350 q -17 6 -28 1"/>
+      </g>
+    </svg>`,
+  midnight: `
+    <svg class="orn" viewBox="0 0 600 424" preserveAspectRatio="none" fill="none" aria-hidden="true">
+      <g fill="currentColor" opacity=".85">
+        ${[[300,40,7],[262,52,4],[338,52,4],[228,42,3],[372,42,3]].map(([x,y,r])=>star(x,y,r)).join('')}
+      </g>
+      <g fill="currentColor" opacity=".4">
+        ${[[58,84],[82,300],[522,92],[542,322],[120,372],[482,360],[300,384]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="1.7"/>`).join('')}
+      </g>
+      <g stroke="currentColor" stroke-width="1" opacity=".3" fill="none">
+        <path d="M44 44 h22 M44 44 v22 M556 44 h-22 M556 44 v22 M44 380 h22 M44 380 v-22 M556 380 h-22 M556 380 v-22"/>
+      </g>
+    </svg>`
+};
+function star(cx,cy,r){let p='';for(let i=0;i<10;i++){const a=Math.PI/5*i-Math.PI/2;const rad=i%2?r*.42:r;p+=(i?'L':'M')+(cx+Math.cos(a)*rad).toFixed(1)+' '+(cy+Math.sin(a)*rad).toFixed(1)+' '}return `<path d="${p}Z"/>`}
+function seal(){return `
+  <svg class="seal" viewBox="0 0 100 100" aria-hidden="true">
+    <circle cx="50" cy="50" r="34" fill="var(--accent)" opacity=".12"/>
+    <circle cx="50" cy="50" r="34" fill="none" stroke="var(--accent)" stroke-width="1.4"/>
+    <circle cx="50" cy="50" r="27" fill="none" stroke="var(--accent)" stroke-width=".7" opacity=".6"/>
+    <g fill="var(--accent)">${star(50,49,15)}</g>
+    <path d="M38 78 l-7 16 9 -4 5 8 6 -16Z M62 78 l7 16 -9 -4 -5 8 -6 -16Z" fill="var(--accent)" opacity=".85"/>
+  </svg>`}
+
+/* ----------------------- accent palette ----------------------- */
+const ACCENTS=[
+  {name:'Gold',hex:'#B8893A'},{name:'Coral',hex:'#CF6A4C'},{name:'Sage',hex:'#5E8C6A'},
+  {name:'Sky',hex:'#4F86B0'},{name:'Plum',hex:'#8A5A86'},{name:'Ink',hex:'#46443F'}
+];
+
+/* ----------------------------- state ----------------------------- */
+const state={template:'laurel',accent:'#B8893A',index:0,pupils:[],logo:null};
+const $=id=>document.getElementById(id);
+const SETTINGS_KEY='certificateStudioSchoolSettings.v1';
+let lastSessionCount=0;
+
+function todayUK(){return new Date().toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}
+
+function parsePupils(){
+  const def=$('reason').value.trim();
+  state.pupils=$('pupils').value.split('\n').map(l=>l.trim()).filter(Boolean).map(l=>{
+    const m=l.split(/\s+[—–-]\s+/);
+    return {name:m[0].trim(), reason:(m[1]||def).trim()};
+  });
+  if(state.index>=state.pupils.length) state.index=Math.max(0,state.pupils.length-1);
+}
+
+function saveSchoolSettings(){
+  const settings={
+    trust:$('trust').value,
+    school:$('school').value,
+    role:$('role').value,
+    award:$('award').value,
+    reason:$('reason').value,
+    signatory:$('signatory').value,
+    template:state.template,
+    accent:state.accent,
+    logo:state.logo
+  };
+  localStorage.setItem(SETTINGS_KEY,JSON.stringify(settings));
+}
+
+function loadSchoolSettings(){
+  try{
+    const settings=JSON.parse(localStorage.getItem(SETTINGS_KEY)||'null');
+    if(!settings)return;
+    ['trust','school','role','award','reason','signatory'].forEach(id=>{
+      if(settings[id])$(id).value=settings[id];
+    });
+    if(settings.template)state.template=settings.template;
+    if(settings.accent)state.accent=settings.accent;
+    if(settings.logo)state.logo=settings.logo;
+  }catch(e){}
+}
+
+async function closeSessionOnBackend(count){
+  try{
+    const res=await fetch('/api/session-complete',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({schoolId:'prototype',certificateCount:count})
+    });
+    if(!res.ok)throw new Error('status '+res.status);
+    const data=await res.json();
+    $('backendState').textContent=data.message || 'Session closed without storing pupil records.';
+    $('backendState').className='backend-state ok';
+  }catch(e){
+    $('backendState').textContent='Pupil data cleared in this browser. Backend confirmation is unavailable in static preview.';
+    $('backendState').className='backend-state warn';
+  }
+}
+
+async function clearPupilSession(){
+  parsePupils();
+  const count=state.pupils.length;
+  $('pupils').value='';
+  $('csv').value='';
+  state.pupils=[];
+  state.index=0;
+  $('printArea').innerHTML='';
+  render();
+  await closeSessionOnBackend(count);
+}
+
+async function loadPlatformStatus(){
+  try{
+    const res=await fetch('/api/platform');
+    if(!res.ok)throw new Error('status '+res.status);
+    const data=await res.json();
+    const schools=(data.tenantModel && data.tenantModel.schools) || [];
+    if(data.tenantModel && data.tenantModel.trust){
+      $('tenantTrust').textContent=data.tenantModel.trust;
+    }
+    if(schools.length){
+      $('tenantSchools').innerHTML=schools.map(s=>`<li>${esc(s.name)}: isolated branding, templates and teacher accounts</li>`).join('');
+    }
+    $('backendState').textContent='Backend connected: '+data.privacyMode.replace(/-/g,' ');
+    $('backendState').className='backend-state ok';
+  }catch(e){
+    $('backendState').textContent='Static preview mode. Vercel API enables backend privacy confirmation.';
+    $('backendState').className='backend-state warn';
+  }
+}
+
+/* build one certificate element from a pupil */
+function certHTML(p){
+  return `<div class="cert t-${state.template}" style="--accent:${state.accent}">
+    <div class="frame"></div><div class="frame inner"></div>
+    ${ORN[state.template]||''}
+    <div class="body">
+      ${state.logo?`<img class="logo" src="${state.logo}" alt="">`:''}
+      <div class="eyebrow">${esc($('school').value)}</div>
+      <h2 class="award">${esc($('award').value)}</h2>
+      <div class="preposition">is proudly awarded to</div>
+      <div class="name">${esc(p?p.name:'Pupil name')}</div>
+      <div class="rule"></div>
+      <div class="reason">${esc(p?p.reason:'')}</div>
+    </div>
+    <div class="foot">
+      <div class="sig"><div class="v">${esc($('signatory').value)}</div><div class="k">Signed</div></div>
+      <div class="date"><div class="v">${esc($('date').value)}</div><div class="k">Date</div></div>
+    </div>
+    ${seal()}
+  </div>`;
+}
+function esc(s){return (s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+
+function render(){
+  parsePupils();
+  const p=state.pupils[state.index];
+  $('mount').innerHTML=certHTML(p);
+  const n=state.pupils.length;
+  lastSessionCount=Math.max(lastSessionCount,n);
+  $('who').textContent=n?`${p.name} — ${state.index+1} of ${n}`:'No pupils yet';
+  $('count').textContent=n?`${n} certificate${n>1?'s':''} ready to print`:'';
+  $('sessionState').textContent=n?`${n} pupil${n>1?'s':''} in this session`:'No pupils in this session';
+  $('prev').disabled=state.index<=0;
+  $('next').disabled=state.index>=n-1;
+}
+
+/* ---------------------------- wiring ---------------------------- */
+function buildSwatches(){
+  $('swatches').innerHTML=ACCENTS.map((a,i)=>
+    `<div class="sw${i===0?' active':''}" data-hex="${a.hex}" style="background:${a.hex}" title="${a.name}" role="button" aria-label="${a.name}"></div>`).join('');
+  $('swatches').querySelectorAll('.sw').forEach(el=>el.onclick=()=>{
+    state.accent=el.dataset.hex; $('customColor').value=el.dataset.hex;
+    $('swatches').querySelectorAll('.sw').forEach(s=>s.classList.remove('active'));
+    el.classList.add('active');saveSchoolSettings();render();
+  });
+}
+$('templates').querySelectorAll('.tpl').forEach(el=>el.onclick=()=>{
+  state.template=el.dataset.tpl;
+  $('templates').querySelectorAll('.tpl').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');saveSchoolSettings();render();
+});
+['trust','school','role','award','reason','signatory'].forEach(id=>$(id).addEventListener('input',()=>{saveSchoolSettings();render()}));
+['date','pupils'].forEach(id=>$(id).addEventListener('input',render));
+$('prev').onclick=()=>{if(state.index>0){state.index--;render()}};
+$('next').onclick=()=>{if(state.index<state.pupils.length-1){state.index++;render()}};
+$('clearSessionBtn').onclick=clearPupilSession;
+
+$('printBtn').onclick=()=>{
+  parsePupils();
+  if(!state.pupils.length){return}
+  $('printArea').innerHTML=state.pupils.map(p=>`<div class="print-page">${certHTML(p)}</div>`).join('');
+  window.print();
+};
+
+/* --------------------- logo + custom colour --------------------- */
+$('logo').addEventListener('change',e=>{
+  const f=e.target.files[0]; if(!f)return;
+  const r=new FileReader();
+  r.onload=()=>{ state.logo=r.result; showLogoMeta(); saveSchoolSettings(); render(); };
+  r.readAsDataURL(f); e.target.value='';
+});
+function showLogoMeta(){
+  const m=$('logoMeta');
+  if(state.logo){
+    m.style.display='flex'; m.style.alignItems='center'; m.style.gap='10px';
+    m.innerHTML='<span class="logo-thumb"><img src="'+state.logo+'" alt=""></span><a id="logoRemove">Remove</a>';
+    $('logoRemove').onclick=()=>{ state.logo=null; resetLogoMeta(); saveSchoolSettings(); render(); };
+  } else resetLogoMeta();
+}
+function resetLogoMeta(){ const m=$('logoMeta'); m.removeAttribute('style');
+  m.textContent='PNG or JPG · shown on every certificate'; }
+$('customColor').addEventListener('input',e=>{
+  state.accent=e.target.value;
+  $('swatches').querySelectorAll('.sw').forEach(s=>s.classList.remove('active'));
+  saveSchoolSettings();
+  render();
+});
+
+/* --------------------- CSV class-list upload --------------------- */
+function parseCSV(text){
+  const rows=[];let row=[],cur='',q=false;
+  for(let i=0;i<text.length;i++){const c=text[i];
+    if(q){ if(c==='"'){ if(text[i+1]==='"'){cur+='"';i++} else q=false } else cur+=c }
+    else{ if(c==='"')q=true; else if(c===','){row.push(cur);cur=''}
+      else if(c==='\n'){row.push(cur);rows.push(row);row=[];cur=''}
+      else if(c==='\r'){} else cur+=c }
+  }
+  if(cur!==''||row.length){row.push(cur);rows.push(row)}
+  return rows.filter(r=>r.some(x=>x.trim()));
+}
+$('csv').addEventListener('change',e=>{
+  const f=e.target.files[0]; if(!f)return;
+  const r=new FileReader();
+  r.onload=()=>{
+    const rows=parseCSV(r.result); if(!rows.length)return;
+    let start=0; const h0=(rows[0][0]||'').toLowerCase();
+    if(/name|pupil|child|first|forename/.test(h0)) start=1;   /* skip a header row */
+    const lines=rows.slice(start).map(c=>{
+      const name=(c[0]||'').trim(), reason=(c[1]||'').trim();
+      return reason?`${name} — ${reason}`:name;
+    }).filter(Boolean);
+    if(lines.length){$('pupils').value=lines.join('\n');state.index=0;render()}
+  };
+  r.readAsText(f); e.target.value='';
+});
+
+/* ---------------------- AI reason writing ----------------------- */
+async function writeReasons(){
+  parsePupils();
+  if(!state.pupils.length)return;
+  const btn=$('aiBtn'), err=$('aiErr'); err.style.display='none';
+  const original=btn.innerHTML;
+  btn.disabled=true; btn.innerHTML='<span class="spin"></span> Writing…';
+  const notes=state.pupils.map((p,i)=>`${i+1}. ${p.reason}`).join('\n');
+  const prompt=`You write short award-certificate lines for a UK primary school's weekly celebration assembly.
+You are given a numbered list of short notes from a teacher (each may be a few keywords or a rough phrase). You are NOT given the pupils' names and do not need them.
+Rewrite each note as ONE warm, specific, encouraging line to be read aloud in assembly and printed on a certificate.
+
+Rules:
+- British English. Genuine and age-appropriate. No clichés, no emojis, no exclamation marks.
+- Begin each line with the word "for" in lower case, e.g. "for showing real kindness to a new classmate".
+- 8 to 16 words. Keep the specific detail from the note; do not invent achievements the note does not imply.
+- Vary the wording so the lines do not all sound the same.
+
+Notes:
+${notes}
+
+Respond with ONLY a JSON array of strings in the same order, no prose and no markdown fences, like:
+["for ...","for ..."]`;
+  try{
+    const res=await fetch("/api/reasons",{
+      method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({prompt})
+    });
+    if(!res.ok)throw new Error('request failed ('+res.status+')');
+    const data=await res.json();
+    if(data.error)throw new Error(data.error);
+    const text=String(data.text||'').trim();
+    const arr=JSON.parse(text.replace(/```json|```/g,'').trim());
+    const lines=state.pupils.map((p,i)=>{
+      const g=arr[i];
+      const reason=(g&&typeof g==='object'&&g.reason)?String(g.reason).trim()
+                  :(typeof g==='string'?g.trim():'');
+      return `${p.name} — ${reason||p.reason}`;
+    });
+    $('pupils').value=lines.join('\n'); state.index=0; render();
+  }catch(e){
+    err.textContent='Could not write the reasons ('+e.message+'). Check the deployment and that ANTHROPIC_API_KEY is set.';
+    err.style.display='block';
+  }finally{ btn.disabled=false; btn.innerHTML=original; }
+}
+$('aiBtn').onclick=writeReasons;
+
+/* ---------------------------- init ---------------------------- */
+loadSchoolSettings();
+$('date').value=todayUK();
+buildSwatches();
+$('customColor').value=state.accent;
+$('templates').querySelectorAll('.tpl').forEach(t=>t.classList.toggle('active',t.dataset.tpl===state.template));
+$('swatches').querySelectorAll('.sw').forEach(s=>s.classList.toggle('active',s.dataset.hex===state.accent));
+showLogoMeta();
+render();
+loadPlatformStatus();
+</script>
+</body>
+</html>

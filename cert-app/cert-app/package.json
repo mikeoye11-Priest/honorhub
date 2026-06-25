@@ -1,0 +1,11 @@
+{
+  "name": "school-recognition-platform",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vercel dev",
+    "check": "node scripts/check-html.js"
+  },
+  "dependencies": {}
+}
