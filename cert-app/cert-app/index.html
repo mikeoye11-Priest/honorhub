@@ -298,8 +298,9 @@
     padding-top:16px;color:#fff;font-size:12px}
   .avatar{width:32px;height:32px;border-radius:50%;background:#F4B35F;display:grid;place-items:center;color:#12182B;font-weight:800}
   .board-grid{display:grid;grid-template-columns:repeat(12,1fr);gap:10px;align-content:start}
-  .board-card{background:#fff;border:1px solid #DAD8FA;border-radius:10px;padding:16px;
+  .board-card{display:none;background:#fff;border:1px solid #DAD8FA;border-radius:10px;padding:16px;
     box-shadow:0 12px 32px rgba(42,38,90,.06)}
+  .board-card.page-active{display:block}
   .span-3{grid-column:span 3}.span-4{grid-column:span 4}.span-5{grid-column:span 5}
   .span-6{grid-column:span 6}.span-7{grid-column:span 7}.span-8{grid-column:span 8}.span-12{grid-column:span 12}
   .step-title{display:inline-flex;align-items:center;border:1px solid #DAD8FA;background:#fff;border-radius:10px;
@@ -353,6 +354,12 @@
     border-radius:7px;padding:9px 10px}.brand-menu button.active{background:#ECE8FF;color:#3019A5;font-weight:800}
   .table{width:100%;border-collapse:collapse;font-size:12px}.table th,.table td{border-bottom:1px solid #EAECF0;padding:9px;text-align:left}.table th{color:#667085}
   .chart-line{height:88px;border:1px solid #EAECF0;border-radius:8px;background:linear-gradient(180deg,#F5F1FF,#fff)}
+  .dashboard-lower{display:grid;grid-template-columns:1.3fr 1fr 1.15fr;gap:18px;margin-top:18px}
+  .event-list{display:grid;gap:11px}
+  .event-item{display:grid;grid-template-columns:48px 1fr auto;gap:12px;align-items:center;border-bottom:1px solid #EAECF0;padding-bottom:11px}
+  .event-date{border:1px solid #E4E7EC;border-radius:8px;text-align:center;padding:5px 0;font-weight:800;color:#111827}
+  .event-date small{display:block;color:#E5484D;font-size:11px}
+  .badge{border-radius:8px;padding:6px 12px;font-size:12px;font-weight:800}.badge.green{background:#DDF8E9;color:#0F7A43}.badge.amber{background:#FFF0D8;color:#A14D00}.badge.blue{background:#E4EEFF;color:#1857D1}
   @media (max-width:1200px){.product-board{grid-template-columns:1fr}.app-sidebar{min-height:auto}.board-grid{grid-template-columns:1fr}.board-card{grid-column:1!important}.stat-grid,.activity-grid,.org-type-grid,.template-gallery,.editor-layout,.brand-layout{grid-template-columns:1fr}}
   @media print{.product-board{display:none!important}.product-board + .layout{display:block}}
 </style>
@@ -374,22 +381,22 @@
       <div>
         <div class="app-logo">🌟 HonorHub<small>by Zequence</small></div>
         <nav class="side-nav" aria-label="Main navigation">
-          <a class="active" href="#">▣ Dashboard</a>
-          <a href="#">▤ Certificates</a>
-          <a href="#">▧ Templates</a>
-          <a href="#">◇ Recipients</a>
-          <a href="#">✎ Signatories</a>
-          <a href="#">◎ Branding</a>
-          <a href="#">♙ Users</a>
-          <a href="#">▥ Reports</a>
-          <a href="#">⚙ Settings</a>
+          <a class="active" href="#dashboard" data-page-link="dashboard">▣ Dashboard</a>
+          <a href="#certificates" data-page-link="certificates">▤ Certificates</a>
+          <a href="#templates" data-page-link="templates">▧ Templates</a>
+          <a href="#recipients" data-page-link="recipients">◇ Recipients</a>
+          <a href="#signatories" data-page-link="signatories">✎ Signatories</a>
+          <a href="#branding" data-page-link="branding">◎ Branding</a>
+          <a href="#users" data-page-link="users">♙ Users</a>
+          <a href="#reports" data-page-link="reports">▥ Reports</a>
+          <a href="#settings" data-page-link="settings">⚙ Settings</a>
         </nav>
       </div>
       <div class="user-chip"><span class="avatar">M</span><span><strong>Michael Johnson</strong><br>Administrator</span></div>
     </aside>
 
     <div class="board-grid">
-      <article class="board-card span-4">
+      <article class="board-card span-12 page-active" data-page="dashboard">
         <div class="step-title">1. Dashboard</div>
         <div class="top-row">
           <div><h3>Good morning, Michael! 👋</h3><p>Here's what's happening with your organisation.</p></div>
@@ -419,9 +426,14 @@
             <div class="template-row"><span class="template-mini"></span><span>Player of the Match<br><small>98 used</small></span></div>
           </div>
         </div>
+        <div class="dashboard-lower">
+          <div class="list-card"><div class="top-row"><strong>Certificates Over Time</strong><select class="org-select"><option>Last 6 Months</option></select></div><div class="chart-line" style="height:190px;margin-top:12px"></div></div>
+          <div class="list-card"><strong>Certificates by Category</strong><div style="display:flex;align-items:center;gap:18px;margin-top:18px"><div style="width:150px;height:150px;border-radius:50%;background:conic-gradient(#6545E8 0 40%,#356CF6 0 60%,#18B875 0 75%,#FF951A 0 85%,#C8CDD6 0);"></div><div class="module-tags"><span>Weekly Awards 40%</span><span>Sports 20%</span><span>Reading 15%</span><span>Attendance 10%</span><span>Other 15%</span></div></div></div>
+          <div class="list-card"><div class="top-row"><strong>Upcoming Events</strong><a href="#" style="font-size:12px;color:#3019A5;text-decoration:none">View calendar</a></div><div class="event-list" style="margin-top:14px"><div class="event-item"><span class="event-date"><small>MAY</small>25</span><span><strong>Sports Day</strong><br><small>25 May 2026 · 9:00 AM</small></span><span class="badge green">Registered</span></div><div class="event-item"><span class="event-date"><small>MAY</small>28</span><span><strong>End of Term Awards</strong><br><small>28 May 2026 · 10:00 AM</small></span><span class="badge amber">Pending</span></div><div class="event-item"><span class="event-date"><small>JUN</small>05</span><span><strong>Graduation Ceremony</strong><br><small>5 Jun 2026 · 11:00 AM</small></span><span class="badge blue">Upcoming</span></div></div></div>
+        </div>
       </article>
 
-      <article class="board-card span-4">
+      <article class="board-card span-12" data-page="certificates">
         <div class="step-title">2. Create Certificate</div>
         <div class="wizard-steps">
           <span class="active"><b>1</b>Category</span><span><b>2</b>Template</span><span><b>3</b>Recipients</span><span><b>4</b>Customise</span><span><b>5</b>Preview</span>
@@ -441,7 +453,7 @@
         <div class="top-row" style="margin-top:16px"><button class="btn btn-ghost" type="button">Cancel</button><button class="solid-action purple" type="button">Next →</button></div>
       </article>
 
-      <article class="board-card span-4">
+      <article class="board-card span-12" data-page="templates">
         <div class="step-title">3. Templates</div>
         <h3>Templates</h3>
         <p>Choose a template for your certificate</p>
@@ -455,7 +467,7 @@
         <div class="top-row" style="margin-top:14px"><button class="btn btn-ghost" type="button">Back</button><button class="solid-action purple" type="button">Next →</button></div>
       </article>
 
-      <article class="board-card span-4">
+      <article class="board-card span-6" data-page="recipients">
         <div class="step-title">4. Recipients Import</div>
         <h3>Add Recipients</h3><p>Import recipients to generate certificates in bulk.</p>
         <div class="import-grid">
@@ -465,7 +477,7 @@
         <p class="hint" style="background:#F4F1FF;border:1px solid #DAD8FA;border-radius:8px;padding:10px;margin-top:12px">CSV Template Columns: Name, Award/Reason, Class/Team, Date, Email (optional)</p>
       </article>
 
-      <article class="board-card span-4">
+      <article class="board-card span-6" data-page="certificates">
         <div class="step-title">5. Certificate Editor</div>
         <div class="top-row"><div><h3>Preview & Edit</h3><p>Review and customise your certificate.</p></div><button class="solid-action purple" type="button">Save Changes</button></div>
         <div class="editor-layout">
@@ -475,7 +487,7 @@
         </div>
       </article>
 
-      <article class="board-card span-4">
+      <article class="board-card span-6" data-page="certificates">
         <div class="step-title">6. Certificate Preview</div>
         <div class="top-row"><div><h3>Certificate Preview</h3></div><div><strong style="font-size:12px">Recipient 1 of 25</strong> <button class="iconbtn" type="button">‹</button> <button class="iconbtn" type="button">›</button> <button class="solid-action purple" type="button">Export ▾</button></div></div>
         <div class="editor-layout" style="grid-template-columns:1fr 170px">
@@ -485,7 +497,7 @@
         <div class="module-tags" style="justify-content:center;margin-top:10px"><span>▦</span><span>⊞</span><span>−</span><span>100%</span><span>+</span></div>
       </article>
 
-      <article class="board-card span-4">
+      <article class="board-card span-6" data-page="certificates">
         <div class="step-title">7. AI Recognition Writer</div>
         <div class="ai-layout">
           <div><h3>AI Recognition Writer</h3><p>Describe the achievement and AI will write a personalised award reason.</p><textarea>Helped another child who was struggling with their reading.</textarea><button class="solid-action purple" type="button">Generate</button></div>
@@ -493,14 +505,14 @@
         </div>
       </article>
 
-      <article class="board-card span-4">
+      <article class="board-card span-6" data-page="certificates">
         <div class="step-title">8. Export & Share</div>
         <h3>Export Certificates</h3>
         <div class="export-grid"><div class="export-card">🖨<br><strong>Print</strong><br>Print directly</div><div class="export-card">📄<br><strong>Download PDF</strong><br>One PDF</div><div class="export-card">📑<br><strong>Individual PDFs</strong><br>Separate PDF</div><div class="export-card">🔗<br><strong>Share Link</strong><br>Secure link</div></div>
         <div class="module-tags" style="margin-top:14px"><span>Include Certificate Number</span><span>Include QR Code</span><span>Include Signature</span></div>
       </article>
 
-      <article class="board-card span-4">
+      <article class="board-card span-12" data-page="branding">
         <div class="step-title">9. Organisation Branding</div>
         <div class="brand-layout">
           <div class="brand-menu"><button class="active">Logo & Colours</button><button>Fonts</button><button>Watermark</button><button>Footer Text</button><button>QR Verification</button></div>
@@ -509,7 +521,17 @@
         </div>
       </article>
 
-      <article class="board-card span-4">
+      <article class="board-card span-12" data-page="signatories">
+        <div class="step-title">Signatories</div>
+        <div class="top-row"><div><h3>Signatories</h3><p>Manage approved signatories for certificates.</p></div><button class="solid-action purple" type="button">+ Add Signatory</button></div>
+        <table class="table"><thead><tr><th>Name</th><th>Position</th><th>Default For</th><th>Signature</th><th>Status</th></tr></thead><tbody>
+          <tr><td>Mr. James Wilson</td><td>Headteacher</td><td>School awards</td><td>Uploaded</td><td>Active</td></tr>
+          <tr><td>Coach Williams</td><td>Head Coach</td><td>Football awards</td><td>Uploaded</td><td>Active</td></tr>
+          <tr><td>Pastor Ade</td><td>Senior Pastor</td><td>Church certificates</td><td>Pending</td><td>Draft</td></tr>
+        </tbody></table>
+      </article>
+
+      <article class="board-card span-12" data-page="users">
         <div class="step-title">10. Users Management</div>
         <h3>Users</h3><p>Manage users and their roles in your organisation.</p>
         <table class="table"><thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Status</th></tr></thead><tbody>
@@ -519,14 +541,14 @@
         </tbody></table>
       </article>
 
-      <article class="board-card span-4">
+      <article class="board-card span-12" data-page="reports">
         <div class="step-title">11. Reports & Analytics</div>
         <h3>Reports & Analytics</h3><p>Track your recognition and certificate activity.</p>
         <div class="stat-grid" style="grid-template-columns:repeat(4,1fr)"><div class="stat-box"><span>Total</span><strong>1,240</strong></div><div class="stat-box"><span>This Month</span><strong>186</strong></div><div class="stat-box"><span>Categories</span><strong>12</strong></div><div class="stat-box"><span>Users</span><strong>8</strong></div></div>
         <div class="chart-line"></div>
       </article>
 
-      <article class="board-card span-4">
+      <article class="board-card span-12" data-page="settings">
         <div class="step-title">12. Settings</div>
         <h3>Settings</h3><p>Manage account and organisation settings.</p>
         <div class="brand-layout" style="grid-template-columns:130px 1fr">
@@ -1045,6 +1067,17 @@ function render(){
   $('next').disabled=state.index>=n-1;
 }
 
+function showAppPage(page){
+  const exists=Array.from(document.querySelectorAll('[data-page]')).some(card=>card.dataset.page===page);
+  const selected=exists?page:'dashboard';
+  document.querySelectorAll('[data-page]').forEach(card=>{
+    card.classList.toggle('page-active',card.dataset.page===selected);
+  });
+  document.querySelectorAll('[data-page-link]').forEach(link=>{
+    link.classList.toggle('active',link.dataset.pageLink===selected);
+  });
+}
+
 function applySectorDefaults(forceText){
   const sector=SECTORS[state.sector] || SECTORS.school;
   $('previewSector').textContent=sector.label;
@@ -1089,6 +1122,12 @@ $('prev').onclick=()=>{if(state.index>0){state.index--;render()}};
 $('next').onclick=()=>{if(state.index<state.pupils.length-1){state.index++;render()}};
 $('clearSessionBtn').onclick=clearPupilSession;
 $('createBtn').onclick=()=>$('award').focus();
+document.querySelectorAll('[data-page-link]').forEach(link=>link.addEventListener('click',e=>{
+  e.preventDefault();
+  const page=link.dataset.pageLink;
+  history.replaceState(null,'','#'+page);
+  showAppPage(page);
+}));
 
 $('printBtn').onclick=()=>{
   parsePupils();
@@ -1209,6 +1248,7 @@ $('swatches').querySelectorAll('.sw').forEach(s=>s.classList.toggle('active',s.d
 showLogoMeta();
 render();
 loadPlatformStatus();
+showAppPage((location.hash||'#dashboard').slice(1));
 </script>
 </body>
 </html>
