@@ -283,10 +283,10 @@
   }
 
   /* ---------- HonorHub SaaS board ---------- */
-  .product-board{display:grid;grid-template-columns:190px 1fr;gap:10px;padding:8px;background:#F7F8FC;
+  .product-board{display:grid;grid-template-columns:220px 1fr;gap:0;padding:0;background:#F7F8FC;
     border-bottom:1px solid #D9D8FB;min-height:100vh}
   .product-board + .layout{display:none}
-  .app-sidebar{background:#101A33;color:#fff;border-radius:10px;padding:18px 14px;min-height:620px;
+  .app-sidebar{background:#080F2A;color:#fff;padding:22px 14px;min-height:100vh;
     display:flex;flex-direction:column;justify-content:space-between}
   .app-logo{font-size:24px;font-weight:800;line-height:1}
   .app-logo small{display:block;font-size:11px;font-weight:500;opacity:.75;margin:5px 0 18px 30px}
@@ -297,7 +297,17 @@
   .user-chip{display:flex;align-items:center;gap:10px;border-top:1px solid rgba(255,255,255,.14);
     padding-top:16px;color:#fff;font-size:12px}
   .avatar{width:32px;height:32px;border-radius:50%;background:#F4B35F;display:grid;place-items:center;color:#12182B;font-weight:800}
-  .board-grid{display:grid;grid-template-columns:repeat(12,1fr);gap:10px;align-content:start}
+  .app-main{min-width:0}
+  .app-header{height:72px;background:#fff;border-bottom:1px solid #E5E7F1;display:flex;align-items:center;
+    justify-content:space-between;gap:18px;padding:0 28px}
+  .app-header h2{margin:0;color:#0B1026;font-size:23px;letter-spacing:0;font-weight:800}
+  .header-actions{display:flex;align-items:center;gap:14px}
+  .bell{position:relative;width:40px;height:40px;border:1px solid #E3E6EF;border-radius:9px;background:#fff;display:grid;place-items:center}
+  .bell::after{content:"3";position:absolute;right:7px;top:5px;background:#EF233C;color:#fff;border-radius:50%;font-size:10px;
+    width:15px;height:15px;display:grid;place-items:center;font-weight:800}
+  .profile-chip{display:flex;align-items:center;gap:10px;border-left:1px solid #E5E7F1;padding-left:14px;font-size:12px;color:#344054}
+  .profile-chip .avatar{background:#E7A05D;color:#111827}
+  .board-grid{display:grid;grid-template-columns:repeat(12,1fr);gap:18px;align-content:start;padding:24px 28px}
   .board-card{display:none;background:#fff;border:1px solid #DAD8FA;border-radius:10px;padding:16px;
     box-shadow:0 12px 32px rgba(42,38,90,.06)}
   .board-card.page-active{display:block}
@@ -305,6 +315,7 @@
   .span-6{grid-column:span 6}.span-7{grid-column:span 7}.span-8{grid-column:span 8}.span-12{grid-column:span 12}
   .step-title{display:inline-flex;align-items:center;border:1px solid #DAD8FA;background:#fff;border-radius:10px;
     color:#3019A5;font-size:16px;font-weight:800;padding:5px 13px;margin:-6px 0 14px;box-shadow:0 4px 14px rgba(48,25,165,.08)}
+  .board-card[data-page="dashboard"]>.step-title{display:none}
   .board-card h3{font-size:20px;line-height:1.1;margin:0 0 6px;color:#111827}
   .board-card p{font-size:12px;color:#667085;margin:0 0 13px}
   .top-row{display:flex;align-items:center;justify-content:space-between;gap:12px}
@@ -360,7 +371,7 @@
   .event-date{border:1px solid #E4E7EC;border-radius:8px;text-align:center;padding:5px 0;font-weight:800;color:#111827}
   .event-date small{display:block;color:#E5484D;font-size:11px}
   .badge{border-radius:8px;padding:6px 12px;font-size:12px;font-weight:800}.badge.green{background:#DDF8E9;color:#0F7A43}.badge.amber{background:#FFF0D8;color:#A14D00}.badge.blue{background:#E4EEFF;color:#1857D1}
-  @media (max-width:1200px){.product-board{grid-template-columns:1fr}.app-sidebar{min-height:auto}.board-grid{grid-template-columns:1fr}.board-card{grid-column:1!important}.stat-grid,.activity-grid,.org-type-grid,.template-gallery,.editor-layout,.brand-layout{grid-template-columns:1fr}}
+  @media (max-width:1200px){.product-board{grid-template-columns:1fr}.app-sidebar{min-height:auto}.app-header{height:auto;align-items:flex-start;flex-direction:column;padding:18px}.board-grid{grid-template-columns:1fr;padding:18px}.board-card{grid-column:1!important}.stat-grid,.activity-grid,.org-type-grid,.template-gallery,.editor-layout,.brand-layout{grid-template-columns:1fr}}
   @media print{.product-board{display:none!important}.product-board + .layout{display:block}}
 </style>
 </head>
@@ -395,13 +406,20 @@
       <div class="user-chip"><span class="avatar">M</span><span><strong>Michael Johnson</strong><br>Administrator</span></div>
     </aside>
 
+    <main class="app-main">
+      <header class="app-header">
+        <h2 id="appPageTitle">Dashboard</h2>
+        <div class="header-actions">
+          <select class="org-select"><option>Oakfield Primary School</option><option>Grace Community Church</option><option>Oakfield Juniors FC</option></select>
+          <button class="bell" type="button" aria-label="Notifications">🔔</button>
+          <div class="profile-chip"><span class="avatar">M</span><span><strong>Michael Johnson</strong><br>Administrator</span></div>
+        </div>
+      </header>
+
     <div class="board-grid">
       <article class="board-card span-12 page-active" data-page="dashboard">
         <div class="step-title">1. Dashboard</div>
-        <div class="top-row">
-          <div><h3>Good morning, Michael! 👋</h3><p>Here's what's happening with your organisation.</p></div>
-          <select class="org-select"><option>Oakfield Primary School</option><option>Grace Community Church</option><option>Oakfield Juniors FC</option></select>
-        </div>
+        <div><h3>Good morning, Michael! 👋</h3><p>Here's what's happening with Oakfield Primary School today.</p></div>
         <div class="stat-grid">
           <div class="stat-box"><span>Certificates Created</span><strong>1,240</strong><span class="up">↑ 12% from last month</span></div>
           <div class="stat-box"><span>This Month</span><strong>186</strong><span class="up">↑ 8% from last month</span></div>
@@ -563,6 +581,7 @@
         </div>
       </article>
     </div>
+    </main>
   </section>
 
   <div class="layout">
@@ -1077,12 +1096,29 @@ function showAppPage(page){
   const exists=Array.from(document.querySelectorAll('[data-page]')).some(card=>card.dataset.page===page);
   const selected=exists?page:'dashboard';
   const navPage=['editor','preview','export','ai'].includes(selected)?'certificates':selected;
+  const titles={
+    dashboard:'Dashboard',
+    certificates:'Create Certificate - Step 1: Choose Category',
+    templates:'Choose Template',
+    recipients:'Import Recipients',
+    editor:'Customise Certificate',
+    preview:'Certificate Preview',
+    export:'Generate & Export',
+    ai:'AI Recognition Writer',
+    branding:'Organisation Branding',
+    signatories:'Signatories',
+    users:'Users',
+    reports:'Reports & Analytics',
+    settings:'Settings'
+  };
   document.querySelectorAll('[data-page]').forEach(card=>{
     card.classList.toggle('page-active',card.dataset.page===selected);
   });
   document.querySelectorAll('[data-page-link]').forEach(link=>{
     link.classList.toggle('active',link.dataset.pageLink===navPage);
   });
+  const title=$('appPageTitle');
+  if(title)title.textContent=titles[selected] || 'Dashboard';
 }
 
 function navigateApp(page){
