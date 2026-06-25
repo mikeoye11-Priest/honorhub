@@ -375,6 +375,9 @@
     linear-gradient(180deg,rgba(101,69,232,.18),rgba(101,69,232,.03)),
     linear-gradient(90deg,#fff0 0 11%,#EAECF0 11% 11.4%,#fff0 11.4% 22%,#EAECF0 22% 22.4%,#fff0 22.4% 33%,#EAECF0 33% 33.4%,#fff0 33.4% 44%,#EAECF0 44% 44.4%,#fff0 44.4% 55%,#EAECF0 55% 55.4%,#fff0 55.4% 66%,#EAECF0 66% 66.4%,#fff0 66.4% 77%,#EAECF0 77% 77.4%,#fff0 77.4%),
     linear-gradient(0deg,#fff0 0 24%,#EAECF0 24% 24.5%,#fff0 24.5% 49%,#EAECF0 49% 49.5%,#fff0 49.5% 74%,#EAECF0 74% 74.5%,#fff0 74.5%)}
+  .line-chart{height:240px;margin-top:18px;border:1px solid #EAECF0;border-radius:8px;background:#fff}
+  .line-chart svg{display:block;width:100%;height:100%}
+  .line-chart text{font-family:var(--ui);font-size:10px;fill:#5C6685}
   .dashboard-lower{display:grid;grid-template-columns:1.3fr 1fr 1.15fr;gap:18px;margin-top:18px}
   .dashboard-top{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;margin-bottom:20px}
   .date-range{border:1px solid #E3E6EF;background:#fff;border-radius:10px;padding:11px 14px;color:#111827;font-size:13px;font-weight:700}
@@ -461,7 +464,15 @@
           <div class="dash-stat"><span class="stat-icon pink">♙</span><span><small>Recipients</small><strong>1,356</strong><em>Total in your contacts</em></span></div>
         </div>
         <div class="dashboard-main-grid">
-          <div class="list-card"><div class="top-row"><strong>Certificates Over Time</strong><select class="org-select"><option>Last 6 Months</option></select></div><div class="chart-line" style="height:240px;margin-top:18px"></div></div>
+          <div class="list-card"><div class="top-row"><strong>Certificates Over Time</strong><select class="org-select"><option>Last 6 Months</option></select></div><div class="line-chart"><svg viewBox="0 0 520 240" role="img" aria-label="Certificates over time">
+            <defs><linearGradient id="lineFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6545E8" stop-opacity=".22"/><stop offset="1" stop-color="#6545E8" stop-opacity=".03"/></linearGradient></defs>
+            <g stroke="#EAECF0" stroke-width="1"><path d="M46 20V196M126 20V196M206 20V196M286 20V196M366 20V196M446 20V196M32 52H488M32 88H488M32 124H488M32 160H488M32 196H488"/></g>
+            <g><text x="8" y="56">250</text><text x="8" y="92">200</text><text x="8" y="128">150</text><text x="14" y="164">100</text><text x="20" y="200">50</text></g>
+            <path d="M46 174 L86 158 L126 124 L166 132 L206 96 L246 116 L286 102 L326 118 L366 84 L406 56 L446 38 L488 24 L488 196 L46 196 Z" fill="url(#lineFill)"/>
+            <path d="M46 174 L86 158 L126 124 L166 132 L206 96 L246 116 L286 102 L326 118 L366 84 L406 56 L446 38 L488 24" fill="none" stroke="#6545E8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+            <g fill="#6545E8"><circle cx="46" cy="174" r="4"/><circle cx="86" cy="158" r="4"/><circle cx="126" cy="124" r="4"/><circle cx="166" cy="132" r="4"/><circle cx="206" cy="96" r="4"/><circle cx="246" cy="116" r="4"/><circle cx="286" cy="102" r="4"/><circle cx="326" cy="118" r="4"/><circle cx="366" cy="84" r="4"/><circle cx="406" cy="56" r="4"/><circle cx="446" cy="38" r="4"/><circle cx="488" cy="24" r="4"/></g>
+            <g><text x="36" y="224">Dec 2025</text><text x="124" y="224">Jan 2026</text><text x="204" y="224">Feb 2026</text><text x="284" y="224">Mar 2026</text><text x="364" y="224">Apr 2026</text><text x="444" y="224">May 2026</text></g>
+          </svg></div></div>
           <div class="list-card"><strong>Certificates by Category</strong><div style="display:flex;align-items:center;gap:22px;margin-top:26px"><div style="width:170px;height:170px;border-radius:50%;background:conic-gradient(#6545E8 0 40%,#356CF6 0 60%,#18B875 0 75%,#FF951A 0 85%,#EF4770 0 95%,#C8CDD6 0);"></div><div class="module-tags"><span>Weekly Awards 40%</span><span>Sports 20%</span><span>Reading 15%</span><span>Attendance 10%</span><span>Behaviour 10%</span><span>Other 5%</span></div></div></div>
           <div class="list-card"><div class="top-row"><strong>Recent Activity</strong><a href="#" style="font-size:12px;color:#3019A5;text-decoration:none">View all</a></div>
             <div class="activity-item"><span class="mini-avatar"></span><span><strong>Star of the Week Certificates</strong><br><small>Created by Sarah Johnson</small></span><small>2 hours ago</small></div>
