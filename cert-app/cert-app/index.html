@@ -281,6 +281,71 @@
     .stage{max-height:none}
     .metrics{grid-template-columns:1fr 1fr}
   }
+
+  /* ---------- HonorHub SaaS board ---------- */
+  .product-board{display:grid;grid-template-columns:210px 1fr;gap:12px;padding:10px;background:#F7F8FC;
+    border-bottom:1px solid #D9D8FB}
+  .app-sidebar{background:#101A33;color:#fff;border-radius:10px;padding:18px 14px;min-height:620px;
+    display:flex;flex-direction:column;justify-content:space-between}
+  .app-logo{font-size:24px;font-weight:800;line-height:1}
+  .app-logo small{display:block;font-size:11px;font-weight:500;opacity:.75;margin:5px 0 18px 30px}
+  .side-nav{display:grid;gap:7px}
+  .side-nav a{display:flex;align-items:center;gap:9px;color:#D8DEF8;text-decoration:none;
+    font-size:13px;font-weight:700;border-radius:7px;padding:10px 11px}
+  .side-nav a.active{background:#6545E8;color:#fff}
+  .user-chip{display:flex;align-items:center;gap:10px;border-top:1px solid rgba(255,255,255,.14);
+    padding-top:16px;color:#fff;font-size:12px}
+  .avatar{width:32px;height:32px;border-radius:50%;background:#F4B35F;display:grid;place-items:center;color:#12182B;font-weight:800}
+  .board-grid{display:grid;grid-template-columns:repeat(12,1fr);gap:10px;align-content:start}
+  .board-card{background:#fff;border:1px solid #DAD8FA;border-radius:10px;padding:16px;
+    box-shadow:0 12px 32px rgba(42,38,90,.06)}
+  .span-3{grid-column:span 3}.span-4{grid-column:span 4}.span-5{grid-column:span 5}
+  .span-6{grid-column:span 6}.span-7{grid-column:span 7}.span-8{grid-column:span 8}.span-12{grid-column:span 12}
+  .step-title{display:inline-flex;align-items:center;border:1px solid #DAD8FA;background:#fff;border-radius:10px;
+    color:#3019A5;font-size:18px;font-weight:800;padding:5px 13px;margin:-6px 0 14px;box-shadow:0 4px 14px rgba(48,25,165,.08)}
+  .board-card h3{font-size:20px;line-height:1.1;margin:0 0 6px;color:#111827}
+  .board-card p{font-size:12px;color:#667085;margin:0 0 13px}
+  .top-row{display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .org-select{border:1px solid #DADDE8;border-radius:7px;background:#fff;padding:8px 12px;font-size:12px;color:#374151}
+  .stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:14px 0}
+  .stat-box{border:1px solid #EAECF0;border-radius:10px;padding:14px;background:#fff}
+  .stat-box strong{display:block;font-size:26px;line-height:1;color:#111827;margin:8px 0}
+  .stat-box span{font-size:11px;color:#667085}.up{color:#12A765!important}
+  .activity-grid{display:grid;grid-template-columns:1.2fr 1fr 1.05fr;gap:12px}
+  .list-card{border:1px solid #EAECF0;border-radius:10px;padding:13px}
+  .activity-item{display:flex;gap:9px;align-items:center;border-bottom:1px solid #F0F1F5;padding:8px 0;font-size:12px}
+  .activity-item:last-child{border-bottom:0}.mini-avatar{width:26px;height:26px;border-radius:50%;background:#F8C8C1}
+  .action-stack{display:grid;gap:9px}.action-stack button,.solid-action{border:0;border-radius:8px;padding:12px;
+    color:#fff;font-weight:800;font-size:13px;cursor:pointer}.purple{background:#6545E8}.green{background:#18B875}
+  .orange{background:#FF951A}.blue{background:#356CF6}
+  .template-row{display:grid;grid-template-columns:56px 1fr;gap:9px;align-items:center;font-size:12px;margin:8px 0}
+  .template-mini{height:36px;border:1px solid #E1C27A;border-radius:4px;background:#FFF9EC}
+  .org-type-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:13px;margin-top:18px}
+  .org-type{border:1px solid #E3E6EF;border-radius:10px;height:86px;display:grid;place-items:center;text-align:center;
+    font-size:12px;font-weight:800;color:#111827}.org-type.active{border-color:#6545E8;background:#F4F1FF}
+  .org-type b{display:block;font-size:24px;margin-bottom:6px}
+  .category-layout{display:grid;grid-template-columns:170px 1fr;gap:22px;align-items:start}
+  .category-list{display:grid;gap:5px}.category-list button{border:0;background:#fff;text-align:left;padding:10px 12px;
+    border-radius:7px;font-weight:700;color:#374151}.category-list button.active{background:#6545E8;color:#fff}
+  .certificate-shot{aspect-ratio:297/210;border:1px solid #F2B544;border-radius:6px;background:#FFFDF8;
+    display:grid;place-items:center;text-align:center;padding:28px;color:#854D0E;box-shadow:0 8px 20px rgba(92,61,15,.12)}
+  .certificate-shot h4{font-family:var(--serif);font-size:24px;margin:0 0 18px}.certificate-shot .recipient{font-family:var(--serif);font-size:30px;color:#B9821D}
+  .template-gallery{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.template-card{text-align:center;font-size:12px;font-weight:700;color:#344054}
+  .template-card .thumb{aspect-ratio:1.58;border:1px solid #E7C26F;border-radius:5px;background:#FFF8EA;margin-bottom:7px}
+  .import-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}.import-option{border:1px solid #EAECF0;border-radius:10px;
+    min-height:170px;display:grid;place-items:center;text-align:center;padding:18px}
+  .editor-layout{display:grid;grid-template-columns:135px 1fr 190px;gap:15px}.tool-list{display:grid;gap:8px}
+  .tool-list button{border:0;background:#fff;text-align:left;padding:9px 10px;border-radius:7px;color:#344054}
+  .recipient-list{border:1px solid #EAECF0;border-radius:10px;padding:12px}.recipient-list ol{font-size:12px;line-height:2;margin:0;padding-left:20px}
+  .dark-cert{aspect-ratio:297/210;background:#071E3D;color:#F8D783;border-radius:4px;display:grid;place-items:center;text-align:center;
+    border:1px solid #C99B35}.dark-cert h4{font-family:var(--serif);font-size:26px;margin:0}.dark-cert .recipient{font-family:var(--serif);font-size:31px;color:#fff;margin:12px 0}
+  .ai-layout{display:grid;grid-template-columns:1fr 1fr;gap:18px}.ai-box{border:1px solid #DAD8FA;border-radius:10px;padding:16px}
+  .export-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.export-card{border:1px solid #EAECF0;border-radius:10px;padding:15px;font-size:12px}
+  .brand-layout{display:grid;grid-template-columns:130px 1fr 1fr;gap:14px}.brand-menu button{display:block;width:100%;border:0;text-align:left;background:#fff;
+    border-radius:7px;padding:9px 10px}.brand-menu button.active{background:#ECE8FF;color:#3019A5;font-weight:800}
+  .table{width:100%;border-collapse:collapse;font-size:12px}.table th,.table td{border-bottom:1px solid #EAECF0;padding:9px;text-align:left}.table th{color:#667085}
+  .chart-line{height:88px;border:1px solid #EAECF0;border-radius:8px;background:linear-gradient(180deg,#F5F1FF,#fff)}
+  @media (max-width:1200px){.product-board{grid-template-columns:1fr}.app-sidebar{min-height:auto}.board-grid{grid-template-columns:1fr}.board-card{grid-column:1!important}.stat-grid,.activity-grid,.org-type-grid,.template-gallery,.editor-layout,.brand-layout{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -295,6 +360,166 @@
     </div>
   </div>
 
+  <section class="product-board" aria-label="HonorHub product dashboard">
+    <aside class="app-sidebar">
+      <div>
+        <div class="app-logo">🌟 HonorHub<small>by Zequence</small></div>
+        <nav class="side-nav" aria-label="Main navigation">
+          <a class="active" href="#">▣ Dashboard</a>
+          <a href="#">▤ Certificates</a>
+          <a href="#">▧ Templates</a>
+          <a href="#">◇ Recipients</a>
+          <a href="#">✎ Signatories</a>
+          <a href="#">◎ Branding</a>
+          <a href="#">♙ Users</a>
+          <a href="#">▥ Reports</a>
+          <a href="#">⚙ Settings</a>
+        </nav>
+      </div>
+      <div class="user-chip"><span class="avatar">M</span><span><strong>Michael Johnson</strong><br>Administrator</span></div>
+    </aside>
+
+    <div class="board-grid">
+      <article class="board-card span-6">
+        <div class="step-title">1. Dashboard</div>
+        <div class="top-row">
+          <div><h3>Good morning, Michael! 👋</h3><p>Here's what's happening with your organisation.</p></div>
+          <select class="org-select"><option>Oakfield Primary School</option><option>Grace Community Church</option><option>Oakfield Juniors FC</option></select>
+        </div>
+        <div class="stat-grid">
+          <div class="stat-box"><span>Certificates Created</span><strong>1,240</strong><span class="up">↑ 12% from last month</span></div>
+          <div class="stat-box"><span>This Month</span><strong>186</strong><span class="up">↑ 8% from last month</span></div>
+          <div class="stat-box"><span>Templates</span><strong>14</strong><span>Total templates</span></div>
+          <div class="stat-box"><span>Users</span><strong>8</strong><span>Active users</span></div>
+        </div>
+        <div class="activity-grid">
+          <div class="list-card"><strong>Recent Activity</strong>
+            <div class="activity-item"><span class="mini-avatar"></span><span>Football Awards<br><small>Created by Sarah Johnson</small></span></div>
+            <div class="activity-item"><span class="mini-avatar"></span><span>Volunteer Certificates<br><small>Created by David Wilson</small></span></div>
+            <div class="activity-item"><span class="mini-avatar"></span><span>Staff Recognition<br><small>Created by Emily Brown</small></span></div>
+          </div>
+          <div class="list-card action-stack"><strong>Quick Actions</strong>
+            <button class="purple" type="button">+ Create Certificate</button>
+            <button class="green" type="button">⇧ Upload Recipients</button>
+            <button class="orange" type="button">▣ Browse Templates</button>
+            <button class="blue" type="button">◎ Manage Branding</button>
+          </div>
+          <div class="list-card"><strong>Top Templates</strong>
+            <div class="template-row"><span class="template-mini"></span><span>Modern Achievement<br><small>156 used</small></span></div>
+            <div class="template-row"><span class="template-mini"></span><span>Classic Gold<br><small>134 used</small></span></div>
+            <div class="template-row"><span class="template-mini"></span><span>Player of the Match<br><small>98 used</small></span></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="board-card span-3">
+        <div class="step-title">2. Choose Organisation Type</div>
+        <h3 style="text-align:center">Who are you recognising?</h3>
+        <p style="text-align:center">Choose your organisation type and we'll personalise your experience.</p>
+        <div class="org-type-grid">
+          <div class="org-type active"><span><b>🏫</b>School</span></div><div class="org-type"><span><b>⚽</b>Football Club</span></div>
+          <div class="org-type"><span><b>🏆</b>Sports Club</span></div><div class="org-type"><span><b>✝</b>Church</span></div>
+          <div class="org-type"><span><b>💞</b>Charity</span></div><div class="org-type"><span><b>💼</b>Company</span></div>
+          <div class="org-type"><span><b>🎓</b>Training Provider</span></div><div class="org-type"><span><b>🎟</b>Event</span></div>
+        </div>
+      </article>
+
+      <article class="board-card span-3">
+        <div class="step-title">3. Certificate Categories (School)</div>
+        <h3 style="text-align:center">Select a category</h3>
+        <div class="category-layout">
+          <div class="category-list">
+            <button class="active" type="button">★ Weekly Awards</button><button type="button">Reading</button><button type="button">Attendance</button>
+            <button type="button">Behaviour</button><button type="button">Sports Day</button><button type="button">Graduation</button>
+          </div>
+          <div class="certificate-shot"><div><h4>STAR OF THE WEEK</h4><small>Presented to</small><div class="recipient">Emma Johnson</div><p>For showing kindness, great effort and a positive attitude all week.</p></div></div>
+        </div>
+      </article>
+
+      <article class="board-card span-4">
+        <div class="step-title">4. Templates</div>
+        <h3>Choose a template</h3>
+        <div class="module-tags"><span>All</span><span>Classic</span><span>Modern</span><span>Children</span><span>Sports</span><span>Corporate</span><span>Church</span></div>
+        <div class="template-gallery" style="margin-top:14px">
+          <div class="template-card"><div class="thumb"></div>Classic Gold</div><div class="template-card"><div class="thumb"></div>Modern Achievement</div>
+          <div class="template-card"><div class="thumb"></div>Colourful Kids</div><div class="template-card"><div class="thumb"></div>Elegant Leaves</div>
+          <div class="template-card"><div class="thumb"></div>Blue Excellence</div><div class="template-card"><div class="thumb" style="background:#071E3D"></div>Sport Star</div>
+          <div class="template-card"><div class="thumb"></div>Corporate Premium</div><div class="template-card"><div class="thumb"></div>Church Appreciation</div>
+        </div>
+      </article>
+
+      <article class="board-card span-4">
+        <div class="step-title">5. Recipient Import</div>
+        <h3>Add Recipients</h3><p>Import recipients to generate certificates in bulk.</p>
+        <div class="import-grid">
+          <div class="import-option"><div><h3>▤</h3><strong>Upload CSV File</strong><p>Upload a CSV file with recipient details.</p><button class="solid-action purple" type="button">Upload CSV</button></div></div>
+          <div class="import-option"><div><h3>♙</h3><strong>Enter Manually</strong><p>Add recipients one by one or paste from Excel.</p><button class="btn btn-ghost" type="button">Enter Manually</button></div></div>
+        </div>
+        <p class="hint" style="background:#F4F1FF;border:1px solid #DAD8FA;border-radius:8px;padding:10px;margin-top:12px">CSV Template Columns: Name, Award/Reason, Class/Team, Date, Email (optional)</p>
+      </article>
+
+      <article class="board-card span-4">
+        <div class="step-title">6. Certificate Preview & Editor</div>
+        <div class="top-row"><div><h3>Preview & Edit</h3><p>Review and customise your certificate.</p></div><button class="solid-action purple" type="button">Save Changes</button></div>
+        <div class="editor-layout">
+          <div class="tool-list"><button>Text</button><button>Change Template</button><button>Colours & Fonts</button><button>Logo</button><button>Signatories</button><button>AI Writer</button></div>
+          <div class="dark-cert"><div><h4>CERTIFICATE<br>OF ACHIEVEMENT</h4><small>PRESENTED TO</small><div class="recipient">Daniel Williams</div><p>For outstanding performance, dedication and excellent teamwork.</p></div></div>
+          <div class="recipient-list"><strong>Recipients</strong><ol><li>Daniel Williams ✓</li><li>James Smith</li><li>Oliver Brown</li><li>Noah Johnson</li><li>Lucas Taylor</li></ol></div>
+        </div>
+      </article>
+
+      <article class="board-card span-4">
+        <div class="step-title">7. AI Recognition Writer</div>
+        <div class="ai-layout">
+          <div><h3>AI Recognition Writer</h3><p>Describe the achievement and AI will write a personalised award reason.</p><textarea>Helped another child who was struggling with their reading.</textarea><button class="solid-action purple" type="button">Generate</button></div>
+          <div class="ai-box"><strong>AI Suggestion</strong><p style="margin-top:12px;color:#111827">For showing exceptional kindness and supporting a classmate with their reading, making a real difference in their learning journey.</p><button class="solid-action purple" type="button">Use This</button></div>
+        </div>
+      </article>
+
+      <article class="board-card span-4">
+        <div class="step-title">8. Export & Share</div>
+        <h3>Export Certificates</h3>
+        <div class="export-grid"><div class="export-card">🖨<br><strong>Print</strong><br>Print directly</div><div class="export-card">📄<br><strong>Download PDF</strong><br>One PDF</div><div class="export-card">📑<br><strong>Individual PDFs</strong><br>Separate PDF</div><div class="export-card">🔗<br><strong>Share Link</strong><br>Secure link</div></div>
+        <div class="module-tags" style="margin-top:14px"><span>Include Certificate Number</span><span>Include QR Code</span><span>Include Signature</span></div>
+      </article>
+
+      <article class="board-card span-4">
+        <div class="step-title">9. Organisation Branding</div>
+        <div class="brand-layout">
+          <div class="brand-menu"><button class="active">Logo & Colours</button><button>Fonts</button><button>Watermark</button><button>Footer Text</button><button>QR Verification</button></div>
+          <div><h3>Brand Identity</h3><p>Primary Colour</p><input type="text" value="#6545E5"><p>Secondary Colour</p><input type="text" value="#10B981"><p>Accent Colour</p><input type="text" value="#F59E0B"></div>
+          <div class="certificate-shot"><div><h4>CERTIFICATE<br>OF ACHIEVEMENT</h4><div class="recipient">Your Name</div><p>Your achievement description goes here.</p></div></div>
+        </div>
+      </article>
+
+      <article class="board-card span-4">
+        <div class="step-title">10. Users Management</div>
+        <h3>Users</h3><p>Manage users and their roles in your organisation.</p>
+        <table class="table"><thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Status</th></tr></thead><tbody>
+          <tr><td>Michael Johnson</td><td>michael@oakfield.sch.uk</td><td>Administrator</td><td>Active</td></tr>
+          <tr><td>Sarah Johnson</td><td>sarah@oakfield.sch.uk</td><td>Teacher</td><td>Active</td></tr>
+          <tr><td>David Wilson</td><td>david@oakfield.sch.uk</td><td>Teacher</td><td>Active</td></tr>
+        </tbody></table>
+      </article>
+
+      <article class="board-card span-4">
+        <div class="step-title">11. Reports & Analytics</div>
+        <h3>Reports & Analytics</h3><p>Track your recognition and certificate activity.</p>
+        <div class="stat-grid" style="grid-template-columns:repeat(4,1fr)"><div class="stat-box"><span>Total</span><strong>1,240</strong></div><div class="stat-box"><span>This Month</span><strong>186</strong></div><div class="stat-box"><span>Categories</span><strong>12</strong></div><div class="stat-box"><span>Users</span><strong>8</strong></div></div>
+        <div class="chart-line"></div>
+      </article>
+
+      <article class="board-card span-4">
+        <div class="step-title">12. Settings</div>
+        <h3>Settings</h3><p>Manage account and organisation settings.</p>
+        <div class="brand-layout" style="grid-template-columns:130px 1fr">
+          <div class="brand-menu"><button>Profile</button><button class="active">Organisation</button><button>Billing</button><button>Security</button><button>Audit Logs</button></div>
+          <div><label>Organisation Name</label><input type="text" value="Oakfield Primary School"><label>Organisation Type</label><select><option>School</option></select><label>Website</label><input type="text" value="www.oakfieldprimary.co.uk"></div>
+        </div>
+      </article>
+    </div>
+  </section>
+
   <div class="layout">
     <!-- ===================== CONTROLS ===================== -->
     <aside class="controls">
@@ -303,7 +528,7 @@
           <strong>Session-only recipient data</strong>
           Upload a CSV, generate certificates, then clear the names and notes from this browser session. Organisation branding can be saved; recipient records are not saved by default.
           <div class="session-row">
-            <span class="session-state" id="sessionState">5 pupils in this session</span>
+            <span class="session-state" id="sessionState">5 recipients in this session</span>
             <button class="btn btn-ghost" id="clearSessionBtn" type="button">Clear recipients</button>
           </div>
           <div class="backend-state" id="backendState">Checking privacy backend...</div>
@@ -474,7 +699,7 @@ Grace Owusu — for reading with wonderful expression</textarea>
       <div class="mount" id="mount"></div>
       <div class="pager">
         <button class="iconbtn" id="prev" aria-label="Previous recipient">‹</button>
-        <span class="who" id="who">Pupil 1 of 5</span>
+        <span class="who" id="who">Recipient 1 of 5</span>
         <button class="iconbtn" id="next" aria-label="Next recipient">›</button>
       </div>
     </main>
