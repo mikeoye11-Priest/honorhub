@@ -415,10 +415,10 @@
             <div class="activity-item"><span class="mini-avatar"></span><span>Staff Recognition<br><small>Created by Emily Brown</small></span></div>
           </div>
           <div class="list-card action-stack"><strong>Quick Actions</strong>
-            <button class="purple" type="button">+ Create Certificate</button>
-            <button class="green" type="button">⇧ Upload Recipients</button>
-            <button class="orange" type="button">▣ Browse Templates</button>
-            <button class="blue" type="button">◎ Manage Branding</button>
+            <button class="purple" type="button" data-page-jump="certificates">+ Create Certificate</button>
+            <button class="green" type="button" data-page-jump="recipients">⇧ Upload Recipients</button>
+            <button class="orange" type="button" data-page-jump="templates">▣ Browse Templates</button>
+            <button class="blue" type="button" data-page-jump="branding">◎ Manage Branding</button>
           </div>
           <div class="list-card"><strong>Top Templates</strong>
             <div class="template-row"><span class="template-mini"></span><span>Modern Achievement<br><small>156 used</small></span></div>
@@ -450,7 +450,7 @@
           <div class="category-tile"><span><b>⚖</b>Teacher Awards<br><small>Teacher appreciation</small></span></div>
           <div class="category-tile"><span><b>▤</b>Other Awards<br><small>All other certificates</small></span></div>
         </div>
-        <div class="top-row" style="margin-top:16px"><button class="btn btn-ghost" type="button">Cancel</button><button class="solid-action purple" type="button">Next →</button></div>
+        <div class="top-row" style="margin-top:16px"><button class="btn btn-ghost" type="button" data-page-jump="dashboard">Cancel</button><button class="solid-action purple" type="button" data-page-jump="templates">Next →</button></div>
       </article>
 
       <article class="board-card span-12" data-page="templates">
@@ -464,10 +464,10 @@
           <div class="template-card"><div class="thumb"></div>Blue Excellence</div><div class="template-card"><div class="thumb" style="background:#071E3D"></div>Sport Star</div>
           <div class="template-card"><div class="thumb"></div>Corporate Premium</div><div class="template-card"><div class="thumb"></div>Church Appreciation</div>
         </div>
-        <div class="top-row" style="margin-top:14px"><button class="btn btn-ghost" type="button">Back</button><button class="solid-action purple" type="button">Next →</button></div>
+        <div class="top-row" style="margin-top:14px"><button class="btn btn-ghost" type="button" data-page-jump="certificates">Back</button><button class="solid-action purple" type="button" data-page-jump="recipients">Generate Certificates</button></div>
       </article>
 
-      <article class="board-card span-6" data-page="recipients">
+      <article class="board-card span-12" data-page="recipients">
         <div class="step-title">4. Recipients Import</div>
         <h3>Add Recipients</h3><p>Import recipients to generate certificates in bulk.</p>
         <div class="import-grid">
@@ -475,9 +475,10 @@
           <div class="import-option"><div><h3>♙</h3><strong>Enter Manually</strong><p>Add recipients one by one or paste from Excel.</p><button class="btn btn-ghost" type="button">Enter Manually</button></div></div>
         </div>
         <p class="hint" style="background:#F4F1FF;border:1px solid #DAD8FA;border-radius:8px;padding:10px;margin-top:12px">CSV Template Columns: Name, Award/Reason, Class/Team, Date, Email (optional)</p>
+        <div class="top-row" style="margin-top:14px"><button class="btn btn-ghost" type="button" data-page-jump="templates">← Back</button><button class="solid-action purple" type="button" data-page-jump="editor">Next →</button></div>
       </article>
 
-      <article class="board-card span-6" data-page="certificates">
+      <article class="board-card span-12" data-page="editor">
         <div class="step-title">5. Certificate Editor</div>
         <div class="top-row"><div><h3>Preview & Edit</h3><p>Review and customise your certificate.</p></div><button class="solid-action purple" type="button">Save Changes</button></div>
         <div class="editor-layout">
@@ -485,9 +486,10 @@
           <div class="dark-cert"><div><h4>CERTIFICATE<br>OF ACHIEVEMENT</h4><small>PRESENTED TO</small><div class="recipient">Daniel Williams</div><p>For outstanding performance, dedication and excellent teamwork.</p></div></div>
           <div class="recipient-list"><strong>Recipients</strong><ol><li>Daniel Williams ✓</li><li>James Smith</li><li>Oliver Brown</li><li>Noah Johnson</li><li>Lucas Taylor</li></ol></div>
         </div>
+        <div class="top-row" style="margin-top:14px"><button class="btn btn-ghost" type="button" data-page-jump="recipients">Preview</button><button class="solid-action purple" type="button" data-page-jump="preview">Next →</button></div>
       </article>
 
-      <article class="board-card span-6" data-page="certificates">
+      <article class="board-card span-12" data-page="preview">
         <div class="step-title">6. Certificate Preview</div>
         <div class="top-row"><div><h3>Certificate Preview</h3></div><div><strong style="font-size:12px">Recipient 1 of 25</strong> <button class="iconbtn" type="button">‹</button> <button class="iconbtn" type="button">›</button> <button class="solid-action purple" type="button">Export ▾</button></div></div>
         <div class="editor-layout" style="grid-template-columns:1fr 170px">
@@ -495,9 +497,10 @@
           <div class="recipient-list"><strong>Recipients</strong><ol><li>Emma Johnson ✓</li><li>Liam Smith</li><li>Olivia Brown</li><li>Noah Williams</li><li>Ava Davis</li><li>Lucas Taylor</li><li>Mia Wilson</li></ol></div>
         </div>
         <div class="module-tags" style="justify-content:center;margin-top:10px"><span>▦</span><span>⊞</span><span>−</span><span>100%</span><span>+</span></div>
+        <div class="top-row" style="margin-top:14px"><button class="btn btn-ghost" type="button" data-page-jump="editor">← Back</button><button class="solid-action purple" type="button" data-page-jump="export">Generate Certificates</button></div>
       </article>
 
-      <article class="board-card span-6" data-page="certificates">
+      <article class="board-card span-12" data-page="ai">
         <div class="step-title">7. AI Recognition Writer</div>
         <div class="ai-layout">
           <div><h3>AI Recognition Writer</h3><p>Describe the achievement and AI will write a personalised award reason.</p><textarea>Helped another child who was struggling with their reading.</textarea><button class="solid-action purple" type="button">Generate</button></div>
@@ -505,11 +508,14 @@
         </div>
       </article>
 
-      <article class="board-card span-6" data-page="certificates">
+      <article class="board-card span-12" data-page="export">
         <div class="step-title">8. Export & Share</div>
+        <h3 style="color:#079455">Certificates Generated Successfully! 🎉</h3>
+        <div class="stat-grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:18px"><div class="stat-box"><span>Total Generated</span><strong>25</strong></div><div class="stat-box"><span>PDF Files</span><strong>25</strong></div><div class="stat-box"><span>Templates Used</span><strong>1</strong></div><div class="stat-box"><span>Time Taken</span><strong>02:34</strong></div></div>
         <h3>Export Certificates</h3>
         <div class="export-grid"><div class="export-card">🖨<br><strong>Print</strong><br>Print directly</div><div class="export-card">📄<br><strong>Download PDF</strong><br>One PDF</div><div class="export-card">📑<br><strong>Individual PDFs</strong><br>Separate PDF</div><div class="export-card">🔗<br><strong>Share Link</strong><br>Secure link</div></div>
         <div class="module-tags" style="margin-top:14px"><span>Include Certificate Number</span><span>Include QR Code</span><span>Include Signature</span></div>
+        <div class="top-row" style="margin-top:14px"><button class="btn btn-ghost" type="button" data-page-jump="preview">Download Again</button><button class="solid-action purple" type="button" data-page-jump="dashboard">View Certificates</button><button class="btn btn-ghost" type="button" data-page-jump="dashboard">Done</button></div>
       </article>
 
       <article class="board-card span-12" data-page="branding">
@@ -1070,12 +1076,18 @@ function render(){
 function showAppPage(page){
   const exists=Array.from(document.querySelectorAll('[data-page]')).some(card=>card.dataset.page===page);
   const selected=exists?page:'dashboard';
+  const navPage=['editor','preview','export','ai'].includes(selected)?'certificates':selected;
   document.querySelectorAll('[data-page]').forEach(card=>{
     card.classList.toggle('page-active',card.dataset.page===selected);
   });
   document.querySelectorAll('[data-page-link]').forEach(link=>{
-    link.classList.toggle('active',link.dataset.pageLink===selected);
+    link.classList.toggle('active',link.dataset.pageLink===navPage);
   });
+}
+
+function navigateApp(page){
+  history.replaceState(null,'','#'+page);
+  showAppPage(page);
 }
 
 function applySectorDefaults(forceText){
@@ -1124,10 +1136,9 @@ $('clearSessionBtn').onclick=clearPupilSession;
 $('createBtn').onclick=()=>$('award').focus();
 document.querySelectorAll('[data-page-link]').forEach(link=>link.addEventListener('click',e=>{
   e.preventDefault();
-  const page=link.dataset.pageLink;
-  history.replaceState(null,'','#'+page);
-  showAppPage(page);
+  navigateApp(link.dataset.pageLink);
 }));
+document.querySelectorAll('[data-page-jump]').forEach(btn=>btn.addEventListener('click',()=>navigateApp(btn.dataset.pageJump)));
 
 $('printBtn').onclick=()=>{
   parsePupils();
