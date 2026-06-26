@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { UserPlus, TrendingUp, MoreVertical, Search, Filter, ShieldCheck, Award as AwardIcon, BarChart3, User, Sparkles, Plus, Users as UsersIcon, Trash2, Loader2, Copy, Link2 } from "lucide-react"
+import { UserPlus, TrendingUp, Search, Filter, ShieldCheck, Award as AwardIcon, BarChart3, User, Sparkles, Plus, Users as UsersIcon, Trash2, Loader2, Copy, Link2 } from "lucide-react"
 import { toast } from "sonner"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Card, CardContent } from "@/components/ui/card"
@@ -15,6 +15,7 @@ import { useAuth } from "@/lib/auth"
 import { VERTICALS } from "@/lib/honor"
 import { listSignatories, addSignatory, setSignatoryActive, deleteSignatory } from "@/lib/org"
 import { listInvites, createInvite, revokeInvite, inviteLink } from "@/lib/invites"
+import { listMembers, updateMemberRole, removeMember, type Member } from "@/lib/members"
 import type { Signatory, Invite, Role } from "@/lib/db-types"
 
 const USERS = [
@@ -78,7 +79,6 @@ export default function Organisation() {
   const { configured, activeOrgId } = useAuth()
   const v = VERTICALS[vertical]
   const [activeRole, setActiveRole] = useState("admin")
-  const [userQuery, setUserQuery] = useState("")
   const [inviteOpen, setInviteOpen] = useState(false)
 
   const onInvite = () => {
@@ -86,7 +86,6 @@ export default function Organisation() {
     else toast("Sign in to invite", { description: "Invitations add members to your organisation." })
   }
   const groups = GROUP_EXAMPLES[vertical] ?? GROUP_EXAMPLES.school
-  const visibleUsers = USERS.filter((u) => (u.name + " " + u.email + " " + u.group).toLowerCase().includes(userQuery.trim().toLowerCase()))
 
   return (
     <div className="mx-auto max-w-7xl">
@@ -113,91 +112,7 @@ export default function Organisation() {
 
         {/* ---------------- Users ---------------- */}
         <TabsContent value="users" className="mt-6 flex flex-col gap-6">
-          <div className="grid gap-6 lg:grid-cols-3">
-            <div className="flex items-start gap-4 rounded-xl border border-secondary/20 bg-accent/40 p-4 lg:col-span-2">
-              <span className="grid size-12 shrink-0 place-items-center rounded-lg bg-secondary text-secondary-foreground">
-                <ShieldCheck className="size-6" />
-              </span>
-              <div>
-                <h4 className="font-semibold">Understanding user roles</h4>
-                <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
-                  Roles determine what users can do. Administrators manage the whole organisation; Managers approve recognitions for their group only.
-                </p>
-              </div>
-            </div>
-            <Card>
-              <CardContent className="flex flex-col justify-center p-5">
-                <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Total members</p>
-                <div className="mt-1 flex items-baseline gap-2">
-                  <span className="text-4xl font-extrabold text-primary">124</span>
-                  <span className="flex items-center text-sm font-medium text-success">
-                    <TrendingUp className="size-4" /> +8%
-                  </span>
-                </div>
-                <p className="mt-1 text-xs text-muted-foreground">Active this month</p>
-              </CardContent>
-            </Card>
-          </div>
-
-          <Card className="overflow-hidden p-0">
-            <div className="flex flex-col gap-3 border-b p-4 sm:flex-row sm:items-center sm:justify-between">
-              <div className="flex items-center gap-3">
-                <div className="relative w-full sm:w-64">
-                  <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-                  <Input value={userQuery} onChange={(e) => setUserQuery(e.target.value)} placeholder="Filter users…" className="pl-9" />
-                </div>
-                <Button variant="outline" onClick={() => toast("Filters", { description: "Filter by role, group and activity — coming soon." })}>
-                  <Filter className="size-4" /> Filters
-                </Button>
-              </div>
-              <span className="text-xs text-muted-foreground">Showing {visibleUsers.length} of 124</span>
-            </div>
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-sm">
-                <thead className="bg-muted/40 text-xs uppercase tracking-wider text-muted-foreground">
-                  <tr>
-                    <th className="px-6 py-3 font-medium">Name</th>
-                    <th className="px-6 py-3 font-medium">Email</th>
-                    <th className="px-6 py-3 font-medium">Role</th>
-                    <th className="px-6 py-3 font-medium">Group</th>
-                    <th className="px-6 py-3 font-medium">Last active</th>
-                    <th className="px-6 py-3" />
-                  </tr>
-                </thead>
-                <tbody className="divide-y">
-                  {visibleUsers.map((u) => (
-                    <tr key={u.email} className="transition-colors hover:bg-muted/30">
-                      <td className="px-6 py-3">
-                        <div className="flex items-center gap-3">
-                          <Avatar className="size-9">
-                            <AvatarFallback className="bg-accent text-xs font-bold text-primary">{u.initials}</AvatarFallback>
-                          </Avatar>
-                          <span className="font-semibold">{u.name}</span>
-                        </div>
-                      </td>
-                      <td className="px-6 py-3 text-muted-foreground">{u.email}</td>
-                      <td className="px-6 py-3">
-                        <span className={`rounded-full px-3 py-1 text-xs font-bold ${u.role === "Admin" ? "bg-accent text-primary" : "bg-muted text-muted-foreground"}`}>
-                          {u.role}
-                        </span>
-                      </td>
-                      <td className="px-6 py-3 text-muted-foreground">{u.group}</td>
-                      <td className="px-6 py-3 text-muted-foreground">{u.active}</td>
-                      <td className="px-6 py-3 text-right">
-                        <button
-                          className="text-muted-foreground hover:text-foreground"
-                          aria-label={`Manage ${u.name}`}
-                          onClick={() => toast(u.name, { description: "Member actions (edit role, remove) are coming soon." })}
-                        >
-                          <MoreVertical className="size-5" />
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </Card>
+          <MembersTab />
         </TabsContent>
 
         {/* ---------------- Roles & Permissions ---------------- */}
@@ -336,6 +251,194 @@ export default function Organisation() {
 function initials(name: string) {
   const parts = name.trim().split(/\s+/)
   return ((parts[1]?.[0] ?? parts[0]?.[0] ?? "?")).toUpperCase()
+}
+
+const MEMBER_ROLES: { key: Role; label: string }[] = [
+  { key: "admin", label: "Administrator" },
+  { key: "manager", label: "Manager" },
+  { key: "contributor", label: "Contributor" },
+  { key: "viewer", label: "Viewer" },
+]
+const fmtDate = (s: string) => new Date(s).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })
+
+function MembersTab() {
+  const { configured, activeOrgId, user } = useAuth()
+  const live = configured && Boolean(activeOrgId)
+
+  const [members, setMembers] = useState<Member[]>([])
+  const [loading, setLoading] = useState(live)
+  const [query, setQuery] = useState("")
+
+  useEffect(() => {
+    if (!live || !activeOrgId) return
+    let cancelled = false
+    setLoading(true)
+    listMembers(activeOrgId).then((data) => {
+      if (!cancelled) {
+        setMembers(data)
+        setLoading(false)
+      }
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [live, activeOrgId])
+
+  const q = query.trim().toLowerCase()
+  const visible = members.filter((m) => `${m.full_name ?? ""} ${m.email ?? ""}`.toLowerCase().includes(q))
+
+  const changeRole = async (m: Member, role: Role) => {
+    setMembers((list) => list.map((x) => (x.id === m.id ? { ...x, role } : x)))
+    const ok = await updateMemberRole(m.id, role)
+    if (ok) toast.success(`${m.full_name ?? m.email} is now ${role}`)
+    else toast.error("Couldn't update role", { description: "Admins/managers only." })
+  }
+
+  const remove = async (m: Member) => {
+    setMembers((list) => list.filter((x) => x.id !== m.id))
+    const ok = await removeMember(m.id)
+    if (ok) toast.success(`${m.full_name ?? m.email} removed`)
+    else toast.error("Couldn't remove member")
+  }
+
+  const total = live ? members.length : USERS.length
+  const demoUsers = USERS.filter((u) => `${u.name} ${u.email}`.toLowerCase().includes(q))
+
+  return (
+    <>
+      <div className="grid gap-6 lg:grid-cols-3">
+        <div className="flex items-start gap-4 rounded-xl border border-secondary/20 bg-accent/40 p-4 lg:col-span-2">
+          <span className="grid size-12 shrink-0 place-items-center rounded-lg bg-secondary text-secondary-foreground">
+            <ShieldCheck className="size-6" />
+          </span>
+          <div>
+            <h4 className="font-semibold">Understanding user roles</h4>
+            <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
+              Roles determine what users can do. Administrators manage the whole organisation; Managers approve recognitions for their group only.
+            </p>
+          </div>
+        </div>
+        <Card>
+          <CardContent className="flex flex-col justify-center p-5">
+            <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Total members</p>
+            <div className="mt-1 flex items-baseline gap-2">
+              <span className="text-4xl font-extrabold text-primary">{total}</span>
+              {!live && (
+                <span className="flex items-center text-sm font-medium text-success">
+                  <TrendingUp className="size-4" /> +8%
+                </span>
+              )}
+            </div>
+            <p className="mt-1 text-xs text-muted-foreground">{live ? "In this organisation" : "Active this month"}</p>
+          </CardContent>
+        </Card>
+      </div>
+
+      <Card className="overflow-hidden p-0">
+        <div className="flex flex-col gap-3 border-b p-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center gap-3">
+            <div className="relative w-full sm:w-64">
+              <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+              <Input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Filter members…" className="pl-9" />
+            </div>
+            <Button variant="outline" onClick={() => toast("Filters", { description: "Filter by role and activity — coming soon." })}>
+              <Filter className="size-4" /> Filters
+            </Button>
+          </div>
+          <span className="text-xs text-muted-foreground">{live ? `${visible.length} of ${total}` : `Showing ${demoUsers.length} of 124`}</span>
+        </div>
+
+        {live && loading ? (
+          <div className="grid place-items-center p-10 text-muted-foreground">
+            <Loader2 className="size-5 animate-spin" />
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-sm">
+              <thead className="bg-muted/40 text-xs uppercase tracking-wider text-muted-foreground">
+                <tr>
+                  <th className="px-6 py-3 font-medium">Name</th>
+                  <th className="px-6 py-3 font-medium">Email</th>
+                  <th className="px-6 py-3 font-medium">Role</th>
+                  <th className="px-6 py-3 font-medium">{live ? "Joined" : "Group"}</th>
+                  {!live && <th className="px-6 py-3 font-medium">Last active</th>}
+                  <th className="px-6 py-3" />
+                </tr>
+              </thead>
+              <tbody className="divide-y">
+                {live
+                  ? visible.map((m) => {
+                      const isSelf = m.user_id === user?.id
+                      const name = m.full_name ?? m.email ?? "Member"
+                      return (
+                        <tr key={m.id} className="transition-colors hover:bg-muted/30">
+                          <td className="px-6 py-3">
+                            <div className="flex items-center gap-3">
+                              <Avatar className="size-9">
+                                <AvatarFallback className="bg-accent text-xs font-bold text-primary">{initials(name)}</AvatarFallback>
+                              </Avatar>
+                              <span className="font-semibold">
+                                {name}
+                                {isSelf && <span className="ml-2 rounded bg-muted px-1.5 py-0.5 text-[10px] font-bold text-muted-foreground">YOU</span>}
+                              </span>
+                            </div>
+                          </td>
+                          <td className="px-6 py-3 text-muted-foreground">{m.email}</td>
+                          <td className="px-6 py-3">
+                            <Select value={m.role} onValueChange={(v) => changeRole(m, v as Role)}>
+                              <SelectTrigger className="h-8 w-36">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {MEMBER_ROLES.map((r) => (
+                                  <SelectItem key={r.key} value={r.key}>
+                                    {r.label}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </td>
+                          <td className="px-6 py-3 text-muted-foreground">{fmtDate(m.created_at)}</td>
+                          <td className="px-6 py-3 text-right">
+                            <button
+                              disabled={isSelf}
+                              onClick={() => remove(m)}
+                              className="text-muted-foreground hover:text-destructive disabled:cursor-not-allowed disabled:opacity-30"
+                              aria-label={`Remove ${name}`}
+                            >
+                              <Trash2 className="size-4" />
+                            </button>
+                          </td>
+                        </tr>
+                      )
+                    })
+                  : demoUsers.map((u) => (
+                      <tr key={u.email} className="transition-colors hover:bg-muted/30">
+                        <td className="px-6 py-3">
+                          <div className="flex items-center gap-3">
+                            <Avatar className="size-9">
+                              <AvatarFallback className="bg-accent text-xs font-bold text-primary">{u.initials}</AvatarFallback>
+                            </Avatar>
+                            <span className="font-semibold">{u.name}</span>
+                          </div>
+                        </td>
+                        <td className="px-6 py-3 text-muted-foreground">{u.email}</td>
+                        <td className="px-6 py-3">
+                          <span className={`rounded-full px-3 py-1 text-xs font-bold ${u.role === "Admin" ? "bg-accent text-primary" : "bg-muted text-muted-foreground"}`}>{u.role}</span>
+                        </td>
+                        <td className="px-6 py-3 text-muted-foreground">{u.group}</td>
+                        <td className="px-6 py-3 text-muted-foreground">{u.active}</td>
+                        <td className="px-6 py-3" />
+                      </tr>
+                    ))}
+              </tbody>
+            </table>
+            {live && visible.length === 0 && <p className="p-6 text-center text-sm text-muted-foreground">No members match your search.</p>}
+          </div>
+        )}
+      </Card>
+    </>
+  )
 }
 
 const INVITE_ROLES: { key: Role; label: string }[] = [
