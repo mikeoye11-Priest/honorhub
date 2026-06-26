@@ -42,6 +42,16 @@ export interface Profile {
   created_at: string
 }
 
+export interface Invite {
+  id: string
+  organisation_id: string
+  email: string
+  role: Role
+  token: string
+  status: "pending" | "accepted" | "revoked"
+  created_at: string
+}
+
 export interface Membership {
   id: string
   organisation_id: string

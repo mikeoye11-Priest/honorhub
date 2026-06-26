@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { UserPlus, TrendingUp, MoreVertical, Search, Filter, ShieldCheck, Award as AwardIcon, BarChart3, User, Sparkles, Plus, Users as UsersIcon, Trash2, Loader2 } from "lucide-react"
+import { UserPlus, TrendingUp, MoreVertical, Search, Filter, ShieldCheck, Award as AwardIcon, BarChart3, User, Sparkles, Plus, Users as UsersIcon, Trash2, Loader2, Copy, Link2 } from "lucide-react"
 import { toast } from "sonner"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Card, CardContent } from "@/components/ui/card"
@@ -8,11 +8,14 @@ import { Input } from "@/components/ui/input"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet"
 import { useHonor } from "@/lib/store"
 import { useAuth } from "@/lib/auth"
 import { VERTICALS } from "@/lib/honor"
 import { listSignatories, addSignatory, setSignatoryActive, deleteSignatory } from "@/lib/org"
-import type { Signatory } from "@/lib/db-types"
+import { listInvites, createInvite, revokeInvite, inviteLink } from "@/lib/invites"
+import type { Signatory, Invite, Role } from "@/lib/db-types"
 
 const USERS = [
   { name: "Sarah Jenkins", email: "s.jenkins@oakfield.sch.uk", role: "Admin", group: "Leadership", active: "2 mins ago", initials: "SJ" },
@@ -72,9 +75,16 @@ const GROUP_EXAMPLES: Record<string, string[]> = {
 
 export default function Organisation() {
   const { org, vertical } = useHonor()
+  const { configured, activeOrgId } = useAuth()
   const v = VERTICALS[vertical]
   const [activeRole, setActiveRole] = useState("admin")
   const [userQuery, setUserQuery] = useState("")
+  const [inviteOpen, setInviteOpen] = useState(false)
+
+  const onInvite = () => {
+    if (configured && activeOrgId) setInviteOpen(true)
+    else toast("Sign in to invite", { description: "Invitations add members to your organisation." })
+  }
   const groups = GROUP_EXAMPLES[vertical] ?? GROUP_EXAMPLES.school
   const visibleUsers = USERS.filter((u) => (u.name + " " + u.email + " " + u.group).toLowerCase().includes(userQuery.trim().toLowerCase()))
 
@@ -85,10 +95,12 @@ export default function Organisation() {
           <h1 className="text-3xl font-semibold tracking-tight">Organisation</h1>
           <p className="mt-1 text-muted-foreground">Manage your team, roles, groups and signatories — {org}.</p>
         </div>
-        <Button className="font-semibold" onClick={() => toast("Invite a teammate", { description: "Email invitations are coming soon — members can sign up to your organisation meanwhile." })}>
+        <Button className="font-semibold" onClick={onInvite}>
           <UserPlus className="size-4" /> Invite new user
         </Button>
       </div>
+
+      {activeOrgId && <InviteSheet open={inviteOpen} onOpenChange={setInviteOpen} orgId={activeOrgId} />}
 
       <Tabs defaultValue="users">
         <TabsList>
@@ -324,6 +336,126 @@ export default function Organisation() {
 function initials(name: string) {
   const parts = name.trim().split(/\s+/)
   return ((parts[1]?.[0] ?? parts[0]?.[0] ?? "?")).toUpperCase()
+}
+
+const INVITE_ROLES: { key: Role; label: string }[] = [
+  { key: "admin", label: "Administrator" },
+  { key: "manager", label: "Manager" },
+  { key: "contributor", label: "Contributor" },
+  { key: "viewer", label: "Viewer" },
+]
+
+function InviteSheet({ open, onOpenChange, orgId }: { open: boolean; onOpenChange: (v: boolean) => void; orgId: string }) {
+  const [email, setEmail] = useState("")
+  const [role, setRole] = useState<Role>("contributor")
+  const [creating, setCreating] = useState(false)
+  const [invites, setInvites] = useState<Invite[]>([])
+  const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    if (!open) return
+    let cancelled = false
+    setLoading(true)
+    listInvites(orgId).then((data) => {
+      if (!cancelled) {
+        setInvites(data)
+        setLoading(false)
+      }
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [open, orgId])
+
+  const copy = (token: string) => {
+    navigator.clipboard?.writeText(inviteLink(token))
+    toast.success("Invite link copied", { description: "Share it with the person you're inviting." })
+  }
+
+  const create = async () => {
+    const e = email.trim()
+    if (!e) return
+    setCreating(true)
+    const inv = await createInvite(orgId, e, role)
+    setCreating(false)
+    if (inv) {
+      setInvites((list) => [inv, ...list])
+      setEmail("")
+      copy(inv.token)
+    } else {
+      toast.error("Couldn't create invite", { description: "You need an admin/manager role." })
+    }
+  }
+
+  const revoke = async (id: string) => {
+    setInvites((list) => list.filter((i) => i.id !== id))
+    await revokeInvite(id)
+    toast.success("Invite revoked")
+  }
+
+  return (
+    <Sheet open={open} onOpenChange={onOpenChange}>
+      <SheetContent className="flex w-full flex-col gap-0 overflow-y-auto sm:max-w-md">
+        <SheetHeader>
+          <SheetTitle>Invite a teammate</SheetTitle>
+          <SheetDescription>Create an invite link and share it. They join this organisation when they sign up.</SheetDescription>
+        </SheetHeader>
+
+        <div className="flex flex-col gap-3 px-4 py-5">
+          <div className="grid gap-1.5">
+            <Label>Email</Label>
+            <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="teammate@school.org" onKeyDown={(e) => e.key === "Enter" && create()} />
+          </div>
+          <div className="grid gap-1.5">
+            <Label>Role</Label>
+            <Select value={role} onValueChange={(v) => setRole(v as Role)}>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {INVITE_ROLES.map((r) => (
+                  <SelectItem key={r.key} value={r.key}>
+                    {r.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <Button onClick={create} disabled={creating || !email.trim()} className="font-semibold">
+            {creating ? <Loader2 className="size-4 animate-spin" /> : <Link2 className="size-4" />} Create invite link
+          </Button>
+        </div>
+
+        <div className="border-t px-4 py-4">
+          <p className="mb-2 text-xs font-bold uppercase tracking-wider text-muted-foreground">Pending invites</p>
+          {loading ? (
+            <div className="grid place-items-center py-6 text-muted-foreground">
+              <Loader2 className="size-5 animate-spin" />
+            </div>
+          ) : invites.length === 0 ? (
+            <p className="py-4 text-sm text-muted-foreground">No pending invites.</p>
+          ) : (
+            <div className="flex flex-col gap-2">
+              {invites.map((i) => (
+                <div key={i.id} className="flex items-center gap-2 rounded-lg border p-2.5">
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-sm font-medium">{i.email}</p>
+                    <p className="text-xs capitalize text-muted-foreground">{i.role}</p>
+                  </div>
+                  <button onClick={() => copy(i.token)} className="text-muted-foreground hover:text-primary" aria-label="Copy invite link">
+                    <Copy className="size-4" />
+                  </button>
+                  <button onClick={() => revoke(i.id)} className="text-muted-foreground hover:text-destructive" aria-label="Revoke invite">
+                    <Trash2 className="size-4" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </SheetContent>
+    </Sheet>
+  )
 }
 
 function SignatoriesPanel() {
