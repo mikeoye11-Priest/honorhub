@@ -24,6 +24,9 @@
   justify-content: center;
   text-align: center;
   --accent: #f58220;
+  /* Print the paper, gradients and gold-foil text instead of dropping to white */
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
 }
 .cert .frame {
   position: absolute;
@@ -664,6 +667,12 @@
     display: block;
     position: absolute;
     inset: 0;
+  }
+  .print-area,
+  .print-page,
+  .print-page * {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
   }
   .print-page {
     width: 297mm;
