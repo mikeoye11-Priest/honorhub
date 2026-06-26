@@ -3,6 +3,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { CalendarDays, TrendingUp, PartyPopper, Users, Award, Sparkles, Download, Minus } from "lucide-react"
+import { useExportStats } from "@/lib/exports"
 
 const IMPACT = [45, 60, 55, 80, 70, 95, 85, 65, 75, 90, 40, 55]
 
@@ -45,6 +46,10 @@ function downloadCsv() {
 
 export default function Reports() {
   const card = "rounded-xl border bg-card shadow-soft"
+  const { stats, live } = useExportStats()
+
+  const metricValue = (m: (typeof METRICS)[number]) =>
+    live && m.label === "Certificates Generated" ? stats.certificates.toLocaleString() : m.value
 
   const onExport = (label: string) => {
     if (label.includes("CSV")) downloadCsv()
@@ -103,7 +108,7 @@ export default function Reports() {
                     <m.icon className="size-5" />
                   </span>
                   <p className="mt-3 text-sm text-muted-foreground">{m.label}</p>
-                  <p className="text-2xl font-bold">{m.value}</p>
+                  <p className="text-2xl font-bold">{metricValue(m)}</p>
                   <p className={`mt-1 flex items-center gap-1 text-xs ${m.up ? "text-success" : "text-muted-foreground"}`}>
                     {m.up ? <TrendingUp className="size-3.5" /> : <Minus className="size-3.5" />} {m.delta}
                   </p>

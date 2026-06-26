@@ -32,9 +32,11 @@ import { toast } from "sonner"
 import { Certificate, printCertificates, printPages, type CertFields } from "@/components/Certificate"
 import { Confetti } from "@/components/Confetti"
 import { useHonor } from "@/lib/store"
+import { useAuth } from "@/lib/auth"
 import { VERTICALS, TEMPLATES, ACCENTS, parseRecipients } from "@/lib/honor"
 import { COLLECTIONS, getPack } from "@/lib/catalog"
 import { usePacks } from "@/lib/packs"
+import { recordExport } from "@/lib/exports"
 
 const STEPS = [
   { label: "Choose Award", icon: Award },
@@ -79,6 +81,7 @@ function parseCSV(text: string): string[][] {
 export default function Create() {
   const navigate = useNavigate()
   const h = useHonor()
+  const { activeOrgId } = useAuth()
   const v = VERTICALS[h.vertical]
   const [step, setStep] = useState(0)
   const [previewIndex, setPreviewIndex] = useState(0)
@@ -112,6 +115,13 @@ export default function Create() {
 
   const generatePack = () =>
     printPages(packCertItems.flatMap((it) => h.recipients.map((r) => ({ fields: { ...fields, award: it.label }, recipient: r }))))
+
+  // Generate, then log the export (no-op in demo mode / not signed in).
+  const doGenerate = () => {
+    if (pack) generatePack()
+    else printCertificates(fields, h.recipients)
+    void recordExport(activeOrgId, { count: totalCerts, template: h.template, award: pack ? pack.name : h.award, packKey: h.packKey })
+  }
 
   function onCSV(e: ChangeEvent<HTMLInputElement>) {
     const f = e.target.files?.[0]
@@ -246,7 +256,7 @@ Respond with ONLY a JSON array of strings in order, no prose or fences.`
                 </div>
               </div>
               <div className="flex flex-col gap-2">
-                <Button size="lg" onClick={() => (pack ? generatePack() : printCertificates(fields, h.recipients))}>
+                <Button size="lg" onClick={doGenerate}>
                   <Download className="size-4" /> Download / Print
                 </Button>
                 <Button size="lg" variant="outline" onClick={() => toast("Share link copied (demo)")}>

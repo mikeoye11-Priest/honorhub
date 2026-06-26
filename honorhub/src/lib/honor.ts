@@ -101,6 +101,13 @@ export interface TemplateDef {
 }
 
 export const TEMPLATES: TemplateDef[] = [
+  // Luxury tier — jewel-tone papers, gold-foil text and ornate flourishes
+  { key: "imperial", name: "Imperial", blurb: "Navy & gold, regal" },
+  { key: "opulent", name: "Opulent", blurb: "Ivory & gold, ornate" },
+  { key: "onyx", name: "Onyx", blurb: "Black-tie minimal" },
+  { key: "emerald", name: "Emerald", blurb: "Jewel green & gold" },
+  { key: "burgundy", name: "Burgundy", blurb: "Deep wine & gold" },
+  // Classic tier
   { key: "laurel", name: "Laurel", blurb: "Classic, ceremonial" },
   { key: "sunbeam", name: "Sunbeam", blurb: "Warm, younger years" },
   { key: "meadow", name: "Meadow", blurb: "Fresh, modern" },
@@ -118,10 +125,15 @@ export interface Accent {
 export const ACCENTS: Accent[] = [
   { name: "Honor Orange", hex: "#F58220" },
   { name: "Gold", hex: "#B8893A" },
+  { name: "Champagne", hex: "#C8A96A" },
+  { name: "Rose Gold", hex: "#C08552" },
   { name: "Coral", hex: "#CF6A4C" },
+  { name: "Emerald", hex: "#2E7D5B" },
   { name: "Sage", hex: "#5E8C6A" },
   { name: "Sky", hex: "#4F86B0" },
+  { name: "Royal", hex: "#3B5BA5" },
   { name: "Plum", hex: "#8A5A86" },
+  { name: "Burgundy", hex: "#8C2F39" },
   { name: "Coffee", hex: "#6A4A3C" },
   { name: "Ink", hex: "#46443F" },
 ]

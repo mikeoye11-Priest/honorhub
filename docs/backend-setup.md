@@ -17,6 +17,7 @@ In the Supabase dashboard → **SQL Editor**, paste and run each migration **in 
 honorhub/supabase/migrations/0001_tenancy.sql           # accounts/orgs/memberships/profiles + RLS + signup trigger
 honorhub/supabase/migrations/0002_org_settings.sql      # org branding/defaults + signatories + groundwork tables
 honorhub/supabase/migrations/0003_recognition_packs.sql # custom per-org Recognition Packs + items + RLS
+honorhub/supabase/migrations/0004_certificate_exports.sql # exports log (counts only) powering live dashboards
 ```
 
 `0001` creates `accounts`, `organisations`, `organisation_memberships`, `profiles`, enables

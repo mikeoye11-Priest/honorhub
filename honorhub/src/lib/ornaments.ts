@@ -22,7 +22,62 @@ export function seal(): string {
   </svg>`
 }
 
+/* ---- Luxury ornament parts ---- */
+
+/** A baroque corner flourish (curling acanthus scrolls). */
+function flourish(transform: string): string {
+  return `<g transform="${transform}" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linecap="round" opacity=".75">
+    <path d="M2 78 C 2 34 34 2 78 2"/>
+    <path d="M2 64 C 2 40 28 18 60 16"/>
+    <path d="M16 58 q 20 -3 33 8 q -7 -21 -28 -27 q 22 -2 36 11"/>
+    <path d="M2 78 q 26 4 40 -8"/>
+    <circle cx="78" cy="2" r="2.4" fill="currentColor" stroke="none"/>
+  </g>`
+}
+
+/** The four corner flourishes, mirrored into place. */
+function corners(): string {
+  return (
+    flourish("translate(28,28)") +
+    flourish("translate(572,28) scale(-1,1)") +
+    flourish("translate(28,396) scale(1,-1)") +
+    flourish("translate(572,396) scale(-1,-1)")
+  )
+}
+
+/** A small centred crest / coronet above the body. */
+function crest(): string {
+  return `<g transform="translate(300,30)" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linecap="round" opacity=".8">
+    <path d="M0 6 V 30"/>
+    <path d="M-24 18 q 24 -17 48 0"/>
+    <path d="M-36 27 q 36 -23 72 0"/>
+    <path d="M-12 35 q 12 9 24 0"/>
+    <g fill="currentColor" stroke="none">${star(0, 3, 5.5)}${star(-24, 17, 2.6)}${star(24, 17, 2.6)}</g>
+  </g>`
+}
+
+const luxeOrn = (extra = "") => `
+    <svg class="cert-orn" viewBox="0 0 600 424" preserveAspectRatio="none" fill="none" aria-hidden="true">
+      ${corners()}
+      ${crest()}
+      ${extra}
+    </svg>`
+
 export const ORN: Record<string, string> = {
+  imperial: luxeOrn(`<g fill="currentColor" opacity=".5">${[[120, 46], [480, 46], [70, 250], [530, 250]].map(([x, y]) => star(x, y, 3.4)).join("")}</g>`),
+  opulent: luxeOrn(`<g stroke="currentColor" stroke-width=".8" opacity=".4" fill="none" stroke-linecap="round">
+        <path d="M170 64 q 130 -34 260 0"/>
+        <path d="M170 360 q 130 34 260 0"/>
+      </g>`),
+  onyx: `
+    <svg class="cert-orn" viewBox="0 0 600 424" preserveAspectRatio="none" fill="none" aria-hidden="true">
+      <g stroke="currentColor" stroke-width="1" opacity=".55" stroke-linecap="round">
+        <path d="M40 40 h34 M40 40 v34 M560 40 h-34 M560 40 v34 M40 384 h34 M40 384 v-34 M560 384 h-34 M560 384 v-34"/>
+      </g>
+      <g transform="translate(300,40)" fill="currentColor" opacity=".7">${star(0, 0, 4.5)}</g>
+    </svg>`,
+  emerald: luxeOrn(),
+  burgundy: luxeOrn(),
   laurel: `
     <svg class="cert-orn" viewBox="0 0 600 424" preserveAspectRatio="none" fill="none" aria-hidden="true">
       <g stroke="currentColor" stroke-width="1.4" opacity=".7" fill="none" stroke-linecap="round">

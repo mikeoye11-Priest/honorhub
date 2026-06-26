@@ -271,6 +271,110 @@
   opacity: 0.4;
 }
 
+/* ================================================================
+   LUXURY TIER — jewel-tone papers, gold-foil text, ornate frames.
+   Foil = a metallic gradient of --accent clipped to the text.
+================================================================= */
+.t-imperial,
+.t-emerald,
+.t-burgundy,
+.t-onyx {
+  --cert-display: var(--serif);
+  --cert-ink: #f1ebdb;
+  --cert-ink-soft: #c2b594;
+  --cert-ink-faint: #837a5c;
+  background-image: radial-gradient(125% 90% at 50% -12%, rgba(255, 255, 255, 0.07), transparent 55%);
+}
+.t-imperial {
+  --paper: #101a33;
+}
+.t-emerald {
+  --paper: #0e2b22;
+}
+.t-burgundy {
+  --paper: #2a0e16;
+}
+.t-onyx {
+  --paper: #141418;
+}
+.t-opulent {
+  --paper: #fbf6ea;
+  --cert-display: var(--serif);
+  background-image: radial-gradient(120% 80% at 50% 0%, color-mix(in srgb, var(--accent) 9%, transparent), transparent 62%);
+}
+
+/* Foil text — name (all) + award (the most ornate two) */
+.t-imperial .name,
+.t-opulent .name,
+.t-onyx .name,
+.t-emerald .name,
+.t-burgundy .name,
+.t-imperial .award,
+.t-opulent .award {
+  background: linear-gradient(115deg, color-mix(in srgb, var(--accent) 50%, #ffffff), var(--accent) 46%, color-mix(in srgb, var(--accent) 58%, #000000));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.t-imperial .award,
+.t-opulent .award {
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+/* Ornate gold double frame */
+.t-imperial .frame,
+.t-emerald .frame,
+.t-burgundy .frame,
+.t-opulent .frame {
+  inset: 2.3cqw;
+  border-width: 0.32cqw;
+  border-radius: 0;
+  border-image: linear-gradient(135deg, color-mix(in srgb, var(--accent) 45%, #fff), var(--accent), color-mix(in srgb, var(--accent) 58%, #000)) 1;
+  opacity: 0.95;
+}
+.t-imperial .frame.inner,
+.t-emerald .frame.inner,
+.t-burgundy .frame.inner,
+.t-opulent .frame.inner {
+  inset: 3.1cqw;
+  border-width: 0.1cqw;
+  border-image: none;
+  border-color: var(--accent);
+  opacity: 0.5;
+}
+
+/* Onyx — restrained black-tie minimalism */
+.t-onyx .frame {
+  inset: 2.9cqw;
+  border-width: 0.1cqw;
+  border-radius: 0;
+  border-color: color-mix(in srgb, var(--accent) 65%, transparent);
+  opacity: 0.7;
+}
+.t-onyx .frame.inner {
+  display: none;
+}
+
+/* Shared luxe refinements */
+.t-imperial .eyebrow,
+.t-opulent .eyebrow,
+.t-emerald .eyebrow,
+.t-burgundy .eyebrow,
+.t-onyx .eyebrow {
+  letter-spacing: 0.46em;
+}
+.t-onyx .eyebrow {
+  letter-spacing: 0.54em;
+}
+.t-imperial .cert-seal,
+.t-opulent .cert-seal,
+.t-onyx .cert-seal,
+.t-emerald .cert-seal,
+.t-burgundy .cert-seal {
+  filter: drop-shadow(0 0.5cqw 1cqw rgba(0, 0, 0, 0.3));
+}
+
 /* Animate certificate swaps unless reduced motion is requested */
 @media (prefers-reduced-motion: no-preference) {
   .cert {

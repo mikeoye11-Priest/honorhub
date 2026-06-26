@@ -22,6 +22,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { useHonor } from "@/lib/store"
+import { useExportStats } from "@/lib/exports"
 import { VERTICALS } from "@/lib/honor"
 
 const KPIS = [
@@ -104,6 +105,16 @@ export default function Home() {
   const card = "rounded-xl border bg-card shadow-soft"
   const [activityFilter, setActivityFilter] = useState<"all" | "milestones">("all")
   const visibleActivity = activityFilter === "milestones" ? ACTIVITY.filter((a) => a.kind === "milestone") : ACTIVITY
+  const { stats, live } = useExportStats()
+
+  // When signed in, surface real export counts; otherwise keep the sample figures.
+  const kpiValue = (k: (typeof KPIS)[number]) => {
+    if (!live) return k.value
+    if (k.label === "Recent Certificates") return stats.certificates.toLocaleString()
+    if (k.label === "Total Recognitions") return stats.certificates.toLocaleString()
+    return k.value
+  }
+  const kpiDelta = (k: (typeof KPIS)[number]) => (live && k.label === "Recent Certificates" ? `${stats.last7} this week` : k.delta)
 
   return (
     <div className="mx-auto max-w-7xl">
@@ -137,12 +148,12 @@ export default function Home() {
                   <k.icon className="size-5" />
                 </span>
                 <span className={`flex items-center gap-1 text-xs font-bold ${k.trend === "up" ? "text-success" : "text-muted-foreground"}`}>
-                  {k.trend === "up" && <TrendingUp className="size-3.5" />} {k.delta}
+                  {k.trend === "up" && <TrendingUp className="size-3.5" />} {kpiDelta(k)}
                 </span>
               </div>
               <div className="mt-4">
                 <p className="text-xs uppercase tracking-tight text-muted-foreground">{k.label}</p>
-                <h3 className="mt-1 text-3xl font-extrabold">{k.value}</h3>
+                <h3 className="mt-1 text-3xl font-extrabold">{kpiValue(k)}</h3>
               </div>
             </div>
           ))}
