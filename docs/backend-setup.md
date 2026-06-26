@@ -14,8 +14,9 @@ The public Vercel demo keeps working either way.
 In the Supabase dashboard → **SQL Editor**, paste and run each migration **in order**:
 
 ```
-honorhub/supabase/migrations/0001_tenancy.sql      # accounts/orgs/memberships/profiles + RLS + signup trigger
-honorhub/supabase/migrations/0002_org_settings.sql # org branding/defaults + signatories + groundwork tables
+honorhub/supabase/migrations/0001_tenancy.sql           # accounts/orgs/memberships/profiles + RLS + signup trigger
+honorhub/supabase/migrations/0002_org_settings.sql      # org branding/defaults + signatories + groundwork tables
+honorhub/supabase/migrations/0003_recognition_packs.sql # custom per-org Recognition Packs + items + RLS
 ```
 
 `0001` creates `accounts`, `organisations`, `organisation_memberships`, `profiles`, enables

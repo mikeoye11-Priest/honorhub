@@ -120,6 +120,8 @@ export interface RecognitionPack {
   sectors: VerticalKey[]
   blurb: string
   items: PackItem[]
+  id?: string // present for org-saved packs (DB row id)
+  builtIn?: boolean // true for the built-in catalog packs below
 }
 
 export const PACKS: RecognitionPack[] = [

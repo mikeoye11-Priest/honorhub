@@ -34,6 +34,7 @@ import { Confetti } from "@/components/Confetti"
 import { useHonor } from "@/lib/store"
 import { VERTICALS, TEMPLATES, ACCENTS, parseRecipients } from "@/lib/honor"
 import { COLLECTIONS, getPack } from "@/lib/catalog"
+import { usePacks } from "@/lib/packs"
 
 const STEPS = [
   { label: "Choose Award", icon: Award },
@@ -87,7 +88,9 @@ export default function Create() {
   const logoRef = useRef<HTMLInputElement>(null)
 
   // Pack mode: a Recognition Pack generates several matched certificate designs per recipient.
-  const pack = getPack(h.packKey)
+  // Resolve from the merged list (built-ins + this org's saved packs), falling back to static.
+  const { getPackByKey } = usePacks()
+  const pack = getPackByKey(h.packKey) ?? getPack(h.packKey)
   const packCertItems = pack ? pack.items.filter((i) => i.kind === "certificate") : []
   const packExtras = pack ? pack.items.filter((i) => i.kind !== "certificate") : []
   const activeItem = pack ? packCertItems[Math.min(packItemIdx, packCertItems.length - 1)] : undefined

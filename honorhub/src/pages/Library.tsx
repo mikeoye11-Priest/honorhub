@@ -16,15 +16,22 @@ import {
   Sparkles,
   Upload,
   ArrowRight,
+  Trash2,
+  Loader2,
 } from "lucide-react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
 import { Badge } from "@/components/ui/badge"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle } from "@/components/ui/sheet"
 import { Certificate } from "@/components/Certificate"
 import { useHonor } from "@/lib/store"
 import { TEMPLATES, ACCENTS, VERTICAL_LIST, VERTICALS, type VerticalKey } from "@/lib/honor"
-import { COLLECTIONS, PACKS, PREMIUM_COLLECTIONS } from "@/lib/catalog"
+import { COLLECTIONS, PREMIUM_COLLECTIONS, type PackItem, type OutputKind } from "@/lib/catalog"
+import { usePacks, type NewPack } from "@/lib/packs"
 
 function EmptyState({ icon: Icon, title, body, cta, onCta }: { icon: ElementType; title: string; body: string; cta: string; onCta?: () => void }) {
   return (
@@ -64,8 +71,24 @@ export default function Library() {
     navigate("/create")
   }
 
+  const { packs, loading: packsLoading, live: packsLive, createPack, deletePack } = usePacks()
+  const [packSheetOpen, setPackSheetOpen] = useState(false)
+
   const sectorsForFilter = sector === "all" ? VERTICAL_LIST.map((v) => v.key) : [sector]
-  const visiblePacks = PACKS.filter((p) => p.sectors.some((s) => sectorsForFilter.includes(s)))
+  const visiblePacks = packs.filter((p) => p.sectors.some((s) => sectorsForFilter.includes(s)))
+
+  const openCreatePack = () => {
+    if (!packsLive) {
+      toast("Sign in to create packs", { description: "Custom Recognition Packs save to your organisation." })
+      return
+    }
+    setPackSheetOpen(true)
+  }
+
+  const removePack = async (id: string, name: string) => {
+    await deletePack(id)
+    toast.success(`“${name}” deleted`)
+  }
 
   return (
     <div className="mx-auto max-w-7xl">
@@ -229,40 +252,67 @@ export default function Library() {
           </div>
 
           {/* Recognition Packs */}
-          <div className="mt-10 mb-4 flex items-center gap-2">
+          <div className="mt-10 mb-4 flex flex-wrap items-center gap-2">
             <Package className="size-5 text-primary" />
             <h2 className="text-xl font-semibold">Recognition Packs</h2>
             <Badge variant="secondary" className="bg-accent text-accent-foreground">one click, whole event</Badge>
+            <Button variant="outline" size="sm" className="ml-auto" onClick={openCreatePack}>
+              <Plus className="size-4" /> Create pack
+            </Button>
           </div>
-          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-            {visiblePacks.map((p) => {
-              const certs = p.items.filter((i) => i.kind === "certificate").length
-              const extras = p.items.length - certs
-              const firstCert = p.items.find((i) => i.kind === "certificate")?.label ?? p.items[0].label
-              return (
-                <div key={p.key} className="flex flex-col rounded-xl border bg-card p-5 shadow-sm transition hover:shadow-soft-lg">
-                  <div className="flex items-start justify-between">
-                    <span className="grid size-10 place-items-center rounded-lg bg-accent text-primary">
-                      <Package className="size-5" />
-                    </span>
-                    <span className="text-xs font-medium text-muted-foreground">{certs} certs · {extras} extras</span>
-                  </div>
-                  <h3 className="mt-3 font-semibold">{p.name}</h3>
-                  <p className="mt-1 text-sm text-muted-foreground">{p.blurb}</p>
-                  <div className="mt-3 flex flex-wrap gap-1.5">
-                    {p.items.map((it) => (
-                      <span key={it.label} className="rounded-full bg-muted px-2 py-0.5 text-[11px] text-muted-foreground">
-                        {it.label}
+          {packsLoading ? (
+            <div className="grid place-items-center rounded-xl border border-dashed py-12 text-muted-foreground">
+              <Loader2 className="size-5 animate-spin" />
+            </div>
+          ) : (
+            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+              {visiblePacks.map((p) => {
+                const certs = p.items.filter((i) => i.kind === "certificate").length
+                const extras = p.items.length - certs
+                const firstCert = p.items.find((i) => i.kind === "certificate")?.label ?? p.items[0]?.label ?? p.name
+                return (
+                  <div key={p.key} className="flex flex-col rounded-xl border bg-card p-5 shadow-sm transition hover:shadow-soft-lg">
+                    <div className="flex items-start justify-between">
+                      <span className="grid size-10 place-items-center rounded-lg bg-accent text-primary">
+                        <Package className="size-5" />
                       </span>
-                    ))}
+                      <div className="flex items-center gap-2">
+                        {!p.builtIn && (
+                          <Badge variant="secondary" className="bg-success/10 text-success">Custom</Badge>
+                        )}
+                        <span className="text-xs font-medium text-muted-foreground">{certs} certs · {extras} extras</span>
+                      </div>
+                    </div>
+                    <h3 className="mt-3 font-semibold">{p.name}</h3>
+                    <p className="mt-1 text-sm text-muted-foreground">{p.blurb}</p>
+                    <div className="mt-3 flex flex-wrap gap-1.5">
+                      {p.items.map((it) => (
+                        <span key={it.label} className="rounded-full bg-muted px-2 py-0.5 text-[11px] text-muted-foreground">
+                          {it.label}
+                        </span>
+                      ))}
+                    </div>
+                    <div className="mt-4 flex gap-2">
+                      <Button className="flex-1" onClick={() => usePack(p.key, firstCert)}>
+                        Use pack <ArrowRight className="size-4" />
+                      </Button>
+                      {!p.builtIn && p.id && (
+                        <Button variant="outline" size="icon" aria-label="Delete pack" onClick={() => removePack(p.id!, p.name)}>
+                          <Trash2 className="size-4" />
+                        </Button>
+                      )}
+                    </div>
                   </div>
-                  <Button className="mt-4 w-full" onClick={() => usePack(p.key, firstCert)}>
-                    Use pack <ArrowRight className="size-4" />
-                  </Button>
-                </div>
-              )
-            })}
-          </div>
+                )
+              })}
+            </div>
+          )}
+          <CreatePackSheet
+            open={packSheetOpen}
+            onOpenChange={setPackSheetOpen}
+            defaultSector={sector === "all" ? h.vertical : sector}
+            createPack={createPack}
+          />
         </TabsContent>
 
         {/* ---------------- Brand Kit ---------------- */}
@@ -429,5 +479,149 @@ export default function Library() {
         </TabsContent>
       </Tabs>
     </div>
+  )
+}
+
+const PACK_EXTRAS: { label: string; kind: OutputKind }[] = [
+  { label: "Medal Badge", kind: "badge" },
+  { label: "Social Media Graphic", kind: "social" },
+  { label: "Printable Award Card", kind: "card" },
+  { label: "Event Banner", kind: "banner" },
+]
+
+function Chip({ on, onClick, children }: { on: boolean; onClick: () => void; children: React.ReactNode }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`rounded-full border px-3 py-1.5 text-sm transition ${on ? "border-primary bg-accent font-semibold text-accent-foreground" : "bg-card hover:border-primary/40"}`}
+    >
+      {children}
+    </button>
+  )
+}
+
+function CreatePackSheet({
+  open,
+  onOpenChange,
+  defaultSector,
+  createPack,
+}: {
+  open: boolean
+  onOpenChange: (v: boolean) => void
+  defaultSector: VerticalKey
+  createPack: (input: NewPack) => Promise<unknown>
+}) {
+  const [name, setName] = useState("")
+  const [sector, setSector] = useState<VerticalKey>(defaultSector)
+  const [blurb, setBlurb] = useState("")
+  const [certs, setCerts] = useState<string[]>([])
+  const [extras, setExtras] = useState<string[]>([])
+  const [saving, setSaving] = useState(false)
+
+  const reset = () => {
+    setName("")
+    setSector(defaultSector)
+    setBlurb("")
+    setCerts([])
+    setExtras([])
+  }
+
+  const toggle = (list: string[], set: (v: string[]) => void, v: string) =>
+    set(list.includes(v) ? list.filter((x) => x !== v) : [...list, v])
+
+  const onSector = (v: VerticalKey) => {
+    setSector(v)
+    setCerts([]) // award lists differ per sector
+  }
+
+  const canSave = name.trim().length > 0 && certs.length + extras.length > 0
+
+  const save = async () => {
+    if (!canSave) return
+    setSaving(true)
+    const items: PackItem[] = [
+      ...certs.map((label) => ({ label, kind: "certificate" as OutputKind })),
+      ...extras.map((label) => ({ label, kind: PACK_EXTRAS.find((e) => e.label === label)!.kind })),
+    ]
+    const created = await createPack({ name: name.trim(), sectors: [sector], blurb: blurb.trim(), items })
+    setSaving(false)
+    if (created) {
+      toast.success(`“${name.trim()}” pack created`, { description: `${items.length} items saved to your organisation.` })
+      reset()
+      onOpenChange(false)
+    } else {
+      toast.error("Couldn't create the pack")
+    }
+  }
+
+  const awards = COLLECTIONS[sector] ?? []
+
+  return (
+    <Sheet open={open} onOpenChange={onOpenChange}>
+      <SheetContent className="flex w-full flex-col gap-0 overflow-y-auto sm:max-w-lg">
+        <SheetHeader>
+          <SheetTitle>Create Recognition Pack</SheetTitle>
+          <SheetDescription>A named family of certificates and extras in one consistent style — usable in one click from Create.</SheetDescription>
+        </SheetHeader>
+
+        <div className="flex flex-col gap-5 px-4 py-5">
+          <div className="grid gap-1.5">
+            <Label>Pack name</Label>
+            <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="End of Year Pack" />
+          </div>
+          <div className="grid gap-1.5">
+            <Label>Workspace</Label>
+            <Select value={sector} onValueChange={(v) => onSector(v as VerticalKey)}>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {VERTICAL_LIST.map((v) => (
+                  <SelectItem key={v.key} value={v.key}>
+                    {v.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="grid gap-1.5">
+            <Label>Description</Label>
+            <Textarea value={blurb} onChange={(e) => setBlurb(e.target.value)} placeholder="Everything for the end-of-year celebration." rows={2} />
+          </div>
+
+          <div className="grid gap-2">
+            <Label>Certificates ({certs.length})</Label>
+            <div className="flex flex-wrap gap-2">
+              {awards.map((a) => (
+                <Chip key={a.name} on={certs.includes(a.name)} onClick={() => toggle(certs, setCerts, a.name)}>
+                  {a.icon} {a.name}
+                </Chip>
+              ))}
+            </div>
+          </div>
+
+          <div className="grid gap-2">
+            <Label>Extras ({extras.length})</Label>
+            <div className="flex flex-wrap gap-2">
+              {PACK_EXTRAS.map((e) => (
+                <Chip key={e.label} on={extras.includes(e.label)} onClick={() => toggle(extras, setExtras, e.label)}>
+                  {e.label}
+                </Chip>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <SheetFooter className="mt-auto flex-row gap-2">
+          <Button variant="outline" className="flex-1" onClick={() => onOpenChange(false)}>
+            Cancel
+          </Button>
+          <Button className="flex-1" onClick={save} disabled={!canSave || saving}>
+            {saving ? <Loader2 className="size-4 animate-spin" /> : <Plus className="size-4" />} Create pack
+          </Button>
+        </SheetFooter>
+      </SheetContent>
+    </Sheet>
   )
 }
