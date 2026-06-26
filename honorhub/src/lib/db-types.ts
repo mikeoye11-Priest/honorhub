@@ -17,6 +17,21 @@ export interface Organisation {
   vertical: VerticalKey
   logo_url: string | null
   accent: string
+  template: string
+  default_award: string | null
+  default_reason: string | null
+  default_signatory: string | null
+  footer_text: string | null
+  created_at: string
+}
+
+export interface Signatory {
+  id: string
+  organisation_id: string
+  name: string
+  role: string | null
+  active: boolean
+  sort: number
   created_at: string
 }
 

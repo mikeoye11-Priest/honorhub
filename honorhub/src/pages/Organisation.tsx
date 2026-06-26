@@ -1,5 +1,6 @@
-import { useState } from "react"
-import { UserPlus, TrendingUp, MoreVertical, Search, Filter, ShieldCheck, Award as AwardIcon, BarChart3, User, Sparkles, Plus, Users as UsersIcon } from "lucide-react"
+import { useState, useEffect } from "react"
+import { UserPlus, TrendingUp, MoreVertical, Search, Filter, ShieldCheck, Award as AwardIcon, BarChart3, User, Sparkles, Plus, Users as UsersIcon, Trash2, Loader2 } from "lucide-react"
+import { toast } from "sonner"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -8,7 +9,10 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
 import { useHonor } from "@/lib/store"
+import { useAuth } from "@/lib/auth"
 import { VERTICALS } from "@/lib/honor"
+import { listSignatories, addSignatory, setSignatoryActive, deleteSignatory } from "@/lib/org"
+import type { Signatory } from "@/lib/db-types"
 
 const USERS = [
   { name: "Sarah Jenkins", email: "s.jenkins@oakfield.sch.uk", role: "Admin", group: "Leadership", active: "2 mins ago", initials: "SJ" },
@@ -49,7 +53,7 @@ const PERMISSIONS = [
   },
 ]
 
-const SIGNATORIES = [
+const DEMO_SIGNATORIES = [
   { name: "Mr James Wilson", role: "Headteacher", on: true },
   { name: "Mrs Sarah Johnson", role: "Deputy Head", on: true },
   { name: "Mr David Brown", role: "Sports Coach", on: true },
@@ -275,23 +279,7 @@ export default function Organisation() {
 
         {/* ---------------- Signatories ---------------- */}
         <TabsContent value="signatories" className="mt-6">
-          <Card>
-            <CardContent className="flex flex-col gap-1 p-2">
-              {SIGNATORIES.map((s) => (
-                <div key={s.name} className="flex items-center gap-3 rounded-lg p-3 hover:bg-muted/50">
-                  <Avatar className="size-9">
-                    <AvatarFallback className="bg-accent font-bold text-primary">{s.name.split(" ")[1]?.[0] ?? s.name[0]}</AvatarFallback>
-                  </Avatar>
-                  <div className="flex-1">
-                    <div className="text-sm font-semibold">{s.name}</div>
-                    <div className="text-xs text-muted-foreground">{s.role}</div>
-                  </div>
-                  <span className="font-serif italic text-muted-foreground">{s.name}</span>
-                  <Switch defaultChecked={s.on} />
-                </div>
-              ))}
-            </CardContent>
-          </Card>
+          <SignatoriesPanel />
         </TabsContent>
 
         {/* ---------------- Privacy ---------------- */}
@@ -313,6 +301,136 @@ export default function Organisation() {
           </Card>
         </TabsContent>
       </Tabs>
+    </div>
+  )
+}
+
+function initials(name: string) {
+  const parts = name.trim().split(/\s+/)
+  return ((parts[1]?.[0] ?? parts[0]?.[0] ?? "?")).toUpperCase()
+}
+
+function SignatoriesPanel() {
+  const { configured, activeOrgId } = useAuth()
+  const live = configured && Boolean(activeOrgId)
+
+  const [rows, setRows] = useState<Signatory[]>([])
+  const [loading, setLoading] = useState(live)
+  const [name, setName] = useState("")
+  const [role, setRole] = useState("")
+  const [saving, setSaving] = useState(false)
+
+  useEffect(() => {
+    if (!live || !activeOrgId) return
+    let cancelled = false
+    setLoading(true)
+    listSignatories(activeOrgId).then((data) => {
+      if (!cancelled) {
+        setRows(data)
+        setLoading(false)
+      }
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [live, activeOrgId])
+
+  async function add() {
+    if (!activeOrgId || !name.trim()) return
+    setSaving(true)
+    const created = await addSignatory(activeOrgId, name.trim(), role.trim())
+    setSaving(false)
+    if (created) {
+      setRows((r) => [...r, created])
+      setName("")
+      setRole("")
+      toast.success("Signatory added")
+    } else {
+      toast.error("Couldn't add signatory")
+    }
+  }
+
+  async function toggle(s: Signatory, next: boolean) {
+    setRows((r) => r.map((x) => (x.id === s.id ? { ...x, active: next } : x)))
+    await setSignatoryActive(s.id, next)
+  }
+
+  async function remove(s: Signatory) {
+    setRows((r) => r.filter((x) => x.id !== s.id))
+    await deleteSignatory(s.id)
+    toast.success("Signatory removed")
+  }
+
+  // Demo mode — no backend: show the sample list read-only.
+  if (!live) {
+    return (
+      <Card>
+        <CardContent className="flex flex-col gap-1 p-2">
+          {DEMO_SIGNATORIES.map((s) => (
+            <div key={s.name} className="flex items-center gap-3 rounded-lg p-3 hover:bg-muted/50">
+              <Avatar className="size-9">
+                <AvatarFallback className="bg-accent font-bold text-primary">{initials(s.name)}</AvatarFallback>
+              </Avatar>
+              <div className="flex-1">
+                <div className="text-sm font-semibold">{s.name}</div>
+                <div className="text-xs text-muted-foreground">{s.role}</div>
+              </div>
+              <span className="font-serif italic text-muted-foreground">{s.name}</span>
+              <Switch defaultChecked={s.on} />
+            </div>
+          ))}
+          <p className="px-3 py-2 text-xs text-muted-foreground">Sign in to manage your organisation's signatories.</p>
+        </CardContent>
+      </Card>
+    )
+  }
+
+  return (
+    <div className="flex flex-col gap-4">
+      <Card>
+        <CardContent className="flex flex-col gap-3 p-4 sm:flex-row sm:items-end">
+          <div className="grid flex-1 gap-1.5">
+            <Label>Name</Label>
+            <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Mr James Wilson" />
+          </div>
+          <div className="grid flex-1 gap-1.5">
+            <Label>Role</Label>
+            <Input value={role} onChange={(e) => setRole(e.target.value)} placeholder="Headteacher" onKeyDown={(e) => e.key === "Enter" && add()} />
+          </div>
+          <Button onClick={add} disabled={saving || !name.trim()} className="font-semibold">
+            {saving ? <Loader2 className="size-4 animate-spin" /> : <Plus className="size-4" />} Add
+          </Button>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardContent className="flex flex-col gap-1 p-2">
+          {loading ? (
+            <div className="grid place-items-center p-8 text-muted-foreground">
+              <Loader2 className="size-5 animate-spin" />
+            </div>
+          ) : rows.length === 0 ? (
+            <p className="p-6 text-center text-sm text-muted-foreground">No signatories yet — add your first above.</p>
+          ) : (
+            rows.map((s) => (
+              <div key={s.id} className="flex items-center gap-3 rounded-lg p-3 hover:bg-muted/50">
+                <Avatar className="size-9">
+                  <AvatarFallback className="bg-accent font-bold text-primary">{initials(s.name)}</AvatarFallback>
+                </Avatar>
+                <div className="flex-1">
+                  <div className="text-sm font-semibold">{s.name}</div>
+                  <div className="text-xs text-muted-foreground">{s.role}</div>
+                </div>
+                <span className="hidden font-serif italic text-muted-foreground sm:inline">{s.name}</span>
+                <Switch checked={s.active} onCheckedChange={(v) => toggle(s, v)} />
+                <button onClick={() => remove(s)} className="text-muted-foreground hover:text-destructive" aria-label="Remove signatory">
+                  <Trash2 className="size-4" />
+                </button>
+              </div>
+            ))
+          )}
+        </CardContent>
+      </Card>
     </div>
   )
 }

@@ -1,5 +1,7 @@
-import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react"
+import { createContext, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react"
 import { VERTICALS, parseRecipients, todayUK, type Recipient, type VerticalKey } from "./honor"
+import { useAuth } from "./auth"
+import { fetchOrganisation, updateOrganisation } from "./org"
 
 const STORAGE_KEY = "honorhub.v1"
 
@@ -62,6 +64,9 @@ export function HonorProvider({ children }: { children: ReactNode }) {
   const [recipientsRaw, setRecipientsRaw] = useState(SEED_RECIPIENTS)
   const [packKey, setPack] = useState<string | null>(null)
 
+  const { configured, activeOrgId } = useAuth()
+  const hydratedOrgRef = useRef<string | null>(null)
+
   const setField = (k: "org" | "award" | "defaultReason" | "signatory" | "date", v: string) => {
     if (k === "org") setOrg(v)
     else if (k === "award") setAward(v)
@@ -90,6 +95,51 @@ export function HonorProvider({ children }: { children: ReactNode }) {
       /* ignore quota errors */
     }
   }, [vertical, template, accent, logo, org, award, defaultReason, signatory, date])
+
+  // When signed in, the active organisation is the source of truth for org-level
+  // settings: hydrate them on load / org switch, then persist edits back (debounced).
+  // hydratedOrgRef guards against writing one org's values onto another during a switch.
+  useEffect(() => {
+    if (!configured || !activeOrgId) {
+      hydratedOrgRef.current = null
+      return
+    }
+    hydratedOrgRef.current = null
+    let cancelled = false
+    fetchOrganisation(activeOrgId).then((o) => {
+      if (cancelled || !o) return
+      const def = VERTICALS[o.vertical] ?? VERTICALS.school
+      setVerticalState(o.vertical)
+      setOrg(o.name)
+      setAccent(o.accent)
+      setTemplate(o.template || "laurel")
+      setLogo(o.logo_url)
+      setAward(o.default_award ?? def.award)
+      setDefaultReason(o.default_reason ?? def.reason)
+      setSignatory(o.default_signatory ?? def.signatory)
+      hydratedOrgRef.current = o.id
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [configured, activeOrgId])
+
+  useEffect(() => {
+    if (!configured || !activeOrgId || hydratedOrgRef.current !== activeOrgId) return
+    const t = setTimeout(() => {
+      void updateOrganisation(activeOrgId, {
+        name: org,
+        vertical,
+        accent,
+        logo_url: logo,
+        template,
+        default_award: award,
+        default_reason: defaultReason,
+        default_signatory: signatory,
+      })
+    }, 800)
+    return () => clearTimeout(t)
+  }, [configured, activeOrgId, org, vertical, accent, logo, template, award, defaultReason, signatory])
 
   const recipients = useMemo(() => parseRecipients(recipientsRaw, defaultReason), [recipientsRaw, defaultReason])
 

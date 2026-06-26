@@ -33,11 +33,8 @@ export function AppSidebar() {
   const { configured, user, organisations, activeOrgId, setActiveOrgId, signOut } = useAuth()
   const liveOrgs = configured && organisations.length > 0
 
-  const onPickOrg = (id: string) => {
-    setActiveOrgId(id)
-    const org = organisations.find((o) => o.id === id)
-    if (org) setVertical(org.vertical)
-  }
+  // Just switch the active org — the store hydrates vertical + branding from the DB.
+  const onPickOrg = (id: string) => setActiveOrgId(id)
 
   return (
     <Sidebar collapsible="icon" className="border-r">
