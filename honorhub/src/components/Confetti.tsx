@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react"
+import { getReduceMotion } from "@/lib/theme"
 
 const COLORS = ["#f58220", "#6A4A3C", "#22C55E", "#2563EB", "#F59E0B"]
 
@@ -8,7 +9,7 @@ export function Confetti({ duration = 6000 }: { duration?: number }) {
   const ref = useRef<HTMLCanvasElement>(null)
 
   useEffect(() => {
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches || getReduceMotion()
     const cv = ref.current
     if (!cv || reduce) return
     const ctx = cv.getContext("2d")

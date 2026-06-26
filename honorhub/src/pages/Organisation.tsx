@@ -74,7 +74,9 @@ export default function Organisation() {
   const { org, vertical } = useHonor()
   const v = VERTICALS[vertical]
   const [activeRole, setActiveRole] = useState("admin")
+  const [userQuery, setUserQuery] = useState("")
   const groups = GROUP_EXAMPLES[vertical] ?? GROUP_EXAMPLES.school
+  const visibleUsers = USERS.filter((u) => (u.name + " " + u.email + " " + u.group).toLowerCase().includes(userQuery.trim().toLowerCase()))
 
   return (
     <div className="mx-auto max-w-7xl">
@@ -83,7 +85,7 @@ export default function Organisation() {
           <h1 className="text-3xl font-semibold tracking-tight">Organisation</h1>
           <p className="mt-1 text-muted-foreground">Manage your team, roles, groups and signatories — {org}.</p>
         </div>
-        <Button className="font-semibold">
+        <Button className="font-semibold" onClick={() => toast("Invite a teammate", { description: "Email invitations are coming soon — members can sign up to your organisation meanwhile." })}>
           <UserPlus className="size-4" /> Invite new user
         </Button>
       </div>
@@ -130,13 +132,13 @@ export default function Organisation() {
               <div className="flex items-center gap-3">
                 <div className="relative w-full sm:w-64">
                   <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-                  <Input placeholder="Filter users…" className="pl-9" />
+                  <Input value={userQuery} onChange={(e) => setUserQuery(e.target.value)} placeholder="Filter users…" className="pl-9" />
                 </div>
-                <Button variant="outline">
+                <Button variant="outline" onClick={() => toast("Filters", { description: "Filter by role, group and activity — coming soon." })}>
                   <Filter className="size-4" /> Filters
                 </Button>
               </div>
-              <span className="text-xs text-muted-foreground">Showing 1–4 of 124</span>
+              <span className="text-xs text-muted-foreground">Showing {visibleUsers.length} of 124</span>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-left text-sm">
@@ -151,7 +153,7 @@ export default function Organisation() {
                   </tr>
                 </thead>
                 <tbody className="divide-y">
-                  {USERS.map((u) => (
+                  {visibleUsers.map((u) => (
                     <tr key={u.email} className="transition-colors hover:bg-muted/30">
                       <td className="px-6 py-3">
                         <div className="flex items-center gap-3">
@@ -170,7 +172,11 @@ export default function Organisation() {
                       <td className="px-6 py-3 text-muted-foreground">{u.group}</td>
                       <td className="px-6 py-3 text-muted-foreground">{u.active}</td>
                       <td className="px-6 py-3 text-right">
-                        <button className="text-muted-foreground hover:text-foreground">
+                        <button
+                          className="text-muted-foreground hover:text-foreground"
+                          aria-label={`Manage ${u.name}`}
+                          onClick={() => toast(u.name, { description: "Member actions (edit role, remove) are coming soon." })}
+                        >
                           <MoreVertical className="size-5" />
                         </button>
                       </td>
@@ -227,7 +233,9 @@ export default function Organisation() {
                     <h3 className="font-semibold">Permissions: {ROLES.find((r) => r.key === activeRole)?.name}</h3>
                     <p className="mt-1 text-sm text-muted-foreground">Configure what this role can see and do.</p>
                   </div>
-                  <Button>Save changes</Button>
+                  <Button onClick={() => toast.success("Permissions saved", { description: `${ROLES.find((r) => r.key === activeRole)?.name} updated.` })}>
+                    Save changes
+                  </Button>
                 </div>
                 <div className="divide-y">
                   {PERMISSIONS.map((cat) => (
@@ -258,7 +266,7 @@ export default function Organisation() {
             <p className="text-sm text-muted-foreground">
               Groups adapt to your workspace — for {v.label.toLowerCase()}, that means {groups.slice(0, 2).join(", ")}…
             </p>
-            <Button variant="outline">
+            <Button variant="outline" onClick={() => toast("New group", { description: "Custom groups are coming soon." })}>
               <Plus className="size-4" /> New group
             </Button>
           </div>
@@ -295,7 +303,15 @@ export default function Organisation() {
                   <Label className="font-semibold">Recipient Directory</Label>
                   <p className="text-xs text-muted-foreground">Opt in to store recipients and build a Recognition Timeline.</p>
                 </div>
-                <Switch />
+                <Switch
+                  onCheckedChange={(on) =>
+                    toast(on ? "Recipient Directory enabled" : "Recipient Directory disabled", {
+                      description: on
+                        ? "Recipients will be stored to build a Recognition Timeline. This changes your privacy posture."
+                        : "Recipients stay session-only — never stored.",
+                    })
+                  }
+                />
               </div>
             </CardContent>
           </Card>

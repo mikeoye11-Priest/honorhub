@@ -1,3 +1,4 @@
+import { toast } from "sonner"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -29,8 +30,26 @@ const INSIGHTS = [
   { tag: "Alert", body: "Reception participation dipped 4% — an engagement prompt is recommended.", tone: "text-warning" },
 ]
 
+function downloadCsv() {
+  const header = ["Group", "Recognitions", "Engagement %", "Top contributor", "Status"]
+  const rows = DISTRIBUTION.map((d) => [d.dept, d.recognitions, d.rate, d.top, d.status])
+  const csv = [header, ...rows].map((r) => r.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(",")).join("\n")
+  const url = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" }))
+  const a = document.createElement("a")
+  a.href = url
+  a.download = "honorhub-recognition-log.csv"
+  a.click()
+  URL.revokeObjectURL(url)
+  toast.success("Recognition log exported", { description: "honorhub-recognition-log.csv" })
+}
+
 export default function Reports() {
   const card = "rounded-xl border bg-card shadow-soft"
+
+  const onExport = (label: string) => {
+    if (label.includes("CSV")) downloadCsv()
+    else toast(`${label}`, { description: "This export format is coming soon." })
+  }
   return (
     <div className="mx-auto max-w-7xl">
       <div className="mb-5 flex flex-wrap items-end justify-between gap-4">
@@ -201,7 +220,7 @@ export default function Reports() {
           <Card>
             <CardContent className="flex flex-wrap gap-3 p-6">
               {["Recognition log (CSV)", "Monthly summary (PDF)", "Audit export"].map((x) => (
-                <Button key={x} variant="outline">
+                <Button key={x} variant="outline" onClick={() => onExport(x)}>
                   <Download className="size-4" /> {x}
                 </Button>
               ))}

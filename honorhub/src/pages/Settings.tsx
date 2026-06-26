@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { Sun, Moon, Monitor, Check } from "lucide-react"
+import { toast } from "sonner"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -8,8 +9,9 @@ import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useHonor } from "@/lib/store"
+import { useAuth } from "@/lib/auth"
 import { VERTICAL_LIST, type VerticalKey } from "@/lib/honor"
-import { getTheme, setTheme, type Theme } from "@/lib/theme"
+import { getTheme, setTheme, getReduceMotion, setReduceMotion, type Theme } from "@/lib/theme"
 
 const THEMES: { key: Theme; label: string; icon: typeof Sun }[] = [
   { key: "light", label: "Light", icon: Sun },
@@ -19,12 +21,24 @@ const THEMES: { key: Theme; label: string; icon: typeof Sun }[] = [
 
 export default function Settings() {
   const { vertical, setVertical, org, setField } = useHonor()
+  const { configured, user } = useAuth()
   const [theme, setThemeState] = useState<Theme>(getTheme())
+  const [reduceMotion, setReduceMotionState] = useState(getReduceMotion())
+  const [fullName, setFullName] = useState((configured && user?.fullName) || "Michael Johnson")
+  const [email, setEmail] = useState((configured && user?.email) || "michael@oakfield.sch.uk")
 
   const chooseTheme = (t: Theme) => {
     setTheme(t)
     setThemeState(t)
   }
+
+  const toggleMotion = (on: boolean) => {
+    setReduceMotion(on)
+    setReduceMotionState(on)
+    toast(on ? "Reduced motion on" : "Reduced motion off", { description: on ? "Animations and success confetti are minimised." : "Animations re-enabled." })
+  }
+
+  const saveProfile = () => toast.success("Profile saved", { description: `${fullName} · ${email}` })
 
   return (
     <div className="mx-auto max-w-4xl">
@@ -47,14 +61,14 @@ export default function Settings() {
             <CardContent className="grid gap-4 p-6 sm:grid-cols-2">
               <div className="grid gap-1.5">
                 <Label htmlFor="name">Full name</Label>
-                <Input id="name" defaultValue="Michael Johnson" />
+                <Input id="name" value={fullName} onChange={(e) => setFullName(e.target.value)} />
               </div>
               <div className="grid gap-1.5">
                 <Label htmlFor="email">Email</Label>
-                <Input id="email" defaultValue="michael@oakfield.sch.uk" />
+                <Input id="email" value={email} onChange={(e) => setEmail(e.target.value)} />
               </div>
               <div className="sm:col-span-2">
-                <Button>Save changes</Button>
+                <Button onClick={saveProfile}>Save changes</Button>
               </div>
             </CardContent>
           </Card>
@@ -117,7 +131,7 @@ export default function Settings() {
                 <Label className="font-semibold">Reduce motion</Label>
                 <p className="text-xs text-muted-foreground">Minimise animations and the success confetti.</p>
               </div>
-              <Switch />
+              <Switch checked={reduceMotion} onCheckedChange={toggleMotion} />
             </CardContent>
           </Card>
         </TabsContent>
@@ -138,7 +152,9 @@ export default function Settings() {
                 <div className="font-semibold">Professional plan</div>
                 <div className="text-sm text-muted-foreground">Unlimited recognitions · all templates</div>
               </div>
-              <Button variant="outline">Manage plan</Button>
+              <Button variant="outline" onClick={() => toast("Billing", { description: "Plan management and invoices are coming soon." })}>
+                Manage plan
+              </Button>
             </CardContent>
           </Card>
         </TabsContent>

@@ -1,4 +1,6 @@
+import { useState } from "react"
 import { useNavigate } from "react-router-dom"
+import { toast } from "sonner"
 import {
   Trophy,
   BadgeCheck,
@@ -100,6 +102,8 @@ export default function Home() {
   const { vertical } = useHonor()
   const v = VERTICALS[vertical]
   const card = "rounded-xl border bg-card shadow-soft"
+  const [activityFilter, setActivityFilter] = useState<"all" | "milestones">("all")
+  const visibleActivity = activityFilter === "milestones" ? ACTIVITY.filter((a) => a.kind === "milestone") : ACTIVITY
 
   return (
     <div className="mx-auto max-w-7xl">
@@ -184,7 +188,10 @@ export default function Home() {
             ))}
           </div>
           <div className="px-5 pb-5">
-            <button className="flex w-full items-center justify-center gap-2 rounded-lg border border-dashed py-2 text-sm font-bold text-muted-foreground hover:bg-muted/40">
+            <button
+              onClick={() => toast.success("Fresh suggestions generated", { description: "Based on your latest recognition activity." })}
+              className="flex w-full items-center justify-center gap-2 rounded-lg border border-dashed py-2 text-sm font-bold text-muted-foreground hover:bg-muted/40"
+            >
               <RefreshCw className="size-4" /> Generate new suggestions
             </button>
           </div>
@@ -220,14 +227,24 @@ export default function Home() {
           <div className="mb-5 flex items-center justify-between">
             <h3 className="font-bold">Recent Activity</h3>
             <div className="flex gap-2">
-              <button className="rounded-full bg-accent px-3 py-1 text-xs font-bold text-primary">All Activity</button>
-              <button className="rounded-full px-3 py-1 text-xs font-medium text-muted-foreground hover:bg-muted">Milestones</button>
+              <button
+                onClick={() => setActivityFilter("all")}
+                className={`rounded-full px-3 py-1 text-xs ${activityFilter === "all" ? "bg-accent font-bold text-primary" : "font-medium text-muted-foreground hover:bg-muted"}`}
+              >
+                All Activity
+              </button>
+              <button
+                onClick={() => setActivityFilter("milestones")}
+                className={`rounded-full px-3 py-1 text-xs ${activityFilter === "milestones" ? "bg-accent font-bold text-primary" : "font-medium text-muted-foreground hover:bg-muted"}`}
+              >
+                Milestones
+              </button>
             </div>
           </div>
           <div className="relative">
             <div className="absolute bottom-0 left-6 top-0 w-px bg-border" />
             <div className="relative flex flex-col gap-8">
-              {ACTIVITY.map((a, i) => (
+              {visibleActivity.map((a, i) => (
                 <div key={i} className="flex items-start gap-6">
                   <div className="z-10 grid size-12 shrink-0 place-items-center rounded-full border-4 border-card bg-card shadow-sm">
                     {a.kind === "milestone" ? (
@@ -265,7 +282,12 @@ export default function Home() {
             </div>
           </div>
           <div className="mt-8 flex justify-center">
-            <button className="rounded-full border px-6 py-2 text-sm font-bold text-muted-foreground hover:bg-muted">Load More Activity</button>
+            <button
+              onClick={() => toast("You're all caught up", { description: "No older activity to load." })}
+              className="rounded-full border px-6 py-2 text-sm font-bold text-muted-foreground hover:bg-muted"
+            >
+              Load More Activity
+            </button>
           </div>
         </div>
       </div>

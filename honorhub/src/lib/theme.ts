@@ -15,3 +15,13 @@ export function setTheme(theme: Theme) {
   localStorage.setItem(KEY, theme)
   applyTheme(theme)
 }
+
+const MOTION_KEY = "honorhub.reduceMotion"
+
+export function getReduceMotion(): boolean {
+  return localStorage.getItem(MOTION_KEY) === "1"
+}
+
+export function setReduceMotion(on: boolean) {
+  localStorage.setItem(MOTION_KEY, on ? "1" : "0")
+}

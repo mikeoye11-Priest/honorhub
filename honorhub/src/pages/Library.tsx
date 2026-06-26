@@ -1,5 +1,6 @@
 import { useState, type ElementType } from "react"
 import { useNavigate } from "react-router-dom"
+import { toast } from "sonner"
 import {
   Plus,
   Search,
@@ -25,13 +26,13 @@ import { useHonor } from "@/lib/store"
 import { TEMPLATES, ACCENTS, VERTICAL_LIST, VERTICALS, type VerticalKey } from "@/lib/honor"
 import { COLLECTIONS, PACKS, PREMIUM_COLLECTIONS } from "@/lib/catalog"
 
-function EmptyState({ icon: Icon, title, body, cta }: { icon: ElementType; title: string; body: string; cta: string }) {
+function EmptyState({ icon: Icon, title, body, cta, onCta }: { icon: ElementType; title: string; body: string; cta: string; onCta?: () => void }) {
   return (
     <div className="grid place-items-center rounded-xl border border-dashed py-16 text-center">
       <Icon className="size-8 text-muted-foreground/50" />
       <h3 className="mt-3 font-semibold">{title}</h3>
       <p className="mt-1 max-w-sm text-sm text-muted-foreground">{body}</p>
-      <Button className="mt-4">{cta}</Button>
+      <Button className="mt-4" onClick={onCta}>{cta}</Button>
     </div>
   )
 }
@@ -40,7 +41,16 @@ export default function Library() {
   const h = useHonor()
   const navigate = useNavigate()
   const [sector, setSector] = useState<VerticalKey | "all">(h.vertical)
+  const [tplQuery, setTplQuery] = useState("")
   const fields = { template: h.template, accent: h.accent, logo: h.logo, org: h.org, award: h.award, date: h.date, signatory: h.signatory }
+
+  const q = tplQuery.trim().toLowerCase()
+  const visibleTemplates = q ? TEMPLATES.filter((t) => (t.name + " " + t.blurb).toLowerCase().includes(q)) : TEMPLATES
+
+  const newTemplate = () => {
+    toast("Design a new template", { description: "Pick a style and customise it in Create." })
+    navigate("/create")
+  }
 
   const useAward = (name: string) => {
     h.setPack(null)
@@ -75,7 +85,7 @@ export default function Library() {
               <h1 className="text-3xl font-semibold tracking-tight">Certificate Templates</h1>
               <p className="mt-1 text-muted-foreground">Manage your designs for every recognition occasion.</p>
             </div>
-            <Button className="font-semibold">
+            <Button className="font-semibold" onClick={newTemplate}>
               <Plus className="size-4" /> Create new template
             </Button>
           </div>
@@ -84,19 +94,24 @@ export default function Library() {
           <div className="mb-6 flex flex-wrap items-center gap-3 rounded-xl border bg-card p-3 shadow-sm">
             <div className="relative min-w-[260px] flex-1">
               <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-              <Input placeholder="Search templates by name or style…" className="pl-9" />
+              <Input
+                value={tplQuery}
+                onChange={(e) => setTplQuery(e.target.value)}
+                placeholder="Search templates by name or style…"
+                className="pl-9"
+              />
             </div>
-            <Button variant="outline">
+            <Button variant="outline" onClick={() => toast("Filters", { description: "Advanced template filters are coming soon." })}>
               <Filter className="size-4" /> Filter
             </Button>
-            <Button variant="outline">
+            <Button variant="outline" onClick={() => toast("Sorted by recently used")}>
               <ArrowUpDown className="size-4" /> Sort: Recently used
             </Button>
           </div>
 
           {/* Grid */}
           <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
-            {TEMPLATES.map((t, i) => {
+            {visibleTemplates.map((t, i) => {
               const active = h.template === t.key
               const status = active ? "In use" : i % 3 === 0 ? "Default" : "Active"
               return (
@@ -125,7 +140,16 @@ export default function Library() {
                       <Button variant="outline" className="flex-1" onClick={() => h.setTemplate(t.key)}>
                         {active ? <Check className="size-4" /> : null} {active ? "Selected" : "Use template"}
                       </Button>
-                      <Button variant="outline" size="icon" aria-label="Duplicate">
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        aria-label="Duplicate"
+                        onClick={() => {
+                          h.setTemplate(t.key)
+                          toast.success(`“${t.name}” duplicated`, { description: "Opened in Create to customise." })
+                          navigate("/create")
+                        }}
+                      >
                         <Copy className="size-4" />
                       </Button>
                     </div>
@@ -135,7 +159,7 @@ export default function Library() {
             })}
 
             {/* Create new */}
-            <button className="group flex min-h-[320px] flex-col items-center justify-center rounded-xl border-2 border-dashed p-8 text-center transition hover:border-primary/40 hover:bg-accent/40">
+            <button onClick={newTemplate} className="group flex min-h-[320px] flex-col items-center justify-center rounded-xl border-2 border-dashed p-8 text-center transition hover:border-primary/40 hover:bg-accent/40">
               <span className="grid size-16 place-items-center rounded-full bg-muted transition-transform group-hover:scale-110">
                 <Plus className="size-8 text-primary" />
               </span>
@@ -372,7 +396,13 @@ export default function Library() {
 
         {/* ---------------- Assets ---------------- */}
         <TabsContent value="assets" className="mt-6">
-          <EmptyState icon={Image} title="No custom assets yet" body="Upload logos, signatures and backgrounds to reuse across recognitions." cta="Upload an asset" />
+          <EmptyState
+            icon={Image}
+            title="No custom assets yet"
+            body="Upload logos, signatures and backgrounds to reuse across recognitions."
+            cta="Upload a logo in Brand Kit"
+            onCta={() => toast("Add assets in Brand Kit", { description: "Your logo lives under the Brand Kit tab — more asset types are coming." })}
+          />
         </TabsContent>
 
         {/* ---------------- Marketplace ---------------- */}
@@ -389,7 +419,9 @@ export default function Library() {
                 <p className="mt-1 text-sm text-muted-foreground">{c.count} premium templates</p>
                 <div className="mt-4 flex items-center justify-between">
                   <span className="text-2xl font-extrabold">{c.price}</span>
-                  <Button variant="outline">Preview</Button>
+                  <Button variant="outline" onClick={() => toast(`${c.name}`, { description: `${c.count} premium templates — preview & checkout coming soon.` })}>
+                    Preview
+                  </Button>
                 </div>
               </div>
             ))}
