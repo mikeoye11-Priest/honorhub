@@ -63,7 +63,89 @@ const luxeOrn = (extra = "") => `
       ${extra}
     </svg>`
 
+/* ---- Signature template parts (inspired by premium certificate designs) ---- */
+
+// Navy corner wedges (top-left + bottom-right) with a gold diagonal accent line.
+function cornerWedges(): string {
+  return `
+    <path d="M0 0 H178 L0 134 Z" fill="var(--navy)"/>
+    <path d="M152 0 L0 114" stroke="var(--accent)" stroke-width="2.4" fill="none" opacity=".9"/>
+    <path d="M600 424 H422 L600 290 Z" fill="var(--navy)"/>
+    <path d="M448 424 L600 310" stroke="var(--accent)" stroke-width="2.4" fill="none" opacity=".9"/>`
+}
+
+// A small crested shield with laurel sprigs at top centre.
+function shield(): string {
+  return `<g transform="translate(300,46)">
+    <path d="M-26 -10 q 12 16 26 18 M26 -10 q -12 16 -26 18" stroke="var(--accent)" stroke-width="1.4" fill="none" opacity=".7"/>
+    <path d="M-16 -18 H16 V2 Q16 21 0 27 Q-16 21 -16 2 Z" fill="var(--navy)" stroke="var(--accent)" stroke-width="1.6"/>
+    <g fill="var(--accent)">${star(0, -1, 6.5)}</g>
+  </g>`
+}
+
+function leaf(cx: number, cy: number, rot: number, len = 11): string {
+  return `<ellipse cx="${cx}" cy="${cy}" rx="${len}" ry="${(len * 0.4).toFixed(1)}" transform="rotate(${rot} ${cx} ${cy})"/>`
+}
+
+// A curved eucalyptus sprig of paired leaves.
+function eucalyptus(transform: string): string {
+  let leaves = ""
+  ;[[14, 16], [30, 34], [48, 54], [70, 76], [92, 100]].forEach(([x, y], i) => {
+    leaves += leaf(x - 11, y, -38 + i * 5) + leaf(x + 8, y - 9, 38 - i * 5)
+  })
+  return `<g transform="${transform}">
+    <path d="M0 0 q 52 20 100 102" fill="none" stroke="var(--leaf)" stroke-width="1.4" opacity=".5"/>
+    <g fill="var(--leaf)" opacity=".5">${leaves}</g>
+  </g>`
+}
+
+function crossEmblem(): string {
+  return `<g transform="translate(300,40)" stroke="var(--accent)" stroke-width="2.4" stroke-linecap="round">
+    <path d="M0 -18 V 22 M-12 -7 H 12"/>
+  </g>`
+}
+
+function hexEmblem(): string {
+  return `<g transform="translate(300,42)">
+    <path d="M0 -17 L15 -8.5 L15 8.5 L0 17 L-15 8.5 L-15 -8.5 Z" fill="none" stroke="var(--navy)" stroke-width="1.8"/>
+    <g fill="var(--accent)">${star(0, 0, 5)}</g>
+  </g>`
+}
+
+// Dynamic gold brush swooshes + spatter for the sports template.
+function brushStrokes(): string {
+  return `<g fill="none" stroke="var(--accent)" stroke-linecap="round">
+    <path d="M-12 64 Q 160 -14 372 64" stroke-width="13" opacity=".9"/>
+    <path d="M-12 96 Q 140 36 312 86" stroke-width="6" opacity=".55"/>
+    <path d="M612 358 Q 470 424 300 360" stroke-width="12" opacity=".85"/>
+    <path d="M612 388 Q 500 420 360 396" stroke-width="5" opacity=".5"/>
+  </g>
+  <g fill="var(--accent)" opacity=".8">${[[384, 44, 4], [404, 72, 3], [250, 360, 4], [214, 388, 3], [560, 120, 3]].map(([x, y, r]) => `<circle cx="${x}" cy="${y}" r="${r}"/>`).join("")}</g>`
+}
+
+// Colourful organic blobs + stars for the playful kids' template.
+function blobs(): string {
+  const stars = [[120, 64, "#f59e0b"], [486, 78, "#22c55e"], [96, 332, "#ec4899"], [512, 322, "#7c3aed"]]
+    .map(([x, y, c]) => `<g transform="translate(${x},${y})" fill="${c}" opacity=".85">${star(0, 0, 7)}</g>`)
+    .join("")
+  return `
+    <path d="M-30 -30 C 130 -40 168 70 96 128 C 44 170 -40 140 -56 64 C -66 18 -54 -18 -30 -30 Z" fill="#7c3aed" opacity=".9"/>
+    <path d="M70 -20 C 130 -26 162 28 132 74 C 108 110 44 100 28 56 C 16 24 40 -12 70 -20 Z" fill="#6366f1" opacity=".6"/>
+    <path d="M630 454 C 470 462 432 352 504 296 C 556 254 640 286 656 360 Z" fill="#ec4899" opacity=".85"/>
+    <path d="M600 360 C 548 372 512 340 528 300 C 560 286 612 300 624 340 Z" fill="#22d3ee" opacity=".55"/>
+    <g>${stars}</g>
+    <g fill="#cbd5e1" opacity=".7">${[[300, 40, 3], [170, 120, 2.6], [440, 360, 3], [60, 210, 2.4]].map(([x, y, r]) => `<circle cx="${x}" cy="${y}" r="${r}"/>`).join("")}</g>`
+}
+
+const sigOrn = (parts: string) => `
+    <svg class="cert-orn" viewBox="0 0 600 424" preserveAspectRatio="none" fill="none" aria-hidden="true">${parts}</svg>`
+
 export const ORN: Record<string, string> = {
+  excellence: sigOrn(cornerWedges() + shield()),
+  playful: sigOrn(blobs()),
+  grace: sigOrn(eucalyptus("translate(556,18) scale(-1,1)") + eucalyptus("translate(44,406) scale(1,-1)") + crossEmblem()),
+  champion: sigOrn(brushStrokes()),
+  executive: sigOrn(cornerWedges() + hexEmblem()),
   imperial: luxeOrn(`<g fill="currentColor" opacity=".5">${[[120, 46], [480, 46], [70, 250], [530, 250]].map(([x, y]) => star(x, y, 3.4)).join("")}</g>`),
   opulent: luxeOrn(`<g stroke="currentColor" stroke-width=".8" opacity=".4" fill="none" stroke-linecap="round">
         <path d="M170 64 q 130 -34 260 0"/>

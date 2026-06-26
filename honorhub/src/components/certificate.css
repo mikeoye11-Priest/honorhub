@@ -272,6 +272,183 @@
 }
 
 /* ================================================================
+   SIGNATURE TEMPLATES — designed, illustrative certificates
+================================================================= */
+
+/* Classic Excellence — cream, gold frame, navy corner wedges, script name */
+.t-excellence {
+  --paper: #fcf8ef;
+  --navy: #1c2742;
+  --cert-display: var(--serif);
+}
+.t-excellence .frame {
+  inset: 3cqw;
+  border-width: 0.26cqw;
+  border-radius: 0;
+  border-color: var(--accent);
+  opacity: 0.9;
+}
+.t-excellence .frame.inner {
+  inset: 3.7cqw;
+  border-width: 0.08cqw;
+  opacity: 0.5;
+}
+.t-excellence .eyebrow {
+  color: var(--navy);
+  font-weight: 700;
+  letter-spacing: 0.34em;
+}
+.t-excellence .award {
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--navy);
+  font-weight: 600;
+  font-size: 5cqw;
+}
+.t-excellence .name {
+  font-family: "Great Vibes", cursive;
+  font-weight: 400;
+  font-size: 10cqw;
+  letter-spacing: 0;
+  color: var(--accent);
+}
+
+/* Bright & Playful — white, colourful blobs, rainbow title, rounded font */
+.t-playful {
+  --paper: #ffffff;
+  --cert-display: var(--round);
+}
+.t-playful .frame {
+  display: none;
+}
+.t-playful .body {
+  width: 70%;
+}
+.t-playful .award {
+  font-family: var(--round);
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 6.2cqw;
+  line-height: 0.98;
+  background: linear-gradient(92deg, #ef4444, #f59e0b 28%, #22c55e 52%, #3b82f6 74%, #7c3aed);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.t-playful .name {
+  font-family: var(--round);
+  font-weight: 700;
+  color: #7c3aed;
+}
+.t-playful .reason {
+  font-family: var(--round);
+  font-style: normal;
+  font-weight: 500;
+}
+.t-playful .rule {
+  background: #7c3aed;
+}
+
+/* Church Appreciation — cream, eucalyptus, cross, graceful serif */
+.t-grace {
+  --paper: #f6f3e7;
+  --leaf: #6f7f4e;
+  --cert-display: var(--serif);
+}
+.t-grace .frame {
+  inset: 3cqw;
+  border-width: 0.1cqw;
+  border-radius: 0;
+  border-color: var(--accent);
+  opacity: 0.55;
+}
+.t-grace .frame.inner {
+  display: none;
+}
+.t-grace .eyebrow {
+  letter-spacing: 0.32em;
+}
+.t-grace .award {
+  font-style: italic;
+  font-weight: 500;
+  color: var(--accent);
+}
+
+/* Sports Excellence — navy + gold brushstrokes, bold foil */
+.t-champion {
+  --paper: #16213e;
+  --navy: #16213e;
+  --cert-display: var(--serif);
+  --cert-ink: #f1ebdb;
+  --cert-ink-soft: #c2b594;
+  --cert-ink-faint: #7d7457;
+  background-image: radial-gradient(120% 90% at 50% -10%, rgba(255, 255, 255, 0.06), transparent 55%);
+}
+.t-champion .frame {
+  inset: 2.4cqw;
+  border-width: 0.14cqw;
+  border-radius: 0;
+  border-color: var(--accent);
+  opacity: 0.55;
+}
+.t-champion .frame.inner {
+  display: none;
+}
+.t-champion .award {
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  font-weight: 700;
+  font-size: 6cqw;
+}
+.t-champion .award,
+.t-champion .name {
+  background: linear-gradient(
+    118deg,
+    color-mix(in srgb, var(--accent) 40%, #fff) 0%,
+    color-mix(in srgb, var(--accent) 80%, #fff) 22%,
+    var(--accent) 46%,
+    color-mix(in srgb, var(--accent) 62%, #000) 72%,
+    color-mix(in srgb, var(--accent) 32%, #fff) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Modern Professional — white, navy + gold wedges, letter-spaced serif */
+.t-executive {
+  --paper: #ffffff;
+  --navy: #1b2540;
+  --cert-display: var(--serif);
+}
+.t-executive .frame {
+  inset: 3cqw;
+  border-width: 0.1cqw;
+  border-radius: 0;
+  border-color: color-mix(in srgb, var(--navy) 22%, transparent);
+  opacity: 0.7;
+}
+.t-executive .frame.inner {
+  display: none;
+}
+.t-executive .eyebrow {
+  color: var(--navy);
+  font-weight: 700;
+  letter-spacing: 0.3em;
+}
+.t-executive .award {
+  text-transform: uppercase;
+  letter-spacing: 0.24em;
+  color: var(--navy);
+  font-weight: 600;
+  font-size: 4.4cqw;
+}
+.t-executive .name {
+  color: var(--navy);
+  font-weight: 600;
+}
+
+/* ================================================================
    LUXURY TIER — jewel-tone papers, gold-foil text, ornate frames.
    Foil = a metallic gradient of --accent clipped to the text.
 ================================================================= */

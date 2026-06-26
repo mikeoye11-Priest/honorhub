@@ -101,6 +101,12 @@ export interface TemplateDef {
 }
 
 export const TEMPLATES: TemplateDef[] = [
+  // Signature tier — designed, illustrative certificates
+  { key: "excellence", name: "Classic Excellence", blurb: "Timeless & elegant" },
+  { key: "playful", name: "Bright & Playful", blurb: "Fun for young learners" },
+  { key: "grace", name: "Church Appreciation", blurb: "Warm & graceful" },
+  { key: "champion", name: "Sports Excellence", blurb: "Energetic & bold" },
+  { key: "executive", name: "Modern Professional", blurb: "Sleek & corporate" },
   // Luxury tier — jewel-tone papers, gold-foil text and ornate flourishes
   { key: "imperial", name: "Imperial", blurb: "Navy & gold, regal" },
   { key: "opulent", name: "Opulent", blurb: "Ivory & gold, ornate" },
