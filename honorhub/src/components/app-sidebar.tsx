@@ -1,5 +1,5 @@
-import { NavLink } from "react-router-dom"
-import { Home, Sparkles, BookOpen, Users, BarChart3, Settings, Award } from "lucide-react"
+import { NavLink, useNavigate } from "react-router-dom"
+import { Home, Sparkles, BookOpen, Users, BarChart3, Settings, Award, LogOut } from "lucide-react"
 import {
   Sidebar,
   SidebarContent,
@@ -13,6 +13,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useHonor } from "@/lib/store"
+import { useAuth } from "@/lib/auth"
 import { VERTICAL_LIST, type VerticalKey } from "@/lib/honor"
 
 // Exactly six primary items — the bible forbids more, and forbids "Certificates"
@@ -28,6 +29,15 @@ const NAV = [
 
 export function AppSidebar() {
   const { vertical, setVertical } = useHonor()
+  const navigate = useNavigate()
+  const { configured, user, organisations, activeOrgId, setActiveOrgId, signOut } = useAuth()
+  const liveOrgs = configured && organisations.length > 0
+
+  const onPickOrg = (id: string) => {
+    setActiveOrgId(id)
+    const org = organisations.find((o) => o.id === id)
+    if (org) setVertical(org.vertical)
+  }
 
   return (
     <Sidebar collapsible="icon" className="border-r">
@@ -43,20 +53,35 @@ export function AppSidebar() {
         </div>
         <div className="group-data-[collapsible=icon]:hidden">
           <label className="mb-1.5 block px-1 text-[10px] font-bold uppercase tracking-[0.13em] text-muted-foreground">
-            Workspace
+            {liveOrgs ? "Organisation" : "Workspace"}
           </label>
-          <Select value={vertical} onValueChange={(v) => setVertical(v as VerticalKey)}>
-            <SelectTrigger className="w-full">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {VERTICAL_LIST.map((v) => (
-                <SelectItem key={v.key} value={v.key}>
-                  {v.brand}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          {liveOrgs ? (
+            <Select value={activeOrgId ?? undefined} onValueChange={onPickOrg}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select organisation" />
+              </SelectTrigger>
+              <SelectContent>
+                {organisations.map((o) => (
+                  <SelectItem key={o.id} value={o.id}>
+                    {o.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          ) : (
+            <Select value={vertical} onValueChange={(v) => setVertical(v as VerticalKey)}>
+              <SelectTrigger className="w-full">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {VERTICAL_LIST.map((v) => (
+                  <SelectItem key={v.key} value={v.key}>
+                    {v.brand}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
         </div>
       </SidebarHeader>
 
@@ -96,6 +121,18 @@ export function AppSidebar() {
           </div>
           <p className="mt-2 text-[11px] text-muted-foreground">750 / 1000 recognitions used this month.</p>
         </div>
+        {configured && user && (
+          <button
+            onClick={async () => {
+              await signOut()
+              navigate("/login")
+            }}
+            className="flex items-center gap-2 px-1 text-sm text-muted-foreground hover:text-foreground"
+          >
+            <LogOut className="size-4" /> Sign out
+            <span className="ml-auto truncate text-xs text-muted-foreground/70">{user.email}</span>
+          </button>
+        )}
       </SidebarFooter>
     </Sidebar>
   )
