@@ -22,6 +22,7 @@ import {
   Globe,
   ShieldCheck,
   Package,
+  Printer,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -29,12 +30,13 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Badge } from "@/components/ui/badge"
 import { toast } from "sonner"
-import { Certificate, printCertificates, printPages, type CertFields } from "@/components/Certificate"
+import { Certificate, printPages, type CertFields, type CertPage } from "@/components/Certificate"
 import { Confetti } from "@/components/Confetti"
 import { useHonor } from "@/lib/store"
 import { useAuth } from "@/lib/auth"
 import { VERTICALS, TEMPLATES, ACCENTS, parseRecipients } from "@/lib/honor"
 import { COLLECTIONS, getPack } from "@/lib/catalog"
+import { downloadPdf } from "@/lib/pdf"
 import { usePacks } from "@/lib/packs"
 import { recordExport } from "@/lib/exports"
 
@@ -87,6 +89,7 @@ export default function Create() {
   const [previewIndex, setPreviewIndex] = useState(0)
   const [packItemIdx, setPackItemIdx] = useState(0)
   const [aiBusy, setAiBusy] = useState(false)
+  const [pdfBusy, setPdfBusy] = useState(false)
   const csvRef = useRef<HTMLInputElement>(null)
   const logoRef = useRef<HTMLInputElement>(null)
 
@@ -113,14 +116,38 @@ export default function Create() {
   const idx = Math.min(previewIndex, Math.max(0, h.recipients.length - 1))
   const awards = COLLECTIONS[h.vertical] ?? []
 
-  const generatePack = () =>
-    printPages(packCertItems.flatMap((it) => h.recipients.map((r) => ({ fields: { ...fields, award: it.label }, recipient: r }))))
+  // One page per (certificate-item × recipient) in pack mode, else one per recipient.
+  const buildPages = (): CertPage[] =>
+    pack
+      ? packCertItems.flatMap((it) => h.recipients.map((r) => ({ fields: { ...fields, award: it.label }, recipient: r })))
+      : h.recipients.map((r) => ({ fields, recipient: r }))
 
-  // Generate, then log the export (no-op in demo mode / not signed in).
-  const doGenerate = () => {
-    if (pack) generatePack()
-    else printCertificates(fields, h.recipients)
-    void recordExport(activeOrgId, { count: totalCerts, template: h.template, award: pack ? pack.name : h.award, packKey: h.packKey })
+  const logExport = (format: string) =>
+    void recordExport(activeOrgId, { count: totalCerts, template: h.template, award: pack ? pack.name : h.award, packKey: h.packKey, format })
+
+  const fileBase = `honorhub-${(pack ? pack.name : h.award).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "certificates"}`
+
+  async function doDownloadPdf() {
+    const pages = buildPages()
+    if (!pages.length) return
+    setPdfBusy(true)
+    const id = toast.loading(`Building your PDF (${pages.length} ${pages.length === 1 ? "certificate" : "certificates"})…`)
+    try {
+      await downloadPdf(pages, `${fileBase}.pdf`)
+      toast.success("PDF downloaded", { id })
+      logExport("pdf")
+    } catch {
+      toast.error("Couldn't build the PDF", { id })
+    } finally {
+      setPdfBusy(false)
+    }
+  }
+
+  const doPrint = () => {
+    const pages = buildPages()
+    if (!pages.length) return
+    printPages(pages)
+    logExport("print")
   }
 
   function onCSV(e: ChangeEvent<HTMLInputElement>) {
@@ -256,12 +283,17 @@ Respond with ONLY a JSON array of strings in order, no prose or fences.`
                 </div>
               </div>
               <div className="flex flex-col gap-2">
-                <Button size="lg" onClick={doGenerate}>
-                  <Download className="size-4" /> Download / Print
+                <Button size="lg" onClick={doDownloadPdf} disabled={pdfBusy}>
+                  {pdfBusy ? <Loader2 className="size-4 animate-spin" /> : <Download className="size-4" />} Download PDF
                 </Button>
-                <Button size="lg" variant="outline" onClick={() => toast("Share link copied (demo)")}>
-                  <Share2 className="size-4" /> Share recognition
-                </Button>
+                <div className="flex gap-2">
+                  <Button size="lg" variant="outline" className="flex-1" onClick={doPrint}>
+                    <Printer className="size-4" /> Print
+                  </Button>
+                  <Button size="lg" variant="outline" className="flex-1" onClick={() => toast("Share link copied (demo)")}>
+                    <Share2 className="size-4" /> Share
+                  </Button>
+                </div>
               </div>
             </div>
           </div>
