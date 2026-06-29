@@ -1,4 +1,4 @@
-import { useRef, useState, type ChangeEvent } from "react"
+import { useEffect, useRef, useState, type ChangeEvent } from "react"
 import { useNavigate } from "react-router-dom"
 import {
   Award,
@@ -23,8 +23,12 @@ import {
   ShieldCheck,
   Package,
   Printer,
+  Link2,
+  FileImage,
+  ChevronDown,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
@@ -36,9 +40,10 @@ import { useHonor } from "@/lib/store"
 import { useAuth } from "@/lib/auth"
 import { VERTICALS, TEMPLATES, ACCENTS, parseRecipients } from "@/lib/honor"
 import { COLLECTIONS, getPack } from "@/lib/catalog"
-import { downloadPdf } from "@/lib/pdf"
+import { downloadPdf, buildShareFile } from "@/lib/pdf"
 import { usePacks } from "@/lib/packs"
 import { recordExport } from "@/lib/exports"
+import { createShareLink } from "@/lib/share"
 
 const STEPS = [
   { label: "Choose Award", icon: Award },
@@ -83,13 +88,18 @@ function parseCSV(text: string): string[][] {
 export default function Create() {
   const navigate = useNavigate()
   const h = useHonor()
-  const { activeOrgId } = useAuth()
+  const { activeOrgId, configured } = useAuth()
   const v = VERTICALS[h.vertical]
   const [step, setStep] = useState(0)
   const [previewIndex, setPreviewIndex] = useState(0)
   const [packItemIdx, setPackItemIdx] = useState(0)
   const [aiBusy, setAiBusy] = useState(false)
   const [pdfBusy, setPdfBusy] = useState(false)
+  const [shareBusy, setShareBusy] = useState(false)
+  const [linkBusy, setLinkBusy] = useState(false)
+  // Pre-built shareable file, so navigator.share() can fire inside the click
+  // handler before the user-activation expires (rendering can take a few seconds).
+  const shareFileRef = useRef<File | null>(null)
   const csvRef = useRef<HTMLInputElement>(null)
   const logoRef = useRef<HTMLInputElement>(null)
 
@@ -149,6 +159,111 @@ export default function Create() {
     printPages(pages)
     logExport("print")
   }
+
+  function downloadFile(file: File, id: string | number, description: string) {
+    const url = URL.createObjectURL(file)
+    const a = document.createElement("a")
+    a.href = url
+    a.download = file.name
+    a.click()
+    URL.revokeObjectURL(url)
+    toast.success("Certificate saved", { id, description })
+    logExport("share")
+  }
+
+  async function doShare() {
+    const pages = buildPages()
+    if (!pages.length) return
+    setShareBusy(true)
+    const id = toast.loading("Preparing your certificate to share…")
+
+    // Use the file pre-built when this screen mounted; only build now if needed.
+    let file = shareFileRef.current
+    if (!file) {
+      try {
+        file = await buildShareFile(pages, fileBase)
+        shareFileRef.current = file
+      } catch {
+        toast.error("Couldn't prepare the certificate to share", { id })
+        setShareBusy(false)
+        return
+      }
+    }
+
+    const title = `${pack ? pack.name : h.award} — ${h.org}`
+    const nav = navigator as Navigator & { canShare?: (data: ShareData) => boolean }
+    setShareBusy(false)
+
+    if (!nav.share || !nav.canShare?.({ files: [file] })) {
+      // No file-share support (e.g. desktop Firefox): download to share manually.
+      downloadFile(file, id, "Your browser has no share sheet, so we downloaded it to share manually.")
+      return
+    }
+
+    try {
+      // Fired synchronously after the (fast) ref lookup, so user-activation holds.
+      await nav.share({ files: [file], title, text: title })
+      toast.success("Shared", { id })
+      logExport("share")
+    } catch (err) {
+      // Cancelling the share sheet throws AbortError — treat as a silent no-op.
+      if ((err as Error)?.name === "AbortError") {
+        toast.dismiss(id)
+        return
+      }
+      // Anything else (activation expired, no targets): fall back to a download.
+      downloadFile(file, id, "Sharing wasn't available, so we downloaded it instead.")
+    }
+  }
+
+  // Saves the currently-previewed certificate to the backend and copies a public
+  // link. Only offered when signed in with an active org (demo mode can't store).
+  const canShareLink = configured && Boolean(activeOrgId)
+  async function doCopyLink() {
+    const recipient = h.recipients[idx]
+    if (!recipient) return
+    setLinkBusy(true)
+    const id = toast.loading("Creating a share link…")
+    try {
+      const url = await createShareLink(activeOrgId, { fields, recipient })
+      if (!url) {
+        toast.error("Couldn't create the share link", { id })
+        return
+      }
+      try {
+        await navigator.clipboard?.writeText(url)
+        toast.success("Share link copied", { id, description: `Anyone with the link can view ${recipient.name}'s certificate.` })
+      } catch {
+        toast.success("Share link created", { id, description: url })
+      }
+      logExport("link")
+    } catch {
+      toast.error("Couldn't create the share link", { id })
+    } finally {
+      setLinkBusy(false)
+    }
+  }
+
+  // Pre-render the shareable file as soon as the success screen appears, so the
+  // Share click can hand it straight to navigator.share() before activation lapses.
+  useEffect(() => {
+    if (step !== 4) {
+      shareFileRef.current = null
+      return
+    }
+    let cancelled = false
+    buildShareFile(buildPages(), fileBase)
+      .then((f) => {
+        if (!cancelled) shareFileRef.current = f
+      })
+      .catch(() => {
+        /* fall back to building on click */
+      })
+    return () => {
+      cancelled = true
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [step])
 
   function onCSV(e: ChangeEvent<HTMLInputElement>) {
     const f = e.target.files?.[0]
@@ -290,9 +405,32 @@ Respond with ONLY a JSON array of strings in order, no prose or fences.`
                   <Button size="lg" variant="outline" className="flex-1" onClick={doPrint}>
                     <Printer className="size-4" /> Print
                   </Button>
-                  <Button size="lg" variant="outline" className="flex-1" onClick={() => toast("Share link copied (demo)")}>
-                    <Share2 className="size-4" /> Share
-                  </Button>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button size="lg" variant="outline" className="flex-1" disabled={shareBusy || linkBusy}>
+                        {shareBusy || linkBusy ? <Loader2 className="size-4 animate-spin" /> : <Share2 className="size-4" />} Share
+                        <ChevronDown className="size-4 opacity-60" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-60">
+                      <DropdownMenuItem onSelect={doShare}>
+                        <FileImage className="size-4" />
+                        <div>
+                          <p className="font-medium">Share certificate file</p>
+                          <p className="text-xs text-muted-foreground">Send the image or PDF directly</p>
+                        </div>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onSelect={doCopyLink} disabled={!canShareLink}>
+                        <Link2 className="size-4" />
+                        <div>
+                          <p className="font-medium">Copy share link</p>
+                          <p className="text-xs text-muted-foreground">
+                            {canShareLink ? "A public link to this certificate" : "Sign in to create share links"}
+                          </p>
+                        </div>
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
               </div>
             </div>

@@ -3,6 +3,7 @@ import { Loader2 } from "lucide-react"
 import { AppLayout } from "@/components/app-layout"
 import { useAuth } from "@/lib/auth"
 import Login from "@/pages/Login"
+import SharedCertificatePage from "@/pages/SharedCertificate"
 import Home from "@/pages/Home"
 import Create from "@/pages/Create"
 import Library from "@/pages/Library"
@@ -27,6 +28,7 @@ export default function App() {
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
+      <Route path="/c/:slug" element={<SharedCertificatePage />} />
       <Route
         element={
           <RequireAuth>
