@@ -647,46 +647,6 @@
   }
 }
 
-/* ---------- Print: one A4 landscape page per recipient ---------- */
-.print-area {
-  display: none;
-}
-@media print {
-  @page {
-    size: A4 landscape;
-    margin: 0;
-  }
-  body * {
-    visibility: hidden;
-  }
-  .print-area,
-  .print-area * {
-    visibility: visible;
-  }
-  .print-area {
-    display: block;
-    position: absolute;
-    inset: 0;
-  }
-  .print-area,
-  .print-page,
-  .print-page * {
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
-  }
-  .print-page {
-    width: 297mm;
-    height: 210mm;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    page-break-after: always;
-    background: #fff;
-  }
-  .print-page:last-child {
-    page-break-after: auto;
-  }
-  .print-page .cert {
-    width: 273mm;
-  }
-}
+/* Printing is handled in an isolated iframe (see printPages in Certificate.tsx),
+   which carries its own @page / .print-page rules. No app-level @media print
+   block here — it would be copied into the iframe and hide the certificates. */

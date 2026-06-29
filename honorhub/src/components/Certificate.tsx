@@ -56,21 +56,63 @@ export interface CertPage {
 }
 
 /** Opens the print dialog with one A4 landscape page per (fields, recipient) pair.
- *  Pack mode passes one page per certificate-item × recipient. */
+ *  Pack mode passes one page per certificate-item × recipient.
+ *
+ *  Renders into an isolated <iframe> rather than overlaying the live app: the
+ *  shadcn sidebar shell (fixed/sticky elements, container queries) made the old
+ *  `body * { visibility:hidden }` print hack produce blank pages. The iframe
+ *  carries only the certificates plus the app's own stylesheets, so what prints
+ *  matches the on-screen design exactly. */
 export function printPages(pages: CertPage[]) {
   if (!pages.length) return
-  const existing = document.querySelector(".print-area")
-  if (existing) existing.remove()
-  const area = document.createElement("div")
-  area.className = "print-area"
-  area.innerHTML = pages
+
+  // Carry over every app stylesheet so fonts, gradients and template styles
+  // resolve identically inside the print iframe.
+  const styles = Array.from(document.querySelectorAll('style, link[rel="stylesheet"]'))
+    .map((n) => n.outerHTML)
+    .join("\n")
+
+  const body = pages
     .map(
       (p) =>
-        `<div class="print-page"><div class="cert t-${p.fields.template}" style="--accent:${p.fields.accent}">${certInnerHTML(p.fields, p.recipient)}</div></div>`
+        `<div class="print-page"><div class="cert t-${p.fields.template}" style="--accent:${p.fields.accent}">${certInnerHTML(p.fields, p.recipient)}</div></div>`,
     )
     .join("")
-  document.body.appendChild(area)
-  window.print()
+
+  const html = `<!doctype html><html><head><meta charset="utf-8"><base href="${document.baseURI}">${styles}<style>
+    @page { size: A4 landscape; margin: 0; }
+    html, body { margin: 0; padding: 0; background: #fff; }
+    .print-page {
+      width: 297mm; height: 210mm;
+      display: flex; align-items: center; justify-content: center;
+      background: #fff; page-break-after: always; break-after: page;
+      -webkit-print-color-adjust: exact; print-color-adjust: exact;
+    }
+    .print-page:last-child { page-break-after: auto; break-after: auto; }
+    .print-page .cert { width: 273mm; }
+  </style></head><body>${body}</body></html>`
+
+  const iframe = document.createElement("iframe")
+  iframe.setAttribute("aria-hidden", "true")
+  iframe.style.cssText = "position:fixed;right:0;bottom:0;width:0;height:0;border:0;"
+
+  iframe.onload = () => {
+    const win = iframe.contentWindow
+    if (!win) return
+    const run = () => {
+      win.focus()
+      win.print()
+      // Leave the iframe long enough for the (modal) print dialog to read it.
+      setTimeout(() => iframe.remove(), 1000)
+    }
+    // Wait for web fonts so glyphs aren't missing on the first paint.
+    const fonts = iframe.contentDocument?.fonts
+    if (fonts?.ready) fonts.ready.then(run).catch(run)
+    else run()
+  }
+
+  document.body.appendChild(iframe)
+  iframe.srcdoc = html
 }
 
 /** Opens the browser print dialog with one A4 landscape page per recipient. */
