@@ -59,21 +59,28 @@ function mountCertEl(host: HTMLDivElement, page: CertPage): HTMLDivElement {
   el.style.setProperty("--accent", page.fields.accent)
   host.appendChild(el)
 
-  // 1) Bake resolved custom properties inline (they cascade to every child).
+  // Snapshot computed values up front — getComputedStyle is live, so read every
+  // value before mutating el.style below.
   const cs = getComputedStyle(el)
+  const vars: Record<string, string> = {}
   for (const v of PAINT_VARS) {
     const val = cs.getPropertyValue(v).trim()
-    if (val) el.style.setProperty(v, val)
+    if (val) vars[v] = val
   }
-  // 2) Bake the resolved background (color + any gradient) so paper never drops to white.
-  el.style.backgroundColor = cs.backgroundColor
-  const bgImage = cs.backgroundImage
-  if (bgImage && bgImage !== "none") el.style.backgroundImage = bgImage
+  const paper = vars["--paper"] || cs.backgroundColor || "#ffffff"
+  const accent = vars["--accent"] || page.fields.accent
+  const navy = vars["--navy"] || ""
+  const leaf = vars["--leaf"] || ""
 
-  // 3) Resolve SVG ornament colours to literal hex (currentColor/var in SVG).
-  const accent = cs.getPropertyValue("--accent").trim() || page.fields.accent
-  const navy = cs.getPropertyValue("--navy").trim()
-  const leaf = cs.getPropertyValue("--leaf").trim()
+  // Bake the variables inline so the snapshot doesn't depend on the .t-<key>
+  // class rules (html-to-image drops class-defined custom properties).
+  for (const [v, val] of Object.entries(vars)) el.style.setProperty(v, val)
+  // Use a SOLID paper colour — baking the decorative var()/color-mix gradients
+  // makes html-to-image render them as a strong accent wash over the paper.
+  el.style.background = paper
+
+  // Resolve SVG ornament colours to literal hex (currentColor/var in SVG render
+  // unreliably under html-to-image).
   let html = certInnerHTML(page.fields, page.recipient)
   html = html.replace(/currentColor/g, accent)
   if (navy) html = html.replace(/var\(--navy\)/g, navy)
