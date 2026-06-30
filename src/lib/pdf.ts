@@ -99,11 +99,16 @@ function bakeAccentMixes(el: HTMLElement, accent: string, navy: string) {
   if (navy) el.style.setProperty("--navy-border-soft", alpha(navy, 0.22))
 }
 
+interface MountedCert {
+  el: HTMLDivElement
+  paper: string
+}
+
 /** Create the off-screen certificate, append it, and bake the template's
  *  resolved variables + background inline so the snapshot matches the on-screen
  *  design. Also substitutes literal colours into the inline SVG (html-to-image
  *  renders currentColor/var() in SVG unreliably, often as black). */
-function mountCertEl(host: HTMLDivElement, page: CertPage): HTMLDivElement {
+function mountCertEl(host: HTMLDivElement, page: CertPage): MountedCert {
   const el = document.createElement("div")
   el.className = `cert t-${page.fields.template}`
   el.style.cssText = `width:${PX_W}px;height:${PX_H}px;animation:none;`
@@ -139,8 +144,20 @@ function mountCertEl(host: HTMLDivElement, page: CertPage): HTMLDivElement {
   if (navy) html = html.replace(/var\(--navy\)/g, navy)
   if (leaf) html = html.replace(/var\(--leaf\)/g, leaf)
   html = html.replace(/var\(--accent\)/g, accent)
-  el.innerHTML = html
-  return el
+  el.innerHTML = `<div aria-hidden="true" style="position:absolute;inset:0;background:${paper};z-index:0"></div>${html}`
+  return { el, paper }
+}
+
+function opaqueImageData(canvas: HTMLCanvasElement, paper: string): string {
+  const flattened = document.createElement("canvas")
+  flattened.width = canvas.width
+  flattened.height = canvas.height
+  const ctx = flattened.getContext("2d")
+  if (!ctx) return canvas.toDataURL("image/png")
+  ctx.fillStyle = paper
+  ctx.fillRect(0, 0, flattened.width, flattened.height)
+  ctx.drawImage(canvas, 0, 0)
+  return flattened.toDataURL("image/jpeg", 0.96)
 }
 
 export async function downloadPdf(pages: CertPage[], filename = "honorhub-certificates.pdf"): Promise<void> {
@@ -152,10 +169,10 @@ export async function downloadPdf(pages: CertPage[], filename = "honorhub-certif
   const pdf = new jsPDF({ orientation: "landscape", unit: "mm", format: "a4" })
   try {
     for (let i = 0; i < pages.length; i++) {
-      const el = mountCertEl(host, pages[i])
+      const { el, paper } = mountCertEl(host, pages[i])
       const canvas = await toCanvas(el, RENDER_OPTS)
       if (i > 0) pdf.addPage()
-      pdf.addImage(canvas.toDataURL("image/png"), "PNG", 0, 0, 297, 210)
+      pdf.addImage(opaqueImageData(canvas, paper), "JPEG", 0, 0, 297, 210)
       host.removeChild(el)
     }
     pdf.save(filename)
@@ -175,7 +192,7 @@ export async function buildShareFile(pages: CertPage[], fileBase = "honorhub-cer
     const { toBlob } = await import("html-to-image")
     const host = makeHost()
     try {
-      const el = mountCertEl(host, pages[0])
+      const { el } = mountCertEl(host, pages[0])
       const blob = await toBlob(el, RENDER_OPTS)
       if (!blob) throw new Error("image render failed")
       return new File([blob], `${fileBase}.png`, { type: "image/png" })
@@ -190,10 +207,10 @@ export async function buildShareFile(pages: CertPage[], fileBase = "honorhub-cer
   const pdf = new jsPDF({ orientation: "landscape", unit: "mm", format: "a4" })
   try {
     for (let i = 0; i < pages.length; i++) {
-      const el = mountCertEl(host, pages[i])
+      const { el, paper } = mountCertEl(host, pages[i])
       const canvas = await toCanvas(el, RENDER_OPTS)
       if (i > 0) pdf.addPage()
-      pdf.addImage(canvas.toDataURL("image/png"), "PNG", 0, 0, 297, 210)
+      pdf.addImage(opaqueImageData(canvas, paper), "JPEG", 0, 0, 297, 210)
       host.removeChild(el)
     }
   } finally {
