@@ -45,6 +45,14 @@ import { usePacks } from "@/lib/packs"
 import { recordExport } from "@/lib/exports"
 import { createShareLink } from "@/lib/share"
 
+// Rough time saved vs producing each certificate by hand (~4 min each).
+function timeSavedLabel(certs: number): string {
+  const mins = certs * 4
+  if (mins < 60) return `~${mins} min`
+  const hrs = mins / 60
+  return `~${Number.isInteger(hrs) ? hrs : hrs.toFixed(1)} hr`
+}
+
 const STEPS = [
   { label: "Choose Award", icon: Award },
   { label: "Recipients", icon: Users },
@@ -355,7 +363,7 @@ Respond with ONLY a JSON array of strings in order, no prose or fences.`
           <p className="mt-2 max-w-xl text-lg text-muted-foreground">
             {pack
               ? `Your ${pack.name} is ready — ${totalCerts} matched certificate${totalCerts === 1 ? "" : "s"} across ${packCertItems.length} designs.`
-              : `Your celebration of excellence is ready. We've crafted ${recipientCount === 1 ? "a premium certificate" : `${recipientCount} premium certificates`} for your ${v.label.toLowerCase()} recipients.`}
+              : `Your celebration of excellence is ready — ${recipientCount === 1 ? "a premium certificate" : `${recipientCount} premium certificates`}, ready to print, share or hand out.`}
           </p>
           {pack && packExtras.length > 0 && (
             <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
@@ -385,10 +393,10 @@ Respond with ONLY a JSON array of strings in order, no prose or fences.`
                 <h4 className="mb-3 font-semibold">Impact summary</h4>
                 <div className="grid grid-cols-2 gap-3">
                   {[
-                    { k: "Time saved", v: "~12 min" },
-                    { k: "Accuracy", v: "100%" },
                     { k: "Recipients", v: String(recipientCount) },
                     { k: "Certificates", v: String(totalCerts) },
+                    { k: "Time saved", v: timeSavedLabel(totalCerts) },
+                    { k: "Designs", v: String(pack ? packCertItems.length : 1) },
                   ].map((m) => (
                     <div key={m.k} className="rounded-lg bg-muted/50 p-3">
                       <p className="text-xs text-muted-foreground">{m.k}</p>
