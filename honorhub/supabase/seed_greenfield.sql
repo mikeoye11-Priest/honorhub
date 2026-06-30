@@ -1,8 +1,8 @@
--- HonorHub — demo seed for "Greenfield Primary School"
+-- HonorHub — demo seed for "Greenfield Community Primary School"
 -- Populates the certificate_exports log with ~9 weeks of believable primary-school
 -- recognition activity, so Reports and the Home dashboard look alive in the demo.
 --
--- PREREQUISITE: onboard "Greenfield Primary School" in the app first (sign up the
+-- PREREQUISITE: onboard "Greenfield Community Primary School" in the app first (sign up the
 -- workspace), so the organisation exists and your login is its admin. Then run
 -- this in the SQL editor of project qjksknhrfzmxbaclcpuy.
 --
@@ -28,12 +28,12 @@ declare
 begin
   select id into v_org
   from public.organisations
-  where name = 'Greenfield Primary School'
+  where lower(trim(name)) = lower('Greenfield Community Primary School')
   order by created_at desc
   limit 1;
 
   if v_org is null then
-    raise exception 'Onboard "Greenfield Primary School" in the app first, then re-run this script.';
+    raise exception 'Onboard "Greenfield Community Primary School" in the app first, then re-run this script.';
   end if;
 
   -- The org admin (set as created_by where available; the column also allows null)
@@ -87,12 +87,12 @@ begin
     end if;
   end loop;
 
-  raise notice 'Seeded % export rows for Greenfield Primary School (org %).', n, v_org;
+  raise notice 'Seeded % export rows for Greenfield Community Primary School (org %).', n, v_org;
 end $$;
 
 -- Quick check after running:
 --   select count(*) as actions, sum(count) as certificates
 --   from public.certificate_exports
 --   where organisation_id = (select id from public.organisations
---                            where name = 'Greenfield Primary School'
+--                            where lower(trim(name)) = lower('Greenfield Community Primary School')
 --                            order by created_at desc limit 1);
