@@ -118,6 +118,16 @@ const TEMPLATE_PAINT: Record<string, Partial<Record<PaintVar, string>>> = {
   opulent: { "--paper": "#fbf6ea", "--cert-display": "var(--serif)" },
 }
 
+const CLIPPED_TEXT_SELECTORS: Record<string, string[]> = {
+  champion: [".award", ".name"],
+  playful: [".award"],
+  imperial: [".award", ".name"],
+  opulent: [".award", ".name"],
+  onyx: [".name"],
+  emerald: [".name"],
+  burgundy: [".name"],
+}
+
 function parseHex(hex: string): [number, number, number] | null {
   const value = hex.trim().replace(/^#/, "")
   if (/^[\da-f]{3}$/i.test(value)) {
@@ -157,6 +167,19 @@ function bakeAccentMixes(el: HTMLElement, accent: string, navy: string) {
   el.style.setProperty("--accent-border-dark", mix(accent, 0.58, "#000000"))
   el.style.setProperty("--accent-border-soft", alpha(accent, 0.65))
   if (navy) el.style.setProperty("--navy-border-soft", alpha(navy, 0.22))
+}
+
+function applySolidTextForPdf(el: HTMLElement, template: string, accent: string) {
+  for (const selector of CLIPPED_TEXT_SELECTORS[template] ?? []) {
+    for (const node of el.querySelectorAll<HTMLElement>(selector)) {
+      node.style.setProperty("background", "none", "important")
+      node.style.setProperty("background-image", "none", "important")
+      node.style.setProperty("-webkit-background-clip", "initial", "important")
+      node.style.setProperty("background-clip", "border-box", "important")
+      node.style.setProperty("-webkit-text-fill-color", accent, "important")
+      node.style.setProperty("color", accent, "important")
+    }
+  }
 }
 
 interface MountedCert {
@@ -206,6 +229,7 @@ function mountCertEl(host: HTMLDivElement, page: CertPage): MountedCert {
   if (leaf) html = html.replace(/var\(--leaf\)/g, leaf)
   html = html.replace(/var\(--accent\)/g, accent)
   el.innerHTML = `<div aria-hidden="true" style="position:absolute;inset:0;background:${paper};z-index:0"></div>${html}`
+  applySolidTextForPdf(el, page.fields.template, accent)
   return { el, paper }
 }
 
