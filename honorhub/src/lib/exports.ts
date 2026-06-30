@@ -28,12 +28,15 @@ export async function recordExport(orgId: string | null, input: ExportInput): Pr
 }
 
 export interface ExportStats {
-  exports: number
-  certificates: number
-  last7: number
+  exports: number // number of generate actions
+  certificates: number // all-time certificates (sum of count)
+  last7: number // certificates in the last 7 days
+  last30: number // certificates in the last 30 days
+  activeDays: number // distinct days with activity in the last 30
+  awardCount: number // distinct award types ever used
 }
 
-const EMPTY: ExportStats = { exports: 0, certificates: 0, last7: 0 }
+const EMPTY: ExportStats = { exports: 0, certificates: 0, last7: 0, last30: 0, activeDays: 0, awardCount: 0 }
 
 /** Aggregate export stats for the active org (used to make dashboards real). */
 export function useExportStats() {
@@ -47,17 +50,29 @@ export function useExportStats() {
     setLoading(true)
     const { data } = await supabase
       .from("certificate_exports")
-      .select("count, created_at")
+      .select("count, award, created_at")
       .eq("organisation_id", activeOrgId)
       .order("created_at", { ascending: false })
-      .limit(2000)
-    const rows = (data ?? []) as { count: number; created_at: string }[]
-    const weekAgo = Date.now() - 7 * 24 * 60 * 60 * 1000
-    const next: ExportStats = { exports: rows.length, certificates: 0, last7: 0 }
+      .limit(5000)
+    const rows = (data ?? []) as { count: number; award: string | null; created_at: string }[]
+    const now = Date.now()
+    const weekAgo = now - 7 * DAY
+    const monthAgo = now - 30 * DAY
+    const awards = new Set<string>()
+    const activeDays = new Set<string>()
+    const next: ExportStats = { exports: rows.length, certificates: 0, last7: 0, last30: 0, activeDays: 0, awardCount: 0 }
     for (const r of rows) {
       next.certificates += r.count
-      if (new Date(r.created_at).getTime() >= weekAgo) next.last7 += r.count
+      const t = new Date(r.created_at).getTime()
+      if (t >= weekAgo) next.last7 += r.count
+      if (t >= monthAgo) {
+        next.last30 += r.count
+        activeDays.add(new Date(r.created_at).toDateString())
+      }
+      if (r.award) awards.add(r.award.trim())
     }
+    next.activeDays = activeDays.size
+    next.awardCount = awards.size
     setStats(next)
     setLoading(false)
   }, [activeOrgId])

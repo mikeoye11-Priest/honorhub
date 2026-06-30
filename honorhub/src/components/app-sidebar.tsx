@@ -14,7 +14,10 @@ import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useHonor } from "@/lib/store"
 import { useAuth } from "@/lib/auth"
+import { useExportStats } from "@/lib/exports"
 import { VERTICAL_LIST, type VerticalKey } from "@/lib/honor"
+
+const PLAN_LIMIT = 1000 // monthly recognition allowance on the Pro plan
 
 // Exactly six primary items — the bible forbids more, and forbids "Certificates"
 // as a nav item (it lives inside Create).
@@ -32,6 +35,9 @@ export function AppSidebar() {
   const navigate = useNavigate()
   const { configured, user, organisations, activeOrgId, setActiveOrgId, signOut } = useAuth()
   const liveOrgs = configured && organisations.length > 0
+  const { stats, live } = useExportStats()
+  const used = live ? stats.last30 : 750
+  const usedPct = Math.min(100, Math.round((used / PLAN_LIMIT) * 100))
 
   // Just switch the active org — the store hydrates vertical + branding from the DB.
   const onPickOrg = (id: string) => setActiveOrgId(id)
@@ -114,9 +120,11 @@ export function AppSidebar() {
         <div className="rounded-xl border bg-card p-4">
           <p className="text-xs font-bold text-primary">PRO PLAN</p>
           <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-muted">
-            <div className="h-full rounded-full bg-primary" style={{ width: "75%" }} />
+            <div className="h-full rounded-full bg-primary" style={{ width: `${usedPct}%` }} />
           </div>
-          <p className="mt-2 text-[11px] text-muted-foreground">750 / 1000 recognitions used this month.</p>
+          <p className="mt-2 text-[11px] text-muted-foreground">
+            {used.toLocaleString()} / {PLAN_LIMIT.toLocaleString()} recognitions in the last 30 days.
+          </p>
         </div>
         {configured && user && (
           <button

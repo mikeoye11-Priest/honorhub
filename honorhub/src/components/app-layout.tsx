@@ -1,6 +1,6 @@
-import { useState } from "react"
+import { useMemo, useState } from "react"
 import { Outlet, useLocation, useNavigate } from "react-router-dom"
-import { Bell, Sparkles, Search, HelpCircle, PartyPopper, Award, TrendingUp, Check, Settings as SettingsIcon, LogOut, CheckCheck } from "lucide-react"
+import { Bell, Sparkles, Search, HelpCircle, PartyPopper, TrendingUp, Check, Settings as SettingsIcon, LogOut, CheckCheck } from "lucide-react"
 import { toast } from "sonner"
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { Separator } from "@/components/ui/separator"
@@ -18,6 +18,7 @@ import {
 import { AppSidebar } from "@/components/app-sidebar"
 import { useHonor } from "@/lib/store"
 import { useAuth } from "@/lib/auth"
+import { useExportAnalytics, type Insight } from "@/lib/exports"
 import { VERTICALS } from "@/lib/honor"
 
 const TITLES: Record<string, string> = {
@@ -29,13 +30,22 @@ const TITLES: Record<string, string> = {
   "/settings": "Settings",
 }
 
-type Notif = { id: number; icon: typeof Bell; tint: string; title: string; body: string; when: string; unread: boolean }
+type Notif = { id: string; icon: typeof Bell; tint: string; title: string; body: string; when: string; unread: boolean }
 
-const INITIAL_NOTIFS: Notif[] = [
-  { id: 1, icon: PartyPopper, tint: "bg-accent text-primary", title: "New recognition", body: "Jessica recognised Kevin Smith — “Quality Star”.", when: "2h ago", unread: true },
-  { id: 2, icon: Award, tint: "bg-info/10 text-info", title: "Milestone reached", body: "Engineering hit 500 total recognitions.", when: "5h ago", unread: true },
-  { id: 3, icon: TrendingUp, tint: "bg-success/10 text-success", title: "Weekly report ready", body: "Recognition is up 12% this week.", when: "Yesterday", unread: true },
-]
+const READ_KEY = "honorhub.readNotifs"
+const TONE: Record<Insight["tone"], { icon: typeof Bell; tint: string }> = {
+  good: { icon: PartyPopper, tint: "bg-accent text-primary" },
+  info: { icon: TrendingUp, tint: "bg-info/10 text-info" },
+  warn: { icon: Bell, tint: "bg-warning/10 text-warning" },
+}
+
+function loadReadIds(): Set<string> {
+  try {
+    return new Set(JSON.parse(localStorage.getItem(READ_KEY) || "[]") as string[])
+  } catch {
+    return new Set()
+  }
+}
 
 export function AppLayout() {
   const location = useLocation()
@@ -45,13 +55,45 @@ export function AppLayout() {
   const title = TITLES[location.pathname] ?? "HonorHub"
   const brand = VERTICALS[vertical].brand
 
-  const [notifs, setNotifs] = useState<Notif[]>(INITIAL_NOTIFS)
   const [query, setQuery] = useState("")
+  const { analytics, live } = useExportAnalytics()
+  const [readIds, setReadIds] = useState<Set<string>>(loadReadIds)
+
+  // Notifications derived from real recognition activity — no recipient PII, just
+  // counts/trends/awards. Read-state is remembered per-browser in localStorage.
+  const notifs = useMemo<Notif[]>(() => {
+    if (!live || !analytics.hasData) return []
+    const items: Omit<Notif, "unread">[] = []
+    if (analytics.last7 > 0) {
+      items.push({
+        id: "weekly",
+        icon: TrendingUp,
+        tint: "bg-success/10 text-success",
+        title: "This week",
+        body: `${analytics.last7.toLocaleString()} certificate${analytics.last7 === 1 ? "" : "s"} created in the last 7 days.`,
+        when: "This week",
+      })
+    }
+    for (const ins of analytics.insights) {
+      const t = TONE[ins.tone]
+      items.push({ id: `insight:${ins.tag}`, icon: t.icon, tint: t.tint, title: ins.tag, body: ins.body, when: "Today" })
+    }
+    return items.map((n) => ({ ...n, unread: !readIds.has(n.id) }))
+  }, [live, analytics, readIds])
+
   const unread = notifs.filter((n) => n.unread).length
 
-  const markAllRead = () => setNotifs((ns) => ns.map((n) => ({ ...n, unread: false })))
-  const openNotif = (id: number) => {
-    setNotifs((ns) => ns.map((n) => (n.id === id ? { ...n, unread: false } : n)))
+  const persistRead = (ids: Set<string>) => {
+    setReadIds(new Set(ids))
+    try {
+      localStorage.setItem(READ_KEY, JSON.stringify([...ids]))
+    } catch {
+      /* ignore quota errors */
+    }
+  }
+  const markAllRead = () => persistRead(new Set([...readIds, ...notifs.map((n) => n.id)]))
+  const openNotif = (id: string) => {
+    persistRead(new Set([...readIds, id]))
   }
 
   const runSearch = () => {

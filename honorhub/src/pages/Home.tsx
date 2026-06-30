@@ -123,8 +123,15 @@ export default function Home() {
     if (!live) return k.value
     if (k.label === "Recent Certificates") return stats.last7.toLocaleString()
     if (k.label === "Total Recognitions") return stats.certificates.toLocaleString()
+    if (k.label === "Active Awards") return stats.awardCount.toLocaleString()
     return k.value
   }
+
+  // Real "activity level": share of the last ~22 school days with recognitions.
+  const healthScore = live ? Math.min(100, Math.round((stats.activeDays / 22) * 100)) : 85
+  const healthCaption = live
+    ? `Recognised on ${stats.activeDays} of the last 30 days.`
+    : "Participation is up 15% since last quarter."
   const kpiDelta = (k: (typeof KPIS)[number]) => {
     if (!live) return k.delta
     if (k.label === "Total Recognitions") return `+${stats.last7.toLocaleString()} this week`
@@ -182,9 +189,9 @@ export default function Home() {
             <p className="text-sm text-muted-foreground">Org activity levels</p>
           </div>
           <div className="mt-4">
-            <HealthDonut score={85} />
+            <HealthDonut score={healthScore} />
           </div>
-          <p className="mt-5 text-xs italic text-muted-foreground">"Participation is up 15% since last quarter."</p>
+          <p className="mt-5 text-xs italic text-muted-foreground">{healthCaption}</p>
         </div>
 
         {/* AI insights */}
