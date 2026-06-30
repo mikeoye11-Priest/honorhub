@@ -299,6 +299,28 @@ export default function Create() {
     e.target.value = ""
   }
 
+  // A ready-to-fill spreadsheet: column A = Name, column B = Comment (optional).
+  // Opens in Excel / Google Sheets; re-upload it via "Upload CSV".
+  function downloadTemplate() {
+    const rows = [
+      ["Name", "Comment"],
+      ["Amelia Cole", "For beautiful, careful handwriting all week"],
+      ["Noah Bryant", "For being a kind and helpful friend"],
+      ["Priya Shah", "For fantastic ideas in our science lesson"],
+      ["Leo Walsh", ""],
+    ]
+    const csv = rows.map((r) => r.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(",")).join("\r\n")
+    // ﻿ (BOM) makes Excel open it as UTF-8 so accents/quotes render correctly.
+    const blob = new Blob(["﻿" + csv], { type: "text/csv;charset=utf-8" })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement("a")
+    a.href = url
+    a.download = "honorhub-recipients-template.csv"
+    a.click()
+    URL.revokeObjectURL(url)
+    toast.success("Template downloaded", { description: "Add a name (and optional comment) per row, then Upload CSV." })
+  }
+
   function onLogo(e: ChangeEvent<HTMLInputElement>) {
     const f = e.target.files?.[0]
     if (!f) return
@@ -593,10 +615,23 @@ Respond with ONLY a JSON array of strings in order, no prose or fences.`
                     <h2 className="text-3xl font-semibold tracking-tight">Add recipients</h2>
                     <p className="mt-1 text-muted-foreground">One per line. Add a note after a dash. Session-only — never stored.</p>
                   </div>
-                  <Button variant="outline" onClick={() => csvRef.current?.click()}>
-                    <Upload className="size-4" /> Upload CSV
-                  </Button>
+                  <div className="flex flex-wrap gap-2">
+                    <Button variant="outline" onClick={downloadTemplate}>
+                      <Download className="size-4" /> Download template
+                    </Button>
+                    <Button variant="outline" onClick={() => csvRef.current?.click()}>
+                      <Upload className="size-4" /> Upload CSV
+                    </Button>
+                  </div>
                   <input ref={csvRef} type="file" accept=".csv,.txt" hidden onChange={onCSV} />
+                </div>
+
+                <div className="flex items-start gap-2 rounded-lg border border-primary/10 bg-accent/40 p-3 text-xs text-accent-foreground">
+                  <Info className="mt-0.5 size-3.5 shrink-0 text-primary" />
+                  <p>
+                    <span className="font-semibold">Spreadsheet format:</span> column A = <span className="font-medium">Name</span>, column B = <span className="font-medium">Comment</span> (optional).
+                    Opens in Excel or Google Sheets — fill it in, save as CSV, then Upload. A header row is detected automatically.
+                  </p>
                 </div>
                 <Textarea
                   value={h.recipientsRaw}
