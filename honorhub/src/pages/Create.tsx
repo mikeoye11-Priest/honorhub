@@ -273,30 +273,51 @@ export default function Create() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [step])
 
-  function onCSV(e: ChangeEvent<HTMLInputElement>) {
-    const f = e.target.files?.[0]
-    if (!f) return
-    const r = new FileReader()
-    r.onload = () => {
-      const rows = parseCSV(String(r.result))
-      if (!rows.length) return
-      const h0 = (rows[0][0] || "").toLowerCase()
-      const start = /name|pupil|child|recipient|first|forename/.test(h0) ? 1 : 0
-      const lines = rows
-        .slice(start)
-        .map((c) => {
-          const name = (c[0] || "").trim()
-          const reason = (c[1] || "").trim()
-          return reason ? `${name} — ${reason}` : name
-        })
-        .filter(Boolean)
-      if (lines.length) {
-        h.setRecipientsRaw(lines.join("\n"))
-        toast.success(`Imported ${lines.length} recipients`)
-      }
+  // Turn parsed rows (from CSV or a spreadsheet) into "Name — Comment" lines.
+  // Column A = name, column B = comment; a header row is auto-detected.
+  function importRows(rows: unknown[][]) {
+    const cell = (v: unknown) => (v == null ? "" : String(v)).trim()
+    const data = rows.filter((r) => Array.isArray(r) && r.some((x) => cell(x)))
+    if (!data.length) {
+      toast("No rows found", { description: "The file looked empty." })
+      return
     }
-    r.readAsText(f)
+    const start = /name|pupil|child|recipient|first|forename/.test(cell(data[0][0]).toLowerCase()) ? 1 : 0
+    const lines = data
+      .slice(start)
+      .map((c) => {
+        const name = cell(c[0])
+        const reason = cell(c[1])
+        return reason ? `${name} — ${reason}` : name
+      })
+      .filter(Boolean)
+    if (lines.length) {
+      h.setRecipientsRaw(lines.join("\n"))
+      toast.success(`Imported ${lines.length} recipient${lines.length === 1 ? "" : "s"}`)
+    } else {
+      toast("No names found", { description: "Check that the first column contains names." })
+    }
+  }
+
+  async function onUpload(e: ChangeEvent<HTMLInputElement>) {
+    const f = e.target.files?.[0]
     e.target.value = ""
+    if (!f) return
+    const name = f.name.toLowerCase()
+    try {
+      if (name.endsWith(".xlsx") || name.endsWith(".xls")) {
+        // Excel: parse the first sheet. xlsx is lazy-loaded so it stays out of the main bundle.
+        const XLSX = await import("xlsx")
+        const wb = XLSX.read(await f.arrayBuffer(), { type: "array" })
+        const ws = wb.Sheets[wb.SheetNames[0]]
+        if (!ws) throw new Error("empty workbook")
+        importRows(XLSX.utils.sheet_to_json(ws, { header: 1, blankrows: false, defval: "" }) as unknown[][])
+      } else {
+        importRows(parseCSV(await f.text()))
+      }
+    } catch {
+      toast.error("Couldn't read that file", { description: "Use the template, saved as CSV or Excel (.xlsx)." })
+    }
   }
 
   // A ready-to-fill spreadsheet: column A = Name, column B = Comment (optional).
@@ -620,17 +641,17 @@ Respond with ONLY a JSON array of strings in order, no prose or fences.`
                       <Download className="size-4" /> Download template
                     </Button>
                     <Button variant="outline" onClick={() => csvRef.current?.click()}>
-                      <Upload className="size-4" /> Upload CSV
+                      <Upload className="size-4" /> Upload CSV / Excel
                     </Button>
                   </div>
-                  <input ref={csvRef} type="file" accept=".csv,.txt" hidden onChange={onCSV} />
+                  <input ref={csvRef} type="file" accept=".csv,.txt,.xlsx,.xls" hidden onChange={onUpload} />
                 </div>
 
                 <div className="flex items-start gap-2 rounded-lg border border-primary/10 bg-accent/40 p-3 text-xs text-accent-foreground">
                   <Info className="mt-0.5 size-3.5 shrink-0 text-primary" />
                   <p>
                     <span className="font-semibold">Spreadsheet format:</span> column A = <span className="font-medium">Name</span>, column B = <span className="font-medium">Comment</span> (optional).
-                    Opens in Excel or Google Sheets — fill it in, save as CSV, then Upload. A header row is detected automatically.
+                    Works with Excel (<span className="font-medium">.xlsx</span>), Google Sheets and <span className="font-medium">.csv</span> — fill in the template and upload. A header row is detected automatically.
                   </p>
                 </div>
                 <Textarea
