@@ -28,12 +28,31 @@ function makeHost(): HTMLDivElement {
   return host
 }
 
-function makeCertEl(page: CertPage): HTMLDivElement {
+/** Create the off-screen certificate, append it to the host, and bake in colours.
+ *  html-to-image@1.11 renders `currentColor` / `var(--…)` inside inline SVG
+ *  unreliably (often as black), which strips a template's ornaments of their
+ *  accent — so the PDF looks like a different, plainer template than the on-screen
+ *  preview. We append first (so the .t-<key> CSS variables resolve), read the
+ *  computed colours, and substitute literal hex values into the SVG before the
+ *  snapshot, leaving nothing for the snapshotter to misinterpret. */
+function mountCertEl(host: HTMLDivElement, page: CertPage): HTMLDivElement {
   const el = document.createElement("div")
   el.className = `cert t-${page.fields.template}`
   el.style.cssText = `width:${PX_W}px;height:${PX_H}px;animation:none;`
   el.style.setProperty("--accent", page.fields.accent)
-  el.innerHTML = certInnerHTML(page.fields, page.recipient)
+  host.appendChild(el)
+
+  const cs = getComputedStyle(el)
+  const accent = cs.getPropertyValue("--accent").trim() || page.fields.accent
+  const navy = cs.getPropertyValue("--navy").trim()
+  const leaf = cs.getPropertyValue("--leaf").trim()
+
+  let html = certInnerHTML(page.fields, page.recipient)
+  html = html.replace(/currentColor/g, accent)
+  if (navy) html = html.replace(/var\(--navy\)/g, navy)
+  if (leaf) html = html.replace(/var\(--leaf\)/g, leaf)
+  html = html.replace(/var\(--accent\)/g, accent)
+  el.innerHTML = html
   return el
 }
 
@@ -46,8 +65,7 @@ export async function downloadPdf(pages: CertPage[], filename = "honorhub-certif
   const pdf = new jsPDF({ orientation: "landscape", unit: "mm", format: "a4" })
   try {
     for (let i = 0; i < pages.length; i++) {
-      const el = makeCertEl(pages[i])
-      host.appendChild(el)
+      const el = mountCertEl(host, pages[i])
       const canvas = await toCanvas(el, RENDER_OPTS)
       if (i > 0) pdf.addPage()
       pdf.addImage(canvas.toDataURL("image/png"), "PNG", 0, 0, 297, 210)
@@ -70,8 +88,7 @@ export async function buildShareFile(pages: CertPage[], fileBase = "honorhub-cer
     const { toBlob } = await import("html-to-image")
     const host = makeHost()
     try {
-      const el = makeCertEl(pages[0])
-      host.appendChild(el)
+      const el = mountCertEl(host, pages[0])
       const blob = await toBlob(el, RENDER_OPTS)
       if (!blob) throw new Error("image render failed")
       return new File([blob], `${fileBase}.png`, { type: "image/png" })
@@ -86,8 +103,7 @@ export async function buildShareFile(pages: CertPage[], fileBase = "honorhub-cer
   const pdf = new jsPDF({ orientation: "landscape", unit: "mm", format: "a4" })
   try {
     for (let i = 0; i < pages.length; i++) {
-      const el = makeCertEl(pages[i])
-      host.appendChild(el)
+      const el = mountCertEl(host, pages[i])
       const canvas = await toCanvas(el, RENDER_OPTS)
       if (i > 0) pdf.addPage()
       pdf.addImage(canvas.toDataURL("image/png"), "PNG", 0, 0, 297, 210)
