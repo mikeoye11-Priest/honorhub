@@ -1,7 +1,8 @@
 // Shared certificates — the "Copy share link" option. When the backend is
-// configured, a single certificate is saved to public.shared_certificates and
-// rendered for anyone at /c/:slug. In demo mode there is nowhere to store it,
-// so these helpers no-op and the UI falls back to file sharing only.
+// configured, a certificate's NON-PII design is saved to public.shared_certificates
+// and rendered for anyone at /c/:slug. The recipient (pupil) name + message are
+// NEVER stored server-side — they travel only in the URL fragment (#…), which the
+// browser does not send to the server. In demo mode these helpers no-op.
 import { supabase } from "./supabase"
 import type { CertFields, CertPage } from "@/components/Certificate"
 import type { Recipient } from "./honor"
@@ -12,11 +13,22 @@ function newSlug(): string {
   return (rnd() + rnd()).slice(0, 24)
 }
 
-export function shareUrl(slug: string): string {
-  return `${window.location.origin}/c/${slug}`
+/** Public URL for a slug. The recipient (if given) is encoded in the fragment,
+ *  so their name/message stay client-side and never reach the server. */
+export function shareUrl(slug: string, recipient?: Recipient): string {
+  const base = `${window.location.origin}/c/${slug}`
+  if (!recipient) return base
+  const frag = new URLSearchParams({ n: recipient.name, r: recipient.reason || "" }).toString()
+  return `${base}#${frag}`
 }
 
-/** Save one certificate and return its public URL, or null when unavailable. */
+/** Recover the recipient from a share URL fragment (client-side only). */
+export function recipientFromHash(hash: string): Recipient {
+  const p = new URLSearchParams(hash.replace(/^#/, ""))
+  return { name: p.get("n") || "Recipient", reason: p.get("r") || "" }
+}
+
+/** Save a certificate's design (no pupil PII) and return its public URL. */
 export async function createShareLink(orgId: string | null, page: CertPage): Promise<string | null> {
   if (!supabase || !orgId) return null
   const { data: auth } = await supabase.auth.getUser()
@@ -31,23 +43,20 @@ export async function createShareLink(orgId: string | null, page: CertPage): Pro
     logo: f.logo,
     org: f.org,
     award: f.award,
-    recipient_name: page.recipient?.name ?? "Recipient",
-    reason: page.recipient?.reason ?? null,
     signatory: f.signatory,
     cert_date: f.date,
   })
   if (error) return null
-  return shareUrl(slug)
+  return shareUrl(slug, page.recipient)
 }
 
-export interface SharedCertificate {
+export interface SharedDesign {
   fields: CertFields
-  recipient: Recipient
   createdAt: string
 }
 
-/** Resolve a shared certificate by slug for the public viewer (works for anon). */
-export async function fetchSharedCertificate(slug: string): Promise<SharedCertificate | null> {
+/** Resolve a shared certificate's design by slug (works for anon visitors). */
+export async function fetchSharedDesign(slug: string): Promise<SharedDesign | null> {
   if (!supabase) return null
   const { data, error } = await supabase.rpc("get_shared_certificate", { p_slug: slug })
   if (error) return null
@@ -58,8 +67,6 @@ export async function fetchSharedCertificate(slug: string): Promise<SharedCertif
         logo: string | null
         org: string
         award: string
-        recipient_name: string
-        reason: string | null
         signatory: string | null
         cert_date: string | null
         created_at: string
@@ -76,7 +83,6 @@ export async function fetchSharedCertificate(slug: string): Promise<SharedCertif
       date: row.cert_date ?? "",
       signatory: row.signatory ?? "",
     },
-    recipient: { name: row.recipient_name, reason: row.reason ?? "" },
     createdAt: row.created_at,
   }
 }

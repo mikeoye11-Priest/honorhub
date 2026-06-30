@@ -4,14 +4,17 @@ import { Award, Download, Loader2, Share2 } from "lucide-react"
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { Certificate } from "@/components/Certificate"
-import { fetchSharedCertificate, type SharedCertificate } from "@/lib/share"
+import { fetchSharedDesign, recipientFromHash, type SharedDesign } from "@/lib/share"
+import type { Recipient } from "@/lib/honor"
 import { downloadPdf } from "@/lib/pdf"
 
 export default function SharedCertificatePage() {
   const { slug } = useParams<{ slug: string }>()
   const [state, setState] = useState<"loading" | "ready" | "missing">("loading")
-  const [cert, setCert] = useState<SharedCertificate | null>(null)
+  const [design, setDesign] = useState<SharedDesign | null>(null)
   const [pdfBusy, setPdfBusy] = useState(false)
+  // Recipient (pupil) name + message live in the URL fragment, never the server.
+  const recipient: Recipient = recipientFromHash(window.location.hash)
 
   useEffect(() => {
     let active = true
@@ -19,10 +22,10 @@ export default function SharedCertificatePage() {
       setState("missing")
       return
     }
-    fetchSharedCertificate(slug).then((c) => {
+    fetchSharedDesign(slug).then((d) => {
       if (!active) return
-      if (c) {
-        setCert(c)
+      if (d) {
+        setDesign(d)
         setState("ready")
       } else {
         setState("missing")
@@ -34,11 +37,11 @@ export default function SharedCertificatePage() {
   }, [slug])
 
   async function download() {
-    if (!cert) return
+    if (!design) return
     setPdfBusy(true)
     const id = toast.loading("Building your PDF…")
     try {
-      await downloadPdf([{ fields: cert.fields, recipient: cert.recipient }], `honorhub-${cert.recipient.name.toLowerCase().replace(/[^a-z0-9]+/g, "-") || "certificate"}.pdf`)
+      await downloadPdf([{ fields: design.fields, recipient }], `honorhub-${recipient.name.toLowerCase().replace(/[^a-z0-9]+/g, "-") || "certificate"}.pdf`)
       toast.success("PDF downloaded", { id })
     } catch {
       toast.error("Couldn't build the PDF", { id })
@@ -81,17 +84,17 @@ export default function SharedCertificatePage() {
           </div>
         )}
 
-        {state === "ready" && cert && (
+        {state === "ready" && design && (
           <>
             <div className="mb-6 text-center">
-              <p className="text-sm font-medium uppercase tracking-wider text-primary">{cert.fields.org}</p>
+              <p className="text-sm font-medium uppercase tracking-wider text-primary">{design.fields.org}</p>
               <h1 className="mt-1 text-2xl font-bold tracking-tight sm:text-3xl">
-                {cert.recipient.name} — {cert.fields.award}
+                {recipient.name} — {design.fields.award}
               </h1>
             </div>
             <div className="rounded-2xl border bg-card p-3 shadow-soft sm:p-5">
               <div className="overflow-hidden rounded-xl ring-1 ring-border">
-                <Certificate fields={cert.fields} recipient={cert.recipient} />
+                <Certificate fields={design.fields} recipient={recipient} />
               </div>
             </div>
             <div className="mt-6 flex justify-center">
