@@ -770,11 +770,6 @@ Respond with ONLY a JSON array of strings in order, no prose or fences.`
             <ChevronLeft className="size-4" /> Previous
           </Button>
           <div className="flex items-center gap-2">
-            {step === 3 && (
-              <Button variant="outline" onClick={() => toast("Saved as draft (demo)")}>
-                Save as draft
-              </Button>
-            )}
             {step < 3 ? (
               <Button onClick={() => setStep((s) => s + 1)} disabled={!canAdvance}>
                 Next: {STEPS[step + 1].label} <ArrowRight className="size-4" />

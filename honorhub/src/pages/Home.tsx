@@ -23,7 +23,15 @@ import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { useHonor } from "@/lib/store"
 import { useExportStats } from "@/lib/exports"
+import { useAuth } from "@/lib/auth"
 import { VERTICALS } from "@/lib/honor"
+
+function greeting(): string {
+  const h = new Date().getHours()
+  if (h < 12) return "Good morning"
+  if (h < 18) return "Good afternoon"
+  return "Good evening"
+}
 
 const KPIS = [
   { label: "Total Recognitions", value: "1,284", delta: "+12%", trend: "up" as const, icon: Trophy, tint: "bg-accent text-primary" },
@@ -101,7 +109,9 @@ function HealthDonut({ score }: { score: number }) {
 export default function Home() {
   const navigate = useNavigate()
   const { vertical } = useHonor()
+  const { configured, user } = useAuth()
   const v = VERTICALS[vertical]
+  const firstName = (configured && user?.fullName?.trim().split(/\s+/)[0]) || "there"
   const card = "rounded-xl border bg-card shadow-soft"
   const [activityFilter, setActivityFilter] = useState<"all" | "milestones">("all")
   const visibleActivity = activityFilter === "milestones" ? ACTIVITY.filter((a) => a.kind === "milestone") : ACTIVITY
@@ -121,7 +131,7 @@ export default function Home() {
       {/* Greeting */}
       <section className="mb-6 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-extrabold tracking-tight">Good morning, Michael!</h2>
+          <h2 className="text-2xl font-extrabold tracking-tight">{greeting()}, {firstName}!</h2>
           <p className="mt-1 text-muted-foreground">Let's celebrate someone's achievement today.</p>
         </div>
         <div className="flex flex-wrap gap-2">
