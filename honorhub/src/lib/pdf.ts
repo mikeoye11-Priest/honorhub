@@ -28,13 +28,30 @@ function makeHost(): HTMLDivElement {
   return host
 }
 
-/** Create the off-screen certificate, append it to the host, and bake in colours.
- *  html-to-image@1.11 renders `currentColor` / `var(--…)` inside inline SVG
- *  unreliably (often as black), which strips a template's ornaments of their
- *  accent — so the PDF looks like a different, plainer template than the on-screen
- *  preview. We append first (so the .t-<key> CSS variables resolve), read the
- *  computed colours, and substitute literal hex values into the SVG before the
- *  snapshot, leaving nothing for the snapshotter to misinterpret. */
+// Every CSS custom property a template can rely on. html-to-image@1.11 snapshots
+// the element but loses class-defined custom properties (it keeps inline ones),
+// so var(--paper)/var(--cert-ink)/… silently fall back to their defaults — e.g.
+// a dark template (Midnight) loses its dark paper and renders white. We bake the
+// resolved values inline so the snapshot no longer depends on the .t-<key> rules.
+const PAINT_VARS = [
+  "--paper",
+  "--accent",
+  "--cert-ink",
+  "--cert-ink-soft",
+  "--cert-ink-faint",
+  "--navy",
+  "--leaf",
+  "--cert-display",
+  "--serif",
+  "--round",
+  "--ui",
+  "--script",
+] as const
+
+/** Create the off-screen certificate, append it, and bake the template's
+ *  resolved variables + background inline so the snapshot matches the on-screen
+ *  design. Also substitutes literal colours into the inline SVG (html-to-image
+ *  renders currentColor/var() in SVG unreliably, often as black). */
 function mountCertEl(host: HTMLDivElement, page: CertPage): HTMLDivElement {
   const el = document.createElement("div")
   el.className = `cert t-${page.fields.template}`
@@ -42,11 +59,21 @@ function mountCertEl(host: HTMLDivElement, page: CertPage): HTMLDivElement {
   el.style.setProperty("--accent", page.fields.accent)
   host.appendChild(el)
 
+  // 1) Bake resolved custom properties inline (they cascade to every child).
   const cs = getComputedStyle(el)
+  for (const v of PAINT_VARS) {
+    const val = cs.getPropertyValue(v).trim()
+    if (val) el.style.setProperty(v, val)
+  }
+  // 2) Bake the resolved background (color + any gradient) so paper never drops to white.
+  el.style.backgroundColor = cs.backgroundColor
+  const bgImage = cs.backgroundImage
+  if (bgImage && bgImage !== "none") el.style.backgroundImage = bgImage
+
+  // 3) Resolve SVG ornament colours to literal hex (currentColor/var in SVG).
   const accent = cs.getPropertyValue("--accent").trim() || page.fields.accent
   const navy = cs.getPropertyValue("--navy").trim()
   const leaf = cs.getPropertyValue("--leaf").trim()
-
   let html = certInnerHTML(page.fields, page.recipient)
   html = html.replace(/currentColor/g, accent)
   if (navy) html = html.replace(/var\(--navy\)/g, navy)
