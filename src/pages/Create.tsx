@@ -40,7 +40,7 @@ import { useHonor } from "@/lib/store"
 import { useAuth } from "@/lib/auth"
 import { VERTICALS, TEMPLATES, ACCENTS, parseRecipients } from "@/lib/honor"
 import { COLLECTIONS, getPack } from "@/lib/catalog"
-import { downloadPdf, buildShareFile } from "@/lib/pdf"
+import { downloadPdf, buildShareFile, usesNativePdfDialog } from "@/lib/pdf"
 import { usePacks } from "@/lib/packs"
 import { recordExport } from "@/lib/exports"
 import { createShareLink } from "@/lib/share"
@@ -149,10 +149,15 @@ export default function Create() {
     const pages = buildPages()
     if (!pages.length) return
     setPdfBusy(true)
-    const id = toast.loading(`Building your PDF (${pages.length} ${pages.length === 1 ? "certificate" : "certificates"})…`)
+    const nativePdf = usesNativePdfDialog()
+    const id = toast.loading(
+      nativePdf
+        ? `Opening Chrome's Save as PDF dialog (${pages.length} ${pages.length === 1 ? "certificate" : "certificates"})…`
+        : `Building your PDF (${pages.length} ${pages.length === 1 ? "certificate" : "certificates"})…`,
+    )
     try {
       await downloadPdf(pages, `${fileBase}.pdf`)
-      toast.success("PDF downloaded", { id })
+      toast.success(nativePdf ? "Choose Save as PDF in the print dialog" : "PDF downloaded", { id })
       logExport("pdf")
     } catch {
       toast.error("Couldn't build the PDF", { id })

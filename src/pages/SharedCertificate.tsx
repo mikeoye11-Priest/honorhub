@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Certificate } from "@/components/Certificate"
 import { fetchSharedDesign, recipientFromHash, type SharedDesign } from "@/lib/share"
 import type { Recipient } from "@/lib/honor"
-import { downloadPdf } from "@/lib/pdf"
+import { downloadPdf, usesNativePdfDialog } from "@/lib/pdf"
 
 export default function SharedCertificatePage() {
   const { slug } = useParams<{ slug: string }>()
@@ -39,10 +39,11 @@ export default function SharedCertificatePage() {
   async function download() {
     if (!design) return
     setPdfBusy(true)
-    const id = toast.loading("Building your PDF…")
+    const nativePdf = usesNativePdfDialog()
+    const id = toast.loading(nativePdf ? "Opening Chrome's Save as PDF dialog…" : "Building your PDF…")
     try {
       await downloadPdf([{ fields: design.fields, recipient }], `honorhub-${recipient.name.toLowerCase().replace(/[^a-z0-9]+/g, "-") || "certificate"}.pdf`)
-      toast.success("PDF downloaded", { id })
+      toast.success(nativePdf ? "Choose Save as PDF in the print dialog" : "PDF downloaded", { id })
     } catch {
       toast.error("Couldn't build the PDF", { id })
     } finally {

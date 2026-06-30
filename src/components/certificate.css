@@ -650,3 +650,117 @@
 /* Printing is handled in an isolated iframe (see printPages in Certificate.tsx),
    which carries its own @page / .print-page rules. No app-level @media print
    block here — it would be copied into the iframe and hide the certificates. */
+
+/* PDF canvas capture fallback.
+   Browser print handles cqw/container-query units correctly, but canvas capture
+   libraries can misplace cqw-based spacing on some Chrome/template combinations.
+   The off-screen PDF renderer uses a fixed 1123px-wide certificate, so these are
+   the equivalent px values for the shared certificate layout. */
+.cert.pdf-export .frame {
+  inset: 29.2px;
+  border-width: 1.8px;
+  border-radius: 6.7px;
+}
+.cert.pdf-export .frame.inner {
+  inset: 39.3px;
+  border-width: 0.9px;
+}
+.cert.pdf-export .body {
+  width: 78%;
+}
+.cert.pdf-export .logo {
+  max-height: 146px;
+  margin-bottom: 29.2px;
+}
+.cert.pdf-export .eyebrow {
+  font-size: 21.3px;
+  margin-bottom: 27px;
+}
+.cert.pdf-export .award {
+  font-size: 60.6px;
+  margin-bottom: 38.2px;
+}
+.cert.pdf-export .preposition {
+  font-size: 23.6px;
+  margin-bottom: 13.5px;
+}
+.cert.pdf-export .name {
+  font-size: 96.6px;
+  margin-bottom: 18px;
+}
+.cert.pdf-export .rule {
+  height: 1.6px;
+  margin-top: 24px;
+  margin-bottom: 33.7px;
+}
+.cert.pdf-export .reason {
+  font-size: 30.3px;
+}
+.cert.pdf-export .foot {
+  left: 101px;
+  right: 101px;
+  bottom: 74px;
+}
+.cert.pdf-export .sig .v,
+.cert.pdf-export .date .v {
+  font-size: 29.2px;
+  border-bottom-width: 1.1px;
+  padding-bottom: 6.7px;
+  min-width: 247px;
+}
+.cert.pdf-export .sig .k,
+.cert.pdf-export .date .k {
+  font-size: 17.4px;
+  margin-top: 10.1px;
+}
+.cert.pdf-export .cert-seal {
+  bottom: 58.4px;
+  width: 146px;
+  height: 146px;
+  z-index: 5;
+}
+.cert.pdf-export.t-imperial .eyebrow,
+.cert.pdf-export.t-opulent .eyebrow,
+.cert.pdf-export.t-emerald .eyebrow,
+.cert.pdf-export.t-burgundy .eyebrow,
+.cert.pdf-export.t-onyx .eyebrow {
+  gap: 18px;
+}
+.cert.pdf-export.t-imperial .eyebrow::before,
+.cert.pdf-export.t-imperial .eyebrow::after,
+.cert.pdf-export.t-opulent .eyebrow::before,
+.cert.pdf-export.t-opulent .eyebrow::after,
+.cert.pdf-export.t-emerald .eyebrow::before,
+.cert.pdf-export.t-emerald .eyebrow::after,
+.cert.pdf-export.t-burgundy .eyebrow::before,
+.cert.pdf-export.t-burgundy .eyebrow::after,
+.cert.pdf-export.t-onyx .eyebrow::before,
+.cert.pdf-export.t-onyx .eyebrow::after {
+  width: 49.4px;
+  height: 1.4px;
+}
+.cert.pdf-export.t-imperial .rule::after,
+.cert.pdf-export.t-opulent .rule::after,
+.cert.pdf-export.t-emerald .rule::after,
+.cert.pdf-export.t-burgundy .rule::after,
+.cert.pdf-export.t-onyx .rule::after {
+  width: 16.8px;
+  height: 16.8px;
+  box-shadow: 0 0 0 2.2px var(--paper);
+}
+.cert.pdf-export.t-imperial .rule,
+.cert.pdf-export.t-opulent .rule,
+.cert.pdf-export.t-emerald .rule,
+.cert.pdf-export.t-burgundy .rule,
+.cert.pdf-export.t-onyx .rule {
+  margin-top: 30px;
+  margin-bottom: 42px;
+}
+.cert.pdf-export.t-imperial .cert-seal,
+.cert.pdf-export.t-opulent .cert-seal,
+.cert.pdf-export.t-emerald .cert-seal,
+.cert.pdf-export.t-burgundy .cert-seal,
+.cert.pdf-export.t-onyx .cert-seal {
+  bottom: 58px;
+  filter: drop-shadow(0 6px 11px rgba(0, 0, 0, 0.3));
+}

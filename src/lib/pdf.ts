@@ -3,12 +3,17 @@
 // with the browser's own renderer (gradients, foil text and container queries all
 // work), and either written into an A4-landscape PDF (one page per certificate)
 // or exported as a single PNG for sharing.
-import { certInnerHTML, type CertPage } from "@/components/Certificate"
+import { certInnerHTML, printPages, type CertPage } from "@/components/Certificate"
 
 const PX_W = 1123 // ≈ A4 landscape width at 96dpi
 const PX_H = Math.round((PX_W * 210) / 297)
 const RENDER_OPTS = { pixelRatio: 2, width: PX_W, height: PX_H, cacheBust: true }
 const CANVAS_SCALE = 2
+
+export function usesNativePdfDialog(): boolean {
+  const ua = navigator.userAgent
+  return /\bChrome\//.test(ua) && !/\bEdg\//.test(ua) && !/\bOPR\//.test(ua)
+}
 
 async function ensureFonts(): Promise<void> {
   // Make sure web fonts (Fraunces, Great Vibes, …) are ready before snapshotting.
@@ -193,7 +198,7 @@ interface MountedCert {
  *  renders currentColor/var() in SVG unreliably, often as black). */
 function mountCertEl(host: HTMLDivElement, page: CertPage): MountedCert {
   const el = document.createElement("div")
-  el.className = `cert t-${page.fields.template}`
+  el.className = `cert t-${page.fields.template} pdf-export`
   el.style.cssText = `width:${PX_W}px;height:${PX_H}px;animation:none;`
   el.style.setProperty("--accent", page.fields.accent)
   host.appendChild(el)
@@ -259,6 +264,10 @@ async function capturePdfCanvas(el: HTMLDivElement, paper: string): Promise<HTML
 
 export async function downloadPdf(pages: CertPage[], filename = "honorhub-certificates.pdf"): Promise<void> {
   if (!pages.length) return
+  if (usesNativePdfDialog()) {
+    printPages(pages)
+    return
+  }
   const { jsPDF } = await import("jspdf")
   await ensureFonts()
 
