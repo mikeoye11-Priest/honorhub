@@ -7,7 +7,7 @@ import { certInnerHTML, type CertPage } from "@/components/Certificate"
 
 const PX_W = 1123 // ≈ A4 landscape width at 96dpi
 const PX_H = Math.round((PX_W * 210) / 297)
-const RENDER_OPTS = { pixelRatio: 2, backgroundColor: "#ffffff", width: PX_W, height: PX_H, cacheBust: true }
+const RENDER_OPTS = { pixelRatio: 2, width: PX_W, height: PX_H, cacheBust: true }
 
 async function ensureFonts(): Promise<void> {
   // Make sure web fonts (Fraunces, Great Vibes, …) are ready before snapshotting.
@@ -127,9 +127,9 @@ function mountCertEl(host: HTMLDivElement, page: CertPage): HTMLDivElement {
   // class rules (html-to-image drops class-defined custom properties).
   for (const [v, val] of Object.entries(vars)) el.style.setProperty(v, val)
   bakeAccentMixes(el, accent, navy)
-  // Force the whole background shorthand to the resolved paper colour. Setting
-  // only backgroundColor lets the class background/background-image rules leak
-  // through in html-to-image, which can flatten dark templates back to white.
+  // Force the whole background shorthand to the resolved paper colour so the
+  // snapshot keeps dark and colour-washed templates instead of depending on
+  // html-to-image's class/style cloning quirks.
   el.style.setProperty("background", paper, "important")
 
   // Resolve SVG ornament colours to literal hex (currentColor/var in SVG render
