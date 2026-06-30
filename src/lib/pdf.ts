@@ -58,6 +58,65 @@ const PAINT_VARS = [
   "--script",
 ] as const
 
+type PaintVar = (typeof PAINT_VARS)[number]
+
+const TEMPLATE_PAINT: Record<string, Partial<Record<PaintVar, string>>> = {
+  laurel: { "--paper": "#fcf9f2", "--cert-display": "var(--serif)" },
+  sunbeam: { "--paper": "#fff7ee", "--cert-display": "var(--round)" },
+  meadow: { "--paper": "#f5faf5", "--cert-display": "var(--serif)" },
+  regal: { "--paper": "#fbf8f0", "--cert-display": "var(--serif)" },
+  confetti: { "--paper": "#ffffff", "--cert-display": "var(--round)" },
+  botanical: { "--paper": "#f6faf2", "--cert-display": "var(--serif)" },
+  midnight: {
+    "--paper": "#1b2230",
+    "--cert-display": "var(--serif)",
+    "--cert-ink": "#ece7da",
+    "--cert-ink-soft": "#aea89a",
+    "--cert-ink-faint": "#6b6657",
+  },
+  excellence: { "--paper": "#fcf8ef", "--navy": "#1c2742", "--cert-display": "var(--serif)" },
+  playful: { "--paper": "#ffffff", "--cert-display": "var(--round)" },
+  grace: { "--paper": "#f6f3e7", "--leaf": "#6f7f4e", "--cert-display": "var(--serif)" },
+  champion: {
+    "--paper": "#16213e",
+    "--navy": "#16213e",
+    "--cert-display": "var(--serif)",
+    "--cert-ink": "#f1ebdb",
+    "--cert-ink-soft": "#c2b594",
+    "--cert-ink-faint": "#7d7457",
+  },
+  executive: { "--paper": "#ffffff", "--navy": "#1b2540", "--cert-display": "var(--serif)" },
+  imperial: {
+    "--paper": "#101a33",
+    "--cert-display": "var(--serif)",
+    "--cert-ink": "#f1ebdb",
+    "--cert-ink-soft": "#c2b594",
+    "--cert-ink-faint": "#837a5c",
+  },
+  emerald: {
+    "--paper": "#0e2b22",
+    "--cert-display": "var(--serif)",
+    "--cert-ink": "#f1ebdb",
+    "--cert-ink-soft": "#c2b594",
+    "--cert-ink-faint": "#837a5c",
+  },
+  burgundy: {
+    "--paper": "#2a0e16",
+    "--cert-display": "var(--serif)",
+    "--cert-ink": "#f1ebdb",
+    "--cert-ink-soft": "#c2b594",
+    "--cert-ink-faint": "#837a5c",
+  },
+  onyx: {
+    "--paper": "#141418",
+    "--cert-display": "var(--serif)",
+    "--cert-ink": "#f1ebdb",
+    "--cert-ink-soft": "#c2b594",
+    "--cert-ink-faint": "#837a5c",
+  },
+  opulent: { "--paper": "#fbf6ea", "--cert-display": "var(--serif)" },
+}
+
 function parseHex(hex: string): [number, number, number] | null {
   const value = hex.trim().replace(/^#/, "")
   if (/^[\da-f]{3}$/i.test(value)) {
@@ -123,6 +182,7 @@ function mountCertEl(host: HTMLDivElement, page: CertPage): MountedCert {
     const val = cs.getPropertyValue(v).trim()
     if (val) vars[v] = val
   }
+  Object.assign(vars, TEMPLATE_PAINT[page.fields.template] ?? {})
   const paper = vars["--paper"] || cs.backgroundColor || "#ffffff"
   const accent = vars["--accent"] || page.fields.accent
   const navy = vars["--navy"] || ""
