@@ -1,0 +1,339 @@
+import { useState } from "react"
+import { useNavigate } from "react-router-dom"
+import { toast } from "sonner"
+import {
+  Trophy,
+  BadgeCheck,
+  Star,
+  TrendingUp,
+  Sparkles,
+  Users,
+  PartyPopper,
+  RefreshCw,
+  ArrowRight,
+  Award,
+  FileText,
+  Plus,
+  UserPlus,
+  Eye,
+} from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { useExportStats } from "@/lib/exports"
+import { useAuth } from "@/lib/auth"
+
+function greeting(): string {
+  const h = new Date().getHours()
+  if (h < 12) return "Good morning"
+  if (h < 18) return "Good afternoon"
+  return "Good evening"
+}
+
+// A near-future date label (always "upcoming"), so events never look stale.
+function upcoming(daysAhead: number) {
+  const d = new Date()
+  d.setDate(d.getDate() + daysAhead)
+  return { day: d.toLocaleDateString("en-GB", { month: "short" }).toUpperCase(), date: String(d.getDate()) }
+}
+
+const KPIS = [
+  { label: "Total Recognitions", value: "1,284", delta: "+12%", trend: "up" as const, icon: Trophy, tint: "bg-accent text-primary" },
+  { label: "Recent Certificates", value: "42", delta: "+5%", trend: "up" as const, icon: BadgeCheck, tint: "bg-info/10 text-info" },
+  { label: "Active Awards", value: "18", delta: "Stable", trend: "flat" as const, icon: Star, tint: "bg-warning/10 text-warning" },
+]
+
+const EVENTS = [
+  { ...upcoming(2), who: "Friday Assembly", what: "Star of the Week", icon: Star, tint: "bg-accent text-primary" },
+  { ...upcoming(9), who: "Reading Champions", what: "Awards ceremony", icon: Award, tint: "bg-info/10 text-info" },
+  { ...upcoming(18), who: "End of Term", what: "Celebration assembly", icon: PartyPopper, tint: "bg-muted text-muted-foreground" },
+]
+
+const ACTIVITY = [
+  {
+    who: "Mrs Hart",
+    action: "recognised",
+    target: "Amelia Cole",
+    quote: "For beautiful, careful handwriting all week — a wonderful example to the whole class.",
+    tags: ["Star of the Week", "Class 3"],
+    when: "2h ago",
+    kind: "person" as const,
+    initials: "MH",
+  },
+  {
+    who: "Class 3 milestone",
+    action: "",
+    target: "",
+    quote: "Class 3 reached 100 stars this term — a celebration certificate was issued to the whole class.",
+    tags: [] as string[],
+    when: "5h ago",
+    kind: "milestone" as const,
+    initials: "",
+  },
+  {
+    who: "Mr Okafor",
+    action: "recognised",
+    target: "Noah Bryant",
+    quote: "For being a kind and helpful friend, and always including others at playtime.",
+    tags: ["Kindness Award"],
+    when: "Yesterday",
+    kind: "person" as const,
+    initials: "MO",
+  },
+]
+
+function HealthDonut({ score }: { score: number }) {
+  const r = 58
+  const c = 2 * Math.PI * r
+  const offset = c * (1 - score / 100)
+  return (
+    <div className="relative flex size-32 items-center justify-center">
+      <svg className="size-full -rotate-90">
+        <circle cx="64" cy="64" r={r} fill="transparent" stroke="var(--muted)" strokeWidth="8" />
+        <circle
+          cx="64"
+          cy="64"
+          r={r}
+          fill="transparent"
+          stroke="var(--primary)"
+          strokeWidth="8"
+          strokeLinecap="round"
+          strokeDasharray={c}
+          strokeDashoffset={offset}
+        />
+      </svg>
+      <div className="absolute flex flex-col items-center">
+        <span className="text-3xl font-extrabold text-primary">{score}</span>
+        <span className="text-[10px] font-bold text-muted-foreground">OPTIMAL</span>
+      </div>
+    </div>
+  )
+}
+
+export default function Home() {
+  const navigate = useNavigate()
+  const { configured, user } = useAuth()
+  const firstName = (configured && user?.fullName?.trim().split(/\s+/)[0]) || "there"
+  const card = "rounded-xl border bg-card shadow-soft"
+  const [activityFilter, setActivityFilter] = useState<"all" | "milestones">("all")
+  const visibleActivity = activityFilter === "milestones" ? ACTIVITY.filter((a) => a.kind === "milestone") : ACTIVITY
+  const { stats, live } = useExportStats()
+
+  // When signed in, surface real export counts; otherwise keep the sample figures.
+  const kpiValue = (k: (typeof KPIS)[number]) => {
+    if (!live) return k.value
+    if (k.label === "Recent Certificates") return stats.last7.toLocaleString()
+    if (k.label === "Total Recognitions") return stats.certificates.toLocaleString()
+    if (k.label === "Active Awards") return stats.awardCount.toLocaleString()
+    return k.value
+  }
+
+  // Real "activity level": share of the last ~22 school days with recognitions.
+  const healthScore = live ? Math.min(100, Math.round((stats.activeDays / 22) * 100)) : 85
+  const healthCaption = live
+    ? `Recognised on ${stats.activeDays} of the last 30 days.`
+    : "Participation is up 15% since last quarter."
+  const kpiDelta = (k: (typeof KPIS)[number]) => {
+    if (!live) return k.delta
+    if (k.label === "Total Recognitions") return `+${stats.last7.toLocaleString()} this week`
+    if (k.label === "Recent Certificates") return "in the last 7 days"
+    return k.delta
+  }
+
+  return (
+    <div className="mx-auto max-w-7xl">
+      {/* Greeting */}
+      <section className="mb-6 flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <h2 className="text-2xl font-extrabold tracking-tight">{greeting()}, {firstName}!</h2>
+          <p className="mt-1 text-muted-foreground">Let's celebrate someone's achievement today.</p>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <Button variant="outline" onClick={() => navigate("/create")}>
+            <UserPlus className="size-4" /> Add Recipient
+          </Button>
+          <Button variant="outline" onClick={() => navigate("/library")}>
+            <Eye className="size-4" /> View Awards
+          </Button>
+          <Button onClick={() => navigate("/create")} className="font-semibold shadow-sm">
+            <Plus className="size-4" /> Create Recognition
+          </Button>
+        </div>
+      </section>
+
+      {/* Bento grid */}
+      <div className="grid grid-cols-12 gap-6">
+        {/* KPIs */}
+        <div className="col-span-12 grid gap-6 sm:grid-cols-3 lg:col-span-8">
+          {KPIS.map((k) => (
+            <div key={k.label} className={`${card} flex flex-col justify-between p-5 transition-shadow hover:shadow-md`}>
+              <div className="flex items-start justify-between">
+                <span className={`grid size-10 place-items-center rounded-full ${k.tint}`}>
+                  <k.icon className="size-5" />
+                </span>
+                <span className={`flex items-center gap-1 text-xs font-bold ${k.trend === "up" ? "text-success" : "text-muted-foreground"}`}>
+                  {k.trend === "up" && <TrendingUp className="size-3.5" />} {kpiDelta(k)}
+                </span>
+              </div>
+              <div className="mt-4">
+                <p className="text-xs uppercase tracking-tight text-muted-foreground">{k.label}</p>
+                <h3 className="mt-1 text-3xl font-extrabold">{kpiValue(k)}</h3>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Health score */}
+        <div className={`${card} col-span-12 flex flex-col items-center justify-center p-6 text-center lg:col-span-4`}>
+          <div>
+            <h3 className="font-bold">Health Score</h3>
+            <p className="text-sm text-muted-foreground">Org activity levels</p>
+          </div>
+          <div className="mt-4">
+            <HealthDonut score={healthScore} />
+          </div>
+          <p className="mt-5 text-xs italic text-muted-foreground">{healthCaption}</p>
+        </div>
+
+        {/* AI insights */}
+        <div className={`${card} col-span-12 flex flex-col overflow-hidden lg:col-span-8`}>
+          <div className="flex items-center justify-between border-b bg-muted/40 p-4">
+            <div className="flex items-center gap-2">
+              <Sparkles className="size-5 text-primary" />
+              <h3 className="font-bold">AI Insights</h3>
+            </div>
+            <span className="rounded bg-accent px-2 py-1 text-[10px] font-bold text-primary">LIVE</span>
+          </div>
+          <div className="grid gap-4 p-5 sm:grid-cols-2">
+            {[
+              { icon: Award, tint: "text-primary", title: "Most-awarded this term", body: "“Star of the Week” is your most-given certificate — your Friday assemblies are clearly landing." },
+              { icon: Users, tint: "text-warning", title: "Worth a mention", body: "It's been a couple of weeks since Reception received a certificate — they could be next to celebrate." },
+            ].map((ins) => (
+              <button key={ins.title} onClick={() => navigate("/create")} className="rounded-xl border bg-muted/40 p-4 text-left transition-colors hover:border-primary">
+                <div className="flex items-start gap-3">
+                  <span className={`grid size-11 shrink-0 place-items-center rounded-full bg-card shadow-sm ${ins.tint}`}>
+                    <ins.icon className="size-5" />
+                  </span>
+                  <div>
+                    <p className="mb-1 text-sm font-bold">{ins.title}</p>
+                    <p className="text-sm leading-relaxed text-muted-foreground">{ins.body}</p>
+                  </div>
+                </div>
+              </button>
+            ))}
+          </div>
+          <div className="px-5 pb-5">
+            <button
+              onClick={() => toast.success("Fresh suggestions generated", { description: "Based on your latest recognition activity." })}
+              className="flex w-full items-center justify-center gap-2 rounded-lg border border-dashed py-2 text-sm font-bold text-muted-foreground hover:bg-muted/40"
+            >
+              <RefreshCw className="size-4" /> Generate new suggestions
+            </button>
+          </div>
+        </div>
+
+        {/* Upcoming events / recognition opportunities */}
+        <div className={`${card} col-span-12 p-5 lg:col-span-4`}>
+          <h3 className="mb-4 font-bold">Upcoming Events</h3>
+          <div className="flex flex-col gap-2">
+            {EVENTS.map((e) => (
+              <div key={e.who} className="flex items-center gap-3 rounded-lg p-2 transition-colors hover:bg-muted/50">
+                <div className={`flex size-10 flex-col items-center justify-center rounded-lg ${e.tint}`}>
+                  <span className="text-[10px] font-bold">{e.day}</span>
+                  <span className="text-sm font-bold leading-none">{e.date}</span>
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm font-bold">{e.who}</p>
+                  <p className="text-xs text-muted-foreground">{e.what}</p>
+                </div>
+                <Button variant="ghost" size="icon" className="text-primary" aria-label="Recognise" onClick={() => navigate("/create")}>
+                  <e.icon className="size-5" />
+                </Button>
+              </div>
+            ))}
+          </div>
+          <button onClick={() => navigate("/reports")} className="mt-5 flex w-full items-center justify-center gap-1 text-sm font-bold text-primary hover:underline">
+            View Calendar <ArrowRight className="size-4" />
+          </button>
+        </div>
+
+        {/* Recent activity timeline */}
+        <div className={`${card} col-span-12 p-5`}>
+          <div className="mb-5 flex items-center justify-between">
+            <h3 className="font-bold">Recent Activity</h3>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setActivityFilter("all")}
+                className={`rounded-full px-3 py-1 text-xs ${activityFilter === "all" ? "bg-accent font-bold text-primary" : "font-medium text-muted-foreground hover:bg-muted"}`}
+              >
+                All Activity
+              </button>
+              <button
+                onClick={() => setActivityFilter("milestones")}
+                className={`rounded-full px-3 py-1 text-xs ${activityFilter === "milestones" ? "bg-accent font-bold text-primary" : "font-medium text-muted-foreground hover:bg-muted"}`}
+              >
+                Milestones
+              </button>
+            </div>
+          </div>
+          <div className="relative">
+            <div className="absolute bottom-0 left-6 top-0 w-px bg-border" />
+            <div className="relative flex flex-col gap-8">
+              {visibleActivity.map((a, i) => (
+                <div key={i} className="flex items-start gap-6">
+                  <div className="z-10 grid size-12 shrink-0 place-items-center rounded-full border-4 border-card bg-card shadow-sm">
+                    {a.kind === "milestone" ? (
+                      <Award className="size-5 text-primary" />
+                    ) : (
+                      <Avatar className="size-10">
+                        <AvatarFallback className="bg-accent text-xs font-bold text-primary">{a.initials}</AvatarFallback>
+                      </Avatar>
+                    )}
+                  </div>
+                  <div className="flex-1 rounded-xl border bg-card/60 p-4 transition-shadow hover:shadow-sm">
+                    <div className="mb-1 flex items-center justify-between">
+                      <p className="text-sm font-bold">
+                        {a.who} {a.action && <span className="font-normal text-muted-foreground">{a.action}</span>}{" "}
+                        {a.target && <span>{a.target}</span>}
+                      </p>
+                      <span className="text-xs text-muted-foreground">{a.when}</span>
+                    </div>
+                    <p className="flex items-start gap-2 text-sm italic text-muted-foreground">
+                      {a.kind === "milestone" && <FileText className="mt-0.5 size-4 shrink-0 text-primary" />}
+                      {a.quote}
+                    </p>
+                    {a.tags.length > 0 && (
+                      <div className="mt-3 flex gap-2">
+                        {a.tags.map((t) => (
+                          <span key={t} className="rounded bg-accent px-2 py-0.5 text-[10px] font-bold uppercase text-primary">
+                            {t}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="mt-8 flex justify-center">
+            <button
+              onClick={() => toast("You're all caught up", { description: "No older activity to load." })}
+              className="rounded-full border px-6 py-2 text-sm font-bold text-muted-foreground hover:bg-muted"
+            >
+              Load More Activity
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Floating create button */}
+      <button
+        onClick={() => navigate("/create")}
+        aria-label="Create recognition"
+        className="group fixed bottom-8 right-8 z-40 grid size-14 place-items-center rounded-full bg-primary text-primary-foreground shadow-2xl transition-transform hover:scale-105 active:scale-95"
+      >
+        <Plus className="size-7" />
+      </button>
+    </div>
+  )
+}

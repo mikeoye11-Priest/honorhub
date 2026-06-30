@@ -1,0 +1,652 @@
+/* ================================================================
+   THE CERTIFICATE — ported from the HonorHub prototype.
+   Everything scales from container width (cqw), so the same markup
+   is crisp in a small preview and on full A4. Each template just
+   swaps paper, font, accent default and ornaments.
+================================================================= */
+.cert {
+  --serif: "Fraunces", Georgia, "Times New Roman", serif;
+  --round: "Quicksand", "Trebuchet MS", system-ui, sans-serif;
+  --ui: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --cert-ink: #2a2622;
+  --cert-ink-soft: #6e665c;
+  --cert-ink-faint: #a39a8d;
+  position: relative;
+  width: 100%;
+  aspect-ratio: 297 / 210;
+  container-type: inline-size;
+  background: var(--paper, #fff);
+  color: var(--cert-ink);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  --accent: #f58220;
+  /* Print the paper, gradients and gold-foil text instead of dropping to white */
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+.cert .frame {
+  position: absolute;
+  inset: 2.6cqw;
+  border: 0.16cqw solid var(--accent);
+  border-radius: 0.6cqw;
+  pointer-events: none;
+  opacity: 0.85;
+}
+.cert .frame.inner {
+  inset: 3.5cqw;
+  border-width: 0.08cqw;
+  opacity: 0.55;
+}
+.cert .cert-orn {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  color: var(--accent);
+}
+.cert .body {
+  position: relative;
+  width: 78%;
+  z-index: 2;
+}
+.cert .logo {
+  display: block;
+  max-height: 13cqw;
+  max-width: 42%;
+  margin: 0 auto 2.6cqw;
+  object-fit: contain;
+}
+.cert .eyebrow {
+  font-family: var(--ui);
+  font-size: 1.9cqw;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--cert-ink-soft);
+  font-weight: 600;
+  margin-bottom: 2.4cqw;
+}
+.cert .award {
+  font-family: var(--cert-display, var(--serif));
+  font-weight: 500;
+  font-size: 5.4cqw;
+  line-height: 1.05;
+  margin: 0 0 3.4cqw;
+  color: var(--cert-ink);
+}
+.cert .preposition {
+  font-family: var(--ui);
+  font-size: 2.1cqw;
+  color: var(--cert-ink-soft);
+  letter-spacing: 0.04em;
+  margin-bottom: 1.2cqw;
+}
+.cert .name {
+  font-family: var(--cert-display, var(--serif));
+  font-weight: 600;
+  font-size: 8.6cqw;
+  line-height: 1;
+  color: var(--accent);
+  margin: 0 0 1.6cqw;
+  letter-spacing: -0.01em;
+}
+.cert .rule {
+  width: 34%;
+  height: 0.14cqw;
+  background: var(--accent);
+  opacity: 0.5;
+  margin: 1.6cqw auto 3cqw;
+}
+.cert .reason {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 2.7cqw;
+  line-height: 1.5;
+  color: var(--cert-ink);
+  max-width: 80%;
+  margin: 0 auto;
+}
+.cert .foot {
+  position: absolute;
+  left: 9cqw;
+  right: 9cqw;
+  bottom: 6.6cqw;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  z-index: 2;
+}
+.cert .sig {
+  text-align: left;
+}
+.cert .sig .v,
+.cert .date .v {
+  font-family: var(--serif);
+  font-size: 2.6cqw;
+  color: var(--cert-ink);
+  border-bottom: 0.1cqw solid var(--cert-ink-faint);
+  padding-bottom: 0.6cqw;
+  min-width: 22cqw;
+}
+.cert .sig .k,
+.cert .date .k {
+  font-family: var(--ui);
+  font-size: 1.55cqw;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--cert-ink-faint);
+  margin-top: 0.9cqw;
+}
+.cert .date {
+  text-align: right;
+}
+.cert .cert-seal {
+  position: absolute;
+  z-index: 3;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 5.2cqw;
+  width: 13cqw;
+  height: 13cqw;
+}
+
+/* ----- Templates ----- */
+.t-laurel {
+  --paper: #fcf9f2;
+  --cert-display: var(--serif);
+}
+.t-sunbeam {
+  --paper: #fff7ee;
+  --cert-display: var(--round);
+}
+.t-sunbeam .frame {
+  border-radius: 2cqw;
+}
+.t-sunbeam .award {
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+.t-sunbeam .name {
+  font-weight: 700;
+}
+.t-sunbeam .reason {
+  font-style: normal;
+  font-family: var(--round);
+  font-weight: 500;
+}
+.t-meadow {
+  --paper: #f5faf5;
+  --cert-display: var(--serif);
+}
+.t-meadow .frame {
+  inset: 0;
+  border: none;
+  border-left: 0.5cqw solid var(--accent);
+  border-radius: 0;
+}
+.t-meadow .frame.inner {
+  display: none;
+}
+.t-meadow .eyebrow {
+  letter-spacing: 0.42em;
+}
+.t-regal {
+  --paper: #fbf8f0;
+  --cert-display: var(--serif);
+  background-image: radial-gradient(120% 80% at 50% 0%, rgba(184, 137, 58, 0.05), transparent 60%);
+}
+.t-regal .frame {
+  inset: 2.2cqw;
+  border-width: 0.3cqw;
+  border-radius: 0;
+  opacity: 0.9;
+}
+.t-regal .frame.inner {
+  inset: 3.1cqw;
+  border-width: 0.1cqw;
+  opacity: 0.7;
+}
+.t-regal .eyebrow {
+  letter-spacing: 0.42em;
+}
+.t-confetti {
+  --paper: #ffffff;
+  --cert-display: var(--round);
+}
+.t-confetti .frame {
+  inset: 2.4cqw;
+  border-style: dashed;
+  border-width: 0.16cqw;
+  border-radius: 3cqw;
+  opacity: 0.5;
+}
+.t-confetti .frame.inner {
+  display: none;
+}
+.t-confetti .award {
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+.t-confetti .name {
+  font-weight: 700;
+}
+.t-confetti .reason {
+  font-style: normal;
+  font-family: var(--round);
+  font-weight: 500;
+}
+.t-botanical {
+  --paper: #f6faf2;
+  --cert-display: var(--serif);
+}
+.t-botanical .frame {
+  inset: 2.8cqw;
+  border-width: 0.1cqw;
+  border-radius: 0;
+  opacity: 0.55;
+}
+.t-botanical .frame.inner {
+  display: none;
+}
+.t-botanical .eyebrow {
+  letter-spacing: 0.36em;
+}
+.t-botanical .reason {
+  max-width: 74%;
+}
+.t-midnight {
+  --paper: #1b2230;
+  --cert-display: var(--serif);
+  --cert-ink: #ece7da;
+  --cert-ink-soft: #aea89a;
+  --cert-ink-faint: #6b6657;
+  background-image: radial-gradient(120% 90% at 50% -10%, rgba(255, 255, 255, 0.06), transparent 55%);
+}
+.t-midnight .frame {
+  inset: 2.6cqw;
+  border-width: 0.12cqw;
+  opacity: 0.75;
+}
+.t-midnight .frame.inner {
+  inset: 3.4cqw;
+  opacity: 0.4;
+}
+
+/* ================================================================
+   SIGNATURE TEMPLATES — designed, illustrative certificates
+================================================================= */
+
+/* Classic Excellence — cream, gold frame, navy corner wedges, script name */
+.t-excellence {
+  --paper: #fcf8ef;
+  --navy: #1c2742;
+  --cert-display: var(--serif);
+}
+.t-excellence .frame {
+  inset: 3cqw;
+  border-width: 0.26cqw;
+  border-radius: 0;
+  border-color: var(--accent);
+  opacity: 0.9;
+}
+.t-excellence .frame.inner {
+  inset: 3.7cqw;
+  border-width: 0.08cqw;
+  opacity: 0.5;
+}
+.t-excellence .eyebrow {
+  color: var(--navy);
+  font-weight: 700;
+  letter-spacing: 0.34em;
+}
+.t-excellence .award {
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--navy);
+  font-weight: 600;
+  font-size: 5cqw;
+}
+.t-excellence .name {
+  font-family: "Great Vibes", cursive;
+  font-weight: 400;
+  font-size: 10cqw;
+  letter-spacing: 0;
+  color: var(--accent);
+}
+
+/* Bright & Playful — white, colourful blobs, rainbow title, rounded font */
+.t-playful {
+  --paper: #ffffff;
+  --cert-display: var(--round);
+}
+.t-playful .frame {
+  display: none;
+}
+.t-playful .body {
+  width: 70%;
+}
+.t-playful .award {
+  font-family: var(--round);
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 6.2cqw;
+  line-height: 0.98;
+  background: linear-gradient(92deg, #ef4444, #f59e0b 28%, #22c55e 52%, #3b82f6 74%, #7c3aed);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.t-playful .name {
+  font-family: var(--round);
+  font-weight: 700;
+  color: #7c3aed;
+}
+.t-playful .reason {
+  font-family: var(--round);
+  font-style: normal;
+  font-weight: 500;
+}
+.t-playful .rule {
+  background: #7c3aed;
+}
+
+/* Church Appreciation — cream, eucalyptus, cross, graceful serif */
+.t-grace {
+  --paper: #f6f3e7;
+  --leaf: #6f7f4e;
+  --cert-display: var(--serif);
+}
+.t-grace .frame {
+  inset: 3cqw;
+  border-width: 0.1cqw;
+  border-radius: 0;
+  border-color: var(--accent);
+  opacity: 0.55;
+}
+.t-grace .frame.inner {
+  display: none;
+}
+.t-grace .eyebrow {
+  letter-spacing: 0.32em;
+}
+.t-grace .award {
+  font-style: italic;
+  font-weight: 500;
+  color: var(--accent);
+}
+
+/* Sports Excellence — navy + gold brushstrokes, bold foil */
+.t-champion {
+  --paper: #16213e;
+  --navy: #16213e;
+  --cert-display: var(--serif);
+  --cert-ink: #f1ebdb;
+  --cert-ink-soft: #c2b594;
+  --cert-ink-faint: #7d7457;
+  background-image: radial-gradient(120% 90% at 50% -10%, rgba(255, 255, 255, 0.06), transparent 55%);
+}
+.t-champion .frame {
+  inset: 2.4cqw;
+  border-width: 0.14cqw;
+  border-radius: 0;
+  border-color: var(--accent);
+  opacity: 0.55;
+}
+.t-champion .frame.inner {
+  display: none;
+}
+.t-champion .award {
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  font-weight: 700;
+  font-size: 6cqw;
+}
+.t-champion .award,
+.t-champion .name {
+  background: linear-gradient(
+    118deg,
+    var(--foil-1, color-mix(in srgb, var(--accent) 40%, #fff)) 0%,
+    var(--foil-2, color-mix(in srgb, var(--accent) 80%, #fff)) 22%,
+    var(--foil-3, var(--accent)) 46%,
+    var(--foil-4, color-mix(in srgb, var(--accent) 62%, #000)) 72%,
+    var(--foil-5, color-mix(in srgb, var(--accent) 32%, #fff)) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Modern Professional — white, navy + gold wedges, letter-spaced serif */
+.t-executive {
+  --paper: #ffffff;
+  --navy: #1b2540;
+  --cert-display: var(--serif);
+}
+.t-executive .frame {
+  inset: 3cqw;
+  border-width: 0.1cqw;
+  border-radius: 0;
+  border-color: var(--navy-border-soft, color-mix(in srgb, var(--navy) 22%, transparent));
+  opacity: 0.7;
+}
+.t-executive .frame.inner {
+  display: none;
+}
+.t-executive .eyebrow {
+  color: var(--navy);
+  font-weight: 700;
+  letter-spacing: 0.3em;
+}
+.t-executive .award {
+  text-transform: uppercase;
+  letter-spacing: 0.24em;
+  color: var(--navy);
+  font-weight: 600;
+  font-size: 4.4cqw;
+}
+.t-executive .name {
+  color: var(--navy);
+  font-weight: 600;
+}
+
+/* ================================================================
+   LUXURY TIER — jewel-tone papers, gold-foil text, ornate frames.
+   Foil = a metallic gradient of --accent clipped to the text.
+================================================================= */
+.t-imperial,
+.t-emerald,
+.t-burgundy,
+.t-onyx {
+  --cert-display: var(--serif);
+  --cert-ink: #f1ebdb;
+  --cert-ink-soft: #c2b594;
+  --cert-ink-faint: #837a5c;
+  background-image: radial-gradient(125% 90% at 50% -12%, rgba(255, 255, 255, 0.08), transparent 55%),
+    radial-gradient(130% 95% at 50% 120%, rgba(0, 0, 0, 0.32), transparent 55%);
+}
+.t-imperial {
+  --paper: #101a33;
+}
+.t-emerald {
+  --paper: #0e2b22;
+}
+.t-burgundy {
+  --paper: #2a0e16;
+}
+.t-onyx {
+  --paper: #141418;
+}
+.t-opulent {
+  --paper: #fbf6ea;
+  --cert-display: var(--serif);
+  background-image: radial-gradient(120% 80% at 50% 0%, var(--accent-wash, color-mix(in srgb, var(--accent) 9%, transparent)), transparent 62%);
+}
+
+/* Foil text — name (all) + award (the most ornate two) */
+.t-imperial .name,
+.t-opulent .name,
+.t-onyx .name,
+.t-emerald .name,
+.t-burgundy .name,
+.t-imperial .award,
+.t-opulent .award {
+  background: linear-gradient(
+    118deg,
+    var(--foil-1, color-mix(in srgb, var(--accent) 40%, #fff)) 0%,
+    var(--foil-2, color-mix(in srgb, var(--accent) 80%, #fff)) 22%,
+    var(--foil-3, var(--accent)) 46%,
+    var(--foil-4, color-mix(in srgb, var(--accent) 62%, #000)) 72%,
+    var(--foil-5, color-mix(in srgb, var(--accent) 32%, #fff)) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.t-imperial .award,
+.t-opulent .award {
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+/* Ornate gold double frame */
+.t-imperial .frame,
+.t-emerald .frame,
+.t-burgundy .frame,
+.t-opulent .frame {
+  inset: 2.3cqw;
+  border-width: 0.32cqw;
+  border-radius: 0;
+  border-image: linear-gradient(135deg, var(--accent-border-light, color-mix(in srgb, var(--accent) 45%, #fff)), var(--accent), var(--accent-border-dark, color-mix(in srgb, var(--accent) 58%, #000))) 1;
+  opacity: 0.95;
+}
+.t-imperial .frame.inner,
+.t-emerald .frame.inner,
+.t-burgundy .frame.inner,
+.t-opulent .frame.inner {
+  inset: 3.1cqw;
+  border-width: 0.1cqw;
+  border-image: none;
+  border-color: var(--accent);
+  opacity: 0.5;
+}
+
+/* Onyx — restrained black-tie minimalism */
+.t-onyx .frame {
+  inset: 2.9cqw;
+  border-width: 0.1cqw;
+  border-radius: 0;
+  border-color: var(--accent-border-soft, color-mix(in srgb, var(--accent) 65%, transparent));
+  opacity: 0.7;
+}
+.t-onyx .frame.inner {
+  display: none;
+}
+
+/* Shared luxe refinements */
+.t-imperial .eyebrow,
+.t-opulent .eyebrow,
+.t-emerald .eyebrow,
+.t-burgundy .eyebrow,
+.t-onyx .eyebrow {
+  letter-spacing: 0.46em;
+}
+.t-onyx .eyebrow {
+  letter-spacing: 0.54em;
+}
+.t-imperial .cert-seal,
+.t-opulent .cert-seal,
+.t-onyx .cert-seal,
+.t-emerald .cert-seal,
+.t-burgundy .cert-seal {
+  filter: drop-shadow(0 0.5cqw 1cqw rgba(0, 0, 0, 0.3));
+}
+
+/* ---- Luxury polish: ligatures, flanked eyebrow, gem divider, ceremony ---- */
+.cert .award,
+.cert .name {
+  text-rendering: optimizeLegibility;
+  font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
+}
+
+/* Org eyebrow flanked by short foil rules */
+.t-imperial .eyebrow,
+.t-opulent .eyebrow,
+.t-emerald .eyebrow,
+.t-burgundy .eyebrow,
+.t-onyx .eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 1.6cqw;
+}
+.t-imperial .eyebrow::before,
+.t-imperial .eyebrow::after,
+.t-opulent .eyebrow::before,
+.t-opulent .eyebrow::after,
+.t-emerald .eyebrow::before,
+.t-emerald .eyebrow::after,
+.t-burgundy .eyebrow::before,
+.t-burgundy .eyebrow::after,
+.t-onyx .eyebrow::before,
+.t-onyx .eyebrow::after {
+  content: "";
+  width: 4.4cqw;
+  height: 0.12cqw;
+  background: var(--accent);
+  opacity: 0.6;
+}
+
+/* Centre gem on the divider */
+.t-imperial .rule,
+.t-opulent .rule,
+.t-emerald .rule,
+.t-burgundy .rule,
+.t-onyx .rule {
+  position: relative;
+  overflow: visible;
+  width: 40%;
+}
+.t-imperial .rule::after,
+.t-opulent .rule::after,
+.t-emerald .rule::after,
+.t-burgundy .rule::after,
+.t-onyx .rule::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 1.5cqw;
+  height: 1.5cqw;
+  background: var(--accent);
+  transform: translate(-50%, -50%) rotate(45deg);
+  box-shadow: 0 0 0 0.2cqw var(--paper);
+}
+
+/* Opulent — ceremonial uppercase award */
+.t-opulent .award {
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: 4.8cqw;
+}
+
+/* Animate certificate swaps unless reduced motion is requested */
+@media (prefers-reduced-motion: no-preference) {
+  .cert {
+    animation: cert-fade 0.35s ease;
+  }
+  @keyframes cert-fade {
+    from {
+      opacity: 0;
+      transform: translateY(4px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+}
+
+/* Printing is handled in an isolated iframe (see printPages in Certificate.tsx),
+   which carries its own @page / .print-page rules. No app-level @media print
+   block here — it would be copied into the iframe and hide the certificates. */
