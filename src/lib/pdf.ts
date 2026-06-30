@@ -8,6 +8,7 @@ import { certInnerHTML, type CertPage } from "@/components/Certificate"
 const PX_W = 1123 // ≈ A4 landscape width at 96dpi
 const PX_H = Math.round((PX_W * 210) / 297)
 const RENDER_OPTS = { pixelRatio: 2, width: PX_W, height: PX_H, cacheBust: true }
+const CANVAS_SCALE = 2
 
 async function ensureFonts(): Promise<void> {
   // Make sure web fonts (Fraunces, Great Vibes, …) are ready before snapshotting.
@@ -220,9 +221,21 @@ function opaqueImageData(canvas: HTMLCanvasElement, paper: string): string {
   return flattened.toDataURL("image/jpeg", 0.96)
 }
 
+async function capturePdfCanvas(el: HTMLDivElement, paper: string): Promise<HTMLCanvasElement> {
+  const { default: html2canvas } = await import("html2canvas")
+  return html2canvas(el, {
+    backgroundColor: paper,
+    scale: CANVAS_SCALE,
+    width: PX_W,
+    height: PX_H,
+    useCORS: true,
+    logging: false,
+  })
+}
+
 export async function downloadPdf(pages: CertPage[], filename = "honorhub-certificates.pdf"): Promise<void> {
   if (!pages.length) return
-  const [{ jsPDF }, { toCanvas }] = await Promise.all([import("jspdf"), import("html-to-image")])
+  const { jsPDF } = await import("jspdf")
   await ensureFonts()
 
   const host = makeHost()
@@ -230,7 +243,7 @@ export async function downloadPdf(pages: CertPage[], filename = "honorhub-certif
   try {
     for (let i = 0; i < pages.length; i++) {
       const { el, paper } = mountCertEl(host, pages[i])
-      const canvas = await toCanvas(el, RENDER_OPTS)
+      const canvas = await capturePdfCanvas(el, paper)
       if (i > 0) pdf.addPage()
       pdf.addImage(opaqueImageData(canvas, paper), "JPEG", 0, 0, 297, 210)
       host.removeChild(el)
@@ -262,13 +275,13 @@ export async function buildShareFile(pages: CertPage[], fileBase = "honorhub-cer
   }
 
   // Several certificates → reuse the PDF path, but capture the bytes.
-  const [{ jsPDF }, { toCanvas }] = await Promise.all([import("jspdf"), import("html-to-image")])
+  const { jsPDF } = await import("jspdf")
   const host = makeHost()
   const pdf = new jsPDF({ orientation: "landscape", unit: "mm", format: "a4" })
   try {
     for (let i = 0; i < pages.length; i++) {
       const { el, paper } = mountCertEl(host, pages[i])
-      const canvas = await toCanvas(el, RENDER_OPTS)
+      const canvas = await capturePdfCanvas(el, paper)
       if (i > 0) pdf.addPage()
       pdf.addImage(opaqueImageData(canvas, paper), "JPEG", 0, 0, 297, 210)
       host.removeChild(el)
