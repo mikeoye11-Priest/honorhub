@@ -113,6 +113,10 @@ export const TEMPLATES: TemplateDef[] = [
   { key: "onyx", name: "Onyx", blurb: "Black-tie minimal" },
   { key: "emerald", name: "Emerald", blurb: "Jewel green & gold" },
   { key: "burgundy", name: "Burgundy", blurb: "Deep wine & gold" },
+  { key: "prestige", name: "Prestige Ivory", blurb: "Ivory, ink & gold" },
+  { key: "sapphire", name: "Sapphire Gala", blurb: "Royal blue ceremony" },
+  { key: "vellum", name: "Heritage Vellum", blurb: "Engraved parchment" },
+  { key: "rose", name: "Rose Ceremony", blurb: "Soft rose-gold" },
   // Classic tier
   { key: "laurel", name: "Laurel", blurb: "Classic, ceremonial" },
   { key: "sunbeam", name: "Sunbeam", blurb: "Warm, younger years" },

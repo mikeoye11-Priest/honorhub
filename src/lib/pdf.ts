@@ -121,6 +121,34 @@ const TEMPLATE_PAINT: Record<string, Partial<Record<PaintVar, string>>> = {
     "--cert-ink-faint": "#837a5c",
   },
   opulent: { "--paper": "#fbf6ea", "--cert-display": "var(--serif)" },
+  prestige: {
+    "--paper": "#fffdf7",
+    "--cert-display": "var(--serif)",
+    "--cert-ink": "#20242e",
+    "--cert-ink-soft": "#746b5d",
+    "--cert-ink-faint": "#a99872",
+  },
+  sapphire: {
+    "--paper": "#0c2446",
+    "--cert-display": "var(--serif)",
+    "--cert-ink": "#f2eddf",
+    "--cert-ink-soft": "#c7b98e",
+    "--cert-ink-faint": "#807454",
+  },
+  vellum: {
+    "--paper": "#fff8e8",
+    "--cert-display": "var(--serif)",
+    "--cert-ink": "#2f2a25",
+    "--cert-ink-soft": "#7b6c57",
+    "--cert-ink-faint": "#b59c6d",
+  },
+  rose: {
+    "--paper": "#fff7f8",
+    "--cert-display": "var(--serif)",
+    "--cert-ink": "#402832",
+    "--cert-ink-soft": "#7c6270",
+    "--cert-ink-faint": "#b98b95",
+  },
 }
 
 const CLIPPED_TEXT_SELECTORS: Record<string, string[]> = {
@@ -131,6 +159,7 @@ const CLIPPED_TEXT_SELECTORS: Record<string, string[]> = {
   onyx: [".name"],
   emerald: [".name"],
   burgundy: [".name"],
+  sapphire: [".award", ".name"],
 }
 
 function parseHex(hex: string): [number, number, number] | null {

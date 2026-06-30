@@ -483,6 +483,42 @@
   --cert-display: var(--serif);
   background-image: radial-gradient(120% 80% at 50% 0%, var(--accent-wash, color-mix(in srgb, var(--accent) 9%, transparent)), transparent 62%);
 }
+.t-prestige {
+  --paper: #fffdf7;
+  --cert-display: var(--serif);
+  --cert-ink: #20242e;
+  --cert-ink-soft: #746b5d;
+  --cert-ink-faint: #a99872;
+  background-image: linear-gradient(135deg, rgba(184, 137, 58, 0.08), transparent 24%, transparent 76%, rgba(32, 36, 46, 0.05)),
+    radial-gradient(90% 70% at 50% 0%, var(--accent-wash, color-mix(in srgb, var(--accent) 8%, transparent)), transparent 62%);
+}
+.t-sapphire {
+  --paper: #0c2446;
+  --cert-display: var(--serif);
+  --cert-ink: #f2eddf;
+  --cert-ink-soft: #c7b98e;
+  --cert-ink-faint: #807454;
+  background-image: radial-gradient(120% 90% at 50% -10%, rgba(255, 255, 255, 0.1), transparent 58%),
+    radial-gradient(120% 85% at 50% 120%, rgba(0, 0, 0, 0.28), transparent 58%);
+}
+.t-vellum {
+  --paper: #fff8e8;
+  --cert-display: var(--serif);
+  --cert-ink: #2f2a25;
+  --cert-ink-soft: #7b6c57;
+  --cert-ink-faint: #b59c6d;
+  background-image: radial-gradient(120% 90% at 50% 0%, rgba(184, 137, 58, 0.13), transparent 62%),
+    linear-gradient(90deg, rgba(47, 42, 37, 0.04), transparent 18%, transparent 82%, rgba(47, 42, 37, 0.04));
+}
+.t-rose {
+  --paper: #fff7f8;
+  --cert-display: var(--serif);
+  --cert-ink: #402832;
+  --cert-ink-soft: #7c6270;
+  --cert-ink-faint: #b98b95;
+  background-image: radial-gradient(95% 80% at 50% 0%, rgba(192, 133, 82, 0.12), transparent 62%),
+    linear-gradient(135deg, rgba(192, 133, 82, 0.08), transparent 28%, transparent 72%, rgba(140, 47, 57, 0.06));
+}
 
 /* Foil text — name (all) + award (the most ornate two) */
 .t-imperial .name,
@@ -490,8 +526,10 @@
 .t-onyx .name,
 .t-emerald .name,
 .t-burgundy .name,
+.t-sapphire .name,
 .t-imperial .award,
-.t-opulent .award {
+.t-opulent .award,
+.t-sapphire .award {
   background: linear-gradient(
     118deg,
     var(--foil-1, color-mix(in srgb, var(--accent) 40%, #fff)) 0%,
@@ -505,7 +543,8 @@
   color: transparent;
 }
 .t-imperial .award,
-.t-opulent .award {
+.t-opulent .award,
+.t-sapphire .award {
   font-weight: 600;
   letter-spacing: 0.01em;
 }
@@ -514,7 +553,8 @@
 .t-imperial .frame,
 .t-emerald .frame,
 .t-burgundy .frame,
-.t-opulent .frame {
+.t-opulent .frame,
+.t-sapphire .frame {
   inset: 2.3cqw;
   border-width: 0.32cqw;
   border-radius: 0;
@@ -524,7 +564,8 @@
 .t-imperial .frame.inner,
 .t-emerald .frame.inner,
 .t-burgundy .frame.inner,
-.t-opulent .frame.inner {
+.t-opulent .frame.inner,
+.t-sapphire .frame.inner {
   inset: 3.1cqw;
   border-width: 0.1cqw;
   border-image: none;
@@ -543,13 +584,45 @@
 .t-onyx .frame.inner {
   display: none;
 }
+.t-prestige .frame {
+  inset: 2.7cqw;
+  border-width: 0.12cqw;
+  border-radius: 0;
+  border-color: #20242e;
+  box-shadow: inset 0 0 0 0.42cqw var(--paper), inset 0 0 0 0.56cqw var(--accent);
+  opacity: 0.92;
+}
+.t-prestige .frame.inner {
+  inset: 4.1cqw;
+  border-width: 0.08cqw;
+  border-color: var(--accent);
+  opacity: 0.56;
+}
+.t-vellum .frame,
+.t-rose .frame {
+  inset: 2.8cqw;
+  border-width: 0.12cqw;
+  border-radius: 0;
+  border-color: var(--accent);
+  opacity: 0.58;
+}
+.t-vellum .frame.inner,
+.t-rose .frame.inner {
+  inset: 3.7cqw;
+  border-width: 0.08cqw;
+  opacity: 0.34;
+}
 
 /* Shared luxe refinements */
 .t-imperial .eyebrow,
 .t-opulent .eyebrow,
 .t-emerald .eyebrow,
 .t-burgundy .eyebrow,
-.t-onyx .eyebrow {
+.t-onyx .eyebrow,
+.t-prestige .eyebrow,
+.t-sapphire .eyebrow,
+.t-vellum .eyebrow,
+.t-rose .eyebrow {
   letter-spacing: 0.46em;
 }
 .t-onyx .eyebrow {
@@ -559,8 +632,47 @@
 .t-opulent .cert-seal,
 .t-onyx .cert-seal,
 .t-emerald .cert-seal,
-.t-burgundy .cert-seal {
+.t-burgundy .cert-seal,
+.t-prestige .cert-seal,
+.t-sapphire .cert-seal,
+.t-vellum .cert-seal,
+.t-rose .cert-seal {
   filter: drop-shadow(0 0.5cqw 1cqw rgba(0, 0, 0, 0.3));
+}
+.t-prestige .award {
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 4.6cqw;
+  color: #20242e;
+}
+.t-prestige .name {
+  color: var(--accent);
+}
+.t-sapphire .award {
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 5.2cqw;
+}
+.t-vellum .award {
+  font-style: italic;
+  font-weight: 500;
+  color: #3b332b;
+}
+.t-vellum .name {
+  font-family: "Great Vibes", cursive;
+  font-size: 10.2cqw;
+  font-weight: 400;
+  letter-spacing: 0;
+  color: var(--accent);
+}
+.t-rose .award {
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #5d3542;
+  font-size: 4.9cqw;
+}
+.t-rose .name {
+  color: #9d5f68;
 }
 
 /* ---- Luxury polish: ligatures, flanked eyebrow, gem divider, ceremony ---- */
@@ -575,7 +687,11 @@
 .t-opulent .eyebrow,
 .t-emerald .eyebrow,
 .t-burgundy .eyebrow,
-.t-onyx .eyebrow {
+.t-onyx .eyebrow,
+.t-prestige .eyebrow,
+.t-sapphire .eyebrow,
+.t-vellum .eyebrow,
+.t-rose .eyebrow {
   display: inline-flex;
   align-items: center;
   gap: 1.6cqw;
@@ -589,7 +705,15 @@
 .t-burgundy .eyebrow::before,
 .t-burgundy .eyebrow::after,
 .t-onyx .eyebrow::before,
-.t-onyx .eyebrow::after {
+.t-onyx .eyebrow::after,
+.t-prestige .eyebrow::before,
+.t-prestige .eyebrow::after,
+.t-sapphire .eyebrow::before,
+.t-sapphire .eyebrow::after,
+.t-vellum .eyebrow::before,
+.t-vellum .eyebrow::after,
+.t-rose .eyebrow::before,
+.t-rose .eyebrow::after {
   content: "";
   width: 4.4cqw;
   height: 0.12cqw;
@@ -602,7 +726,11 @@
 .t-opulent .rule,
 .t-emerald .rule,
 .t-burgundy .rule,
-.t-onyx .rule {
+.t-onyx .rule,
+.t-prestige .rule,
+.t-sapphire .rule,
+.t-vellum .rule,
+.t-rose .rule {
   position: relative;
   overflow: visible;
   width: 40%;
@@ -611,7 +739,11 @@
 .t-opulent .rule::after,
 .t-emerald .rule::after,
 .t-burgundy .rule::after,
-.t-onyx .rule::after {
+.t-onyx .rule::after,
+.t-prestige .rule::after,
+.t-sapphire .rule::after,
+.t-vellum .rule::after,
+.t-rose .rule::after {
   content: "";
   position: absolute;
   top: 50%;
@@ -723,7 +855,11 @@
 .cert.pdf-export.t-opulent .eyebrow,
 .cert.pdf-export.t-emerald .eyebrow,
 .cert.pdf-export.t-burgundy .eyebrow,
-.cert.pdf-export.t-onyx .eyebrow {
+.cert.pdf-export.t-onyx .eyebrow,
+.cert.pdf-export.t-prestige .eyebrow,
+.cert.pdf-export.t-sapphire .eyebrow,
+.cert.pdf-export.t-vellum .eyebrow,
+.cert.pdf-export.t-rose .eyebrow {
   gap: 18px;
 }
 .cert.pdf-export.t-imperial .eyebrow::before,
@@ -735,7 +871,15 @@
 .cert.pdf-export.t-burgundy .eyebrow::before,
 .cert.pdf-export.t-burgundy .eyebrow::after,
 .cert.pdf-export.t-onyx .eyebrow::before,
-.cert.pdf-export.t-onyx .eyebrow::after {
+.cert.pdf-export.t-onyx .eyebrow::after,
+.cert.pdf-export.t-prestige .eyebrow::before,
+.cert.pdf-export.t-prestige .eyebrow::after,
+.cert.pdf-export.t-sapphire .eyebrow::before,
+.cert.pdf-export.t-sapphire .eyebrow::after,
+.cert.pdf-export.t-vellum .eyebrow::before,
+.cert.pdf-export.t-vellum .eyebrow::after,
+.cert.pdf-export.t-rose .eyebrow::before,
+.cert.pdf-export.t-rose .eyebrow::after {
   width: 49.4px;
   height: 1.4px;
 }
@@ -743,7 +887,11 @@
 .cert.pdf-export.t-opulent .rule::after,
 .cert.pdf-export.t-emerald .rule::after,
 .cert.pdf-export.t-burgundy .rule::after,
-.cert.pdf-export.t-onyx .rule::after {
+.cert.pdf-export.t-onyx .rule::after,
+.cert.pdf-export.t-prestige .rule::after,
+.cert.pdf-export.t-sapphire .rule::after,
+.cert.pdf-export.t-vellum .rule::after,
+.cert.pdf-export.t-rose .rule::after {
   width: 16.8px;
   height: 16.8px;
   box-shadow: 0 0 0 2.2px var(--paper);
@@ -752,7 +900,11 @@
 .cert.pdf-export.t-opulent .rule,
 .cert.pdf-export.t-emerald .rule,
 .cert.pdf-export.t-burgundy .rule,
-.cert.pdf-export.t-onyx .rule {
+.cert.pdf-export.t-onyx .rule,
+.cert.pdf-export.t-prestige .rule,
+.cert.pdf-export.t-sapphire .rule,
+.cert.pdf-export.t-vellum .rule,
+.cert.pdf-export.t-rose .rule {
   margin-top: 30px;
   margin-bottom: 42px;
 }
@@ -760,7 +912,11 @@
 .cert.pdf-export.t-opulent .cert-seal,
 .cert.pdf-export.t-emerald .cert-seal,
 .cert.pdf-export.t-burgundy .cert-seal,
-.cert.pdf-export.t-onyx .cert-seal {
+.cert.pdf-export.t-onyx .cert-seal,
+.cert.pdf-export.t-prestige .cert-seal,
+.cert.pdf-export.t-sapphire .cert-seal,
+.cert.pdf-export.t-vellum .cert-seal,
+.cert.pdf-export.t-rose .cert-seal {
   bottom: 58px;
   filter: drop-shadow(0 6px 11px rgba(0, 0, 0, 0.3));
 }

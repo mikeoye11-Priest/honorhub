@@ -137,6 +137,57 @@ function blobs(): string {
     <g fill="#cbd5e1" opacity=".7">${[[300, 40, 3], [170, 120, 2.6], [440, 360, 3], [60, 210, 2.4]].map(([x, y, r]) => `<circle cx="${x}" cy="${y}" r="${r}"/>`).join("")}</g>`
 }
 
+function decoFans(): string {
+  const fan = (transform: string) => `<g transform="${transform}" stroke="var(--accent)" stroke-width="1" fill="none" stroke-linecap="round" opacity=".58">
+    <path d="M0 72 C 16 30 48 8 92 0"/>
+    <path d="M14 72 C 26 42 54 22 88 16"/>
+    <path d="M30 72 C 42 52 62 40 86 36"/>
+    <path d="M0 72 H92"/>
+    <circle cx="92" cy="0" r="2.8" fill="var(--accent)" stroke="none"/>
+  </g>`
+  return `
+    ${fan("translate(46,48)")}
+    ${fan("translate(554,48) scale(-1,1)")}
+    ${fan("translate(46,376) scale(1,-1)")}
+    ${fan("translate(554,376) scale(-1,-1)")}
+    <g transform="translate(300,46)" stroke="var(--accent)" stroke-width="1.2" fill="none" opacity=".7">
+      <path d="M-42 0 H42 M-20 10 H20"/>
+      <path d="M0 -20 V24"/>
+      <path d="M-12 -8 L0 -20 L12 -8"/>
+    </g>`
+}
+
+function vellumEngraving(): string {
+  return `<g stroke="var(--accent)" stroke-width="1" fill="none" stroke-linecap="round" opacity=".48">
+    <path d="M54 78 q 54 -46 108 0 q -54 -22 -108 0Z"/>
+    <path d="M546 78 q -54 -46 -108 0 q 54 -22 108 0Z"/>
+    <path d="M54 346 q 54 46 108 0 q -54 22 -108 0Z"/>
+    <path d="M546 346 q -54 46 -108 0 q 54 22 108 0Z"/>
+    <path d="M210 52 q 90 -20 180 0 M210 372 q 90 20 180 0"/>
+  </g>
+  <g fill="var(--accent)" opacity=".55">
+    ${[[300, 38, 4.5], [224, 54, 2.4], [376, 54, 2.4], [300, 386, 4.5]].map(([x, y, r]) => star(x, y, r)).join("")}
+  </g>`
+}
+
+function roseSprigs(): string {
+  const sprig = (transform: string) => `<g transform="${transform}" stroke="var(--accent)" stroke-width="1.2" fill="none" stroke-linecap="round" opacity=".55">
+    <path d="M0 86 C 34 38 82 10 136 0"/>
+    <path d="M34 52 q -22 -10 -36 2 q 22 10 36 -2Z" fill="var(--accent)" opacity=".28"/>
+    <path d="M66 28 q -18 -14 -34 -6 q 20 13 34 6Z" fill="var(--accent)" opacity=".24"/>
+    <path d="M98 12 q -14 -12 -28 -7 q 16 11 28 7Z" fill="var(--accent)" opacity=".24"/>
+    <circle cx="136" cy="0" r="3.2" fill="var(--accent)" stroke="none"/>
+  </g>`
+  return `
+    ${sprig("translate(34,68)")}
+    ${sprig("translate(566,68) scale(-1,1)")}
+    ${sprig("translate(34,356) scale(1,-1)")}
+    ${sprig("translate(566,356) scale(-1,-1)")}
+    <g transform="translate(300,42)" stroke="var(--accent)" stroke-width="1.2" fill="none" opacity=".55">
+      <path d="M-34 0 q 34 -20 68 0 M-18 12 q 18 10 36 0"/>
+    </g>`
+}
+
 const sigOrn = (parts: string) => `
     <svg class="cert-orn" viewBox="0 0 600 424" preserveAspectRatio="none" fill="none" aria-hidden="true">${parts}</svg>`
 
@@ -160,6 +211,10 @@ export const ORN: Record<string, string> = {
     </svg>`,
   emerald: luxeOrn(),
   burgundy: luxeOrn(),
+  prestige: sigOrn(decoFans()),
+  sapphire: luxeOrn(`<g fill="currentColor" opacity=".45">${[[94, 70], [506, 70], [82, 304], [518, 304], [300, 384]].map(([x, y]) => star(x, y, 3.6)).join("")}</g>`),
+  vellum: sigOrn(vellumEngraving()),
+  rose: sigOrn(roseSprigs()),
   laurel: `
     <svg class="cert-orn" viewBox="0 0 600 424" preserveAspectRatio="none" fill="none" aria-hidden="true">
       <g stroke="currentColor" stroke-width="1.4" opacity=".7" fill="none" stroke-linecap="round">
