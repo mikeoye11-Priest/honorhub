@@ -9,7 +9,6 @@ import {
   Sparkles,
   Users,
   PartyPopper,
-  Cake,
   RefreshCw,
   ArrowRight,
   Award,
@@ -17,20 +16,24 @@ import {
   Plus,
   UserPlus,
   Eye,
-  CalendarDays,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { useHonor } from "@/lib/store"
 import { useExportStats } from "@/lib/exports"
 import { useAuth } from "@/lib/auth"
-import { VERTICALS } from "@/lib/honor"
 
 function greeting(): string {
   const h = new Date().getHours()
   if (h < 12) return "Good morning"
   if (h < 18) return "Good afternoon"
   return "Good evening"
+}
+
+// A near-future date label (always "upcoming"), so events never look stale.
+function upcoming(daysAhead: number) {
+  const d = new Date()
+  d.setDate(d.getDate() + daysAhead)
+  return { day: d.toLocaleDateString("en-GB", { month: "short" }).toUpperCase(), date: String(d.getDate()) }
 }
 
 const KPIS = [
@@ -40,41 +43,41 @@ const KPIS = [
 ]
 
 const EVENTS = [
-  { day: "OCT", date: "14", who: "David Chen", what: "Work Anniversary (5 Years)", icon: PartyPopper, tint: "bg-accent text-primary" },
-  { day: "OCT", date: "18", who: "Maria Garcia", what: "Birthday Celebration", icon: Cake, tint: "bg-info/10 text-info" },
-  { day: "OCT", date: "22", who: "Team Quarterly", what: "Recognition Ceremony", icon: CalendarDays, tint: "bg-muted text-muted-foreground" },
+  { ...upcoming(2), who: "Friday Assembly", what: "Star of the Week", icon: Star, tint: "bg-accent text-primary" },
+  { ...upcoming(9), who: "Reading Champions", what: "Awards ceremony", icon: Award, tint: "bg-info/10 text-info" },
+  { ...upcoming(18), who: "End of Term", what: "Celebration assembly", icon: PartyPopper, tint: "bg-muted text-muted-foreground" },
 ]
 
 const ACTIVITY = [
   {
-    who: "Jessica Wu",
+    who: "Mrs Hart",
     action: "recognised",
-    target: "Kevin Smith",
-    quote: "Amazing work on the Q3 audit — your attention to detail saved us weeks of rework.",
-    tags: ["Quality Star", "Audit Team"],
+    target: "Amelia Cole",
+    quote: "For beautiful, careful handwriting all week — a wonderful example to the whole class.",
+    tags: ["Star of the Week", "Class 3"],
     when: "2h ago",
     kind: "person" as const,
-    initials: "JW",
+    initials: "MH",
   },
   {
-    who: "New Milestone Reached",
+    who: "Class 3 milestone",
     action: "",
     target: "",
-    quote: "Engineering has reached 500 total recognitions — a celebratory lunch certificate was issued.",
+    quote: "Class 3 reached 100 stars this term — a celebration certificate was issued to the whole class.",
     tags: [] as string[],
     when: "5h ago",
     kind: "milestone" as const,
     initials: "",
   },
   {
-    who: "Marcus Thorne",
-    action: "created a new",
-    target: "Certificate Template",
-    quote: "“Q4 Innovation Award” — minimalist design with gold-foil accents.",
-    tags: [] as string[],
+    who: "Mr Okafor",
+    action: "recognised",
+    target: "Noah Bryant",
+    quote: "For being a kind and helpful friend, and always including others at playtime.",
+    tags: ["Kindness Award"],
     when: "Yesterday",
     kind: "person" as const,
-    initials: "MT",
+    initials: "MO",
   },
 ]
 
@@ -108,9 +111,7 @@ function HealthDonut({ score }: { score: number }) {
 
 export default function Home() {
   const navigate = useNavigate()
-  const { vertical } = useHonor()
   const { configured, user } = useAuth()
-  const v = VERTICALS[vertical]
   const firstName = (configured && user?.fullName?.trim().split(/\s+/)[0]) || "there"
   const card = "rounded-xl border bg-card shadow-soft"
   const [activityFilter, setActivityFilter] = useState<"all" | "milestones">("all")
@@ -120,11 +121,16 @@ export default function Home() {
   // When signed in, surface real export counts; otherwise keep the sample figures.
   const kpiValue = (k: (typeof KPIS)[number]) => {
     if (!live) return k.value
-    if (k.label === "Recent Certificates") return stats.certificates.toLocaleString()
+    if (k.label === "Recent Certificates") return stats.last7.toLocaleString()
     if (k.label === "Total Recognitions") return stats.certificates.toLocaleString()
     return k.value
   }
-  const kpiDelta = (k: (typeof KPIS)[number]) => (live && k.label === "Recent Certificates" ? `${stats.last7} this week` : k.delta)
+  const kpiDelta = (k: (typeof KPIS)[number]) => {
+    if (!live) return k.delta
+    if (k.label === "Total Recognitions") return `+${stats.last7.toLocaleString()} this week`
+    if (k.label === "Recent Certificates") return "in the last 7 days"
+    return k.delta
+  }
 
   return (
     <div className="mx-auto max-w-7xl">
@@ -192,8 +198,8 @@ export default function Home() {
           </div>
           <div className="grid gap-4 p-5 sm:grid-cols-2">
             {[
-              { icon: Users, tint: "text-primary", title: "Missed connection", body: `It's been a while since you recognised your top-performing ${v.label.toLowerCase()} group — they've exceeded expectations this month.` },
-              { icon: TrendingUp, tint: "text-warning", title: "Achievement streak", body: "Sarah Jenkins is on a three-month streak. Consider a Top Performer award." },
+              { icon: Award, tint: "text-primary", title: "Most-awarded this term", body: "“Star of the Week” is your most-given certificate — your Friday assemblies are clearly landing." },
+              { icon: Users, tint: "text-warning", title: "Worth a mention", body: "It's been a couple of weeks since Reception received a certificate — they could be next to celebrate." },
             ].map((ins) => (
               <button key={ins.title} onClick={() => navigate("/create")} className="rounded-xl border bg-muted/40 p-4 text-left transition-colors hover:border-primary">
                 <div className="flex items-start gap-3">
