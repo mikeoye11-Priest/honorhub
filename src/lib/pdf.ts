@@ -127,7 +127,10 @@ function mountCertEl(host: HTMLDivElement, page: CertPage): HTMLDivElement {
   // class rules (html-to-image drops class-defined custom properties).
   for (const [v, val] of Object.entries(vars)) el.style.setProperty(v, val)
   bakeAccentMixes(el, accent, navy)
-  el.style.backgroundColor = paper
+  // Force the whole background shorthand to the resolved paper colour. Setting
+  // only backgroundColor lets the class background/background-image rules leak
+  // through in html-to-image, which can flatten dark templates back to white.
+  el.style.setProperty("background", paper, "important")
 
   // Resolve SVG ornament colours to literal hex (currentColor/var in SVG render
   // unreliably under html-to-image).
