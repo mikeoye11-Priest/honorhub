@@ -16,6 +16,7 @@ import {
   Plus,
   UserPlus,
   Eye,
+  ShieldCheck,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
@@ -51,9 +52,9 @@ const EVENTS = [
 const ACTIVITY = [
   {
     who: "Mrs Hart",
-    action: "recognised",
-    target: "Amelia Cole",
-    quote: "For beautiful, careful handwriting all week — a wonderful example to the whole class.",
+    action: "generated",
+    target: "5 certificates",
+    quote: "Star of the Week certificates were created and printed. Pupil names were not stored in HonorHub.",
     tags: ["Star of the Week", "Class 3"],
     when: "2h ago",
     kind: "person" as const,
@@ -71,9 +72,9 @@ const ACTIVITY = [
   },
   {
     who: "Mr Okafor",
-    action: "recognised",
-    target: "Noah Bryant",
-    quote: "For being a kind and helpful friend, and always including others at playtime.",
+    action: "downloaded",
+    target: "a kindness award set",
+    quote: "Certificates were exported as a private file for the teacher to print or share under school policy.",
     tags: ["Kindness Award"],
     when: "Yesterday",
     kind: "person" as const,
@@ -162,6 +163,25 @@ export default function Home() {
 
       {/* Bento grid */}
       <div className="grid grid-cols-12 gap-6">
+        <div className={`${card} col-span-12 border-success/25 bg-success/5 p-5`}>
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-start gap-3">
+              <span className="grid size-11 shrink-0 place-items-center rounded-full bg-success/10 text-success">
+                <ShieldCheck className="size-5" />
+              </span>
+              <div>
+                <h3 className="font-bold">School privacy promise</h3>
+                <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
+                  HonorHub stores teacher accounts and school branding. Pupil names, award reasons and uploaded recipient lists stay session-only by default and are not stored in the organisation account.
+                </p>
+              </div>
+            </div>
+            <Button variant="outline" onClick={() => navigate("/organisation")}>
+              View privacy settings
+            </Button>
+          </div>
+        </div>
+
         {/* KPIs */}
         <div className="col-span-12 grid gap-6 sm:grid-cols-3 lg:col-span-8">
           {KPIS.map((k) => (

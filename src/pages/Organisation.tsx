@@ -223,22 +223,23 @@ export default function Organisation() {
             <CardContent className="p-6 text-sm leading-relaxed">
               <h3 className="text-base font-bold">Privacy by default</h3>
               <p className="mt-2 text-muted-foreground">
-                Recipient names and messages are <strong className="text-foreground">session-only</strong> — kept in the browser, never stored on our servers, and cleared when you finish. Organisation settings and branding are saved.
+                Teacher accounts, school settings, branding and usage counts are saved. Pupil names, award reasons and uploaded recipient lists are <strong className="text-foreground">session-only</strong> by default — kept in the browser to generate certificates and not stored in HonorHub.
               </p>
-              <div className="mt-4 flex items-center justify-between rounded-lg border p-4">
-                <div>
-                  <Label className="font-semibold">Recipient Directory</Label>
-                  <p className="text-xs text-muted-foreground">Opt in to store recipients and build a Recognition Timeline.</p>
+              <div className="mt-4 grid gap-3 md:grid-cols-2">
+                <div className="rounded-lg border border-success/20 bg-success/5 p-4">
+                  <Label className="font-semibold text-success">Stored</Label>
+                  <p className="mt-1 text-xs text-muted-foreground">Teacher users, roles, school branding, templates, signatories and subscription/usage information.</p>
                 </div>
-                <Switch
-                  onCheckedChange={(on) =>
-                    toast(on ? "Recipient Directory enabled" : "Recipient Directory disabled", {
-                      description: on
-                        ? "Recipients will be stored to build a Recognition Timeline. This changes your privacy posture."
-                        : "Recipients stay session-only — never stored.",
-                    })
-                  }
-                />
+                <div className="rounded-lg border border-primary/20 bg-accent/40 p-4">
+                  <Label className="font-semibold text-primary">Not stored by default</Label>
+                  <p className="mt-1 text-xs text-muted-foreground">Pupil names, certificate comments, CSV uploads and generated recipient lists.</p>
+                </div>
+              </div>
+              <div className="mt-4 rounded-lg border p-4">
+                <Label className="font-semibold">Public share links</Label>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Printing and PDF download keep pupil details local. Share links are optional and should be used only when a school intentionally wants a certificate to be viewable by anyone with that link.
+                </p>
               </div>
             </CardContent>
           </Card>

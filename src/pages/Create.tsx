@@ -493,7 +493,7 @@ Respond with ONLY a JSON array of strings in order, no prose or fences.`
                         <div>
                           <p className="font-medium">Copy share link</p>
                           <p className="text-xs text-muted-foreground">
-                            {canShareLink ? "A public link to this certificate" : "Sign in to create share links"}
+                            {canShareLink ? "Optional public link; use only under school policy" : "Sign in to create share links"}
                           </p>
                         </div>
                       </DropdownMenuItem>
@@ -671,6 +671,15 @@ Respond with ONLY a JSON array of strings in order, no prose or fences.`
                     Works with Excel (<span className="font-medium">.xlsx</span>), Google Sheets and <span className="font-medium">.csv</span> — fill in the template and upload. A header row is detected automatically.
                   </p>
                 </div>
+                <div className="flex items-start gap-3 rounded-xl border border-success/20 bg-success/5 p-4">
+                  <ShieldCheck className="mt-0.5 size-5 shrink-0 text-success" />
+                  <div>
+                    <p className="text-sm font-semibold">Pupil data is private by default</p>
+                    <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                      Names and comments are held only in this browser session to build the certificates. They are not saved to HonorHub, not added to reports and not stored with the school account.
+                    </p>
+                  </div>
+                </div>
                 <Textarea
                   value={h.recipientsRaw}
                   onChange={(e) => h.setRecipientsRaw(e.target.value)}
@@ -813,15 +822,15 @@ Respond with ONLY a JSON array of strings in order, no prose or fences.`
                     <div className="flex items-start gap-3 rounded-lg bg-muted/50 p-3">
                       <ShieldCheck className="mt-0.5 size-4 text-success" />
                       <div>
-                        <p className="text-sm font-semibold">Session-only by default</p>
-                        <p className="text-xs text-muted-foreground">Recipient names stay in this browser and are never stored on our servers.</p>
+                        <p className="text-sm font-semibold">Pupil data is session-only</p>
+                        <p className="text-xs text-muted-foreground">Recipient names and messages stay in this browser and are not stored in HonorHub.</p>
                       </div>
                     </div>
                     <div className="flex items-start gap-3 rounded-lg bg-muted/50 p-3">
                       <Globe className="mt-0.5 size-4 text-info" />
                       <div>
-                        <p className="text-sm font-semibold">Recognition Timeline (opt-in)</p>
-                        <p className="text-xs text-muted-foreground">Enable the Recipient Directory to keep an achievement history.</p>
+                        <p className="text-sm font-semibold">Public sharing is optional</p>
+                        <p className="text-xs text-muted-foreground">Print and PDF download keep data local. Share links should be used only when the school chooses to publish a certificate.</p>
                       </div>
                     </div>
                   </div>
