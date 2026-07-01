@@ -38,6 +38,10 @@ export interface CertFields {
   signatory: string
 }
 
+export function certClassName(fields: Pick<CertFields, "template" | "logo">, extra = ""): string {
+  return ["cert", `t-${fields.template}`, fields.logo ? "has-logo" : "", extra].filter(Boolean).join(" ")
+}
+
 /** Returns the inner HTML string for a single certificate (used for both
  *  the live React preview and the print document). */
 export function certInnerHTML(f: CertFields, recipient?: Recipient): string {
@@ -76,7 +80,7 @@ export function certInnerHTML(f: CertFields, recipient?: Recipient): string {
 export function Certificate({ fields, recipient }: { fields: CertFields; recipient?: Recipient }) {
   return (
     <div
-      className={`cert t-${fields.template}`}
+      className={certClassName(fields)}
       style={{ "--accent": fields.accent } as CSSProperties}
       // certInnerHTML is built from app-controlled template strings + escaped user text
       dangerouslySetInnerHTML={{ __html: certInnerHTML(fields, recipient) }}
@@ -109,7 +113,7 @@ export function printPages(pages: CertPage[]) {
   const body = pages
     .map(
       (p) =>
-        `<div class="print-page"><div class="cert t-${p.fields.template}" style="--accent:${p.fields.accent}">${certInnerHTML(p.fields, p.recipient)}</div></div>`,
+        `<div class="print-page"><div class="${certClassName(p.fields)}" style="--accent:${p.fields.accent}">${certInnerHTML(p.fields, p.recipient)}</div></div>`,
     )
     .join("")
 

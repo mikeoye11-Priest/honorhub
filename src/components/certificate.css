@@ -52,6 +52,9 @@
   width: 78%;
   z-index: 2;
 }
+.cert.has-logo .body {
+  transform: translateY(-3.2cqw);
+}
 .cert .logo {
   display: block;
   max-height: 13cqw;
@@ -60,6 +63,10 @@
   object-fit: contain;
   transform: translate(var(--logo-x, 0), var(--logo-y, 0)) scale(calc(var(--logo-scale, 100) / 100));
   transform-origin: center;
+}
+.cert.has-logo .logo {
+  max-height: 9.5cqw;
+  margin-bottom: 1.4cqw;
 }
 .cert .eyebrow {
   font-family: var(--ui);
@@ -119,6 +126,28 @@
   overflow-wrap: anywhere;
   text-wrap: balance;
 }
+.cert.has-logo .eyebrow {
+  margin-bottom: 1.45cqw;
+}
+.cert.has-logo .award {
+  font-size: 4.85cqw;
+  margin-bottom: 2.05cqw;
+}
+.cert.has-logo .preposition {
+  margin-bottom: 0.9cqw;
+}
+.cert.has-logo .name {
+  font-size: 7.35cqw;
+  margin-bottom: 1.1cqw;
+}
+.cert.has-logo .rule {
+  margin: 1.1cqw auto 1.55cqw;
+}
+.cert.has-logo .reason {
+  font-size: 2.35cqw;
+  line-height: 1.25;
+  max-width: 72%;
+}
 .cert .foot {
   position: absolute;
   left: 9cqw;
@@ -128,6 +157,9 @@
   align-items: flex-end;
   justify-content: space-between;
   z-index: 2;
+}
+.cert.has-logo .foot {
+  bottom: 5.25cqw;
 }
 .cert .sig {
   text-align: left;
@@ -164,6 +196,11 @@
   bottom: 5.2cqw;
   width: 13cqw;
   height: 13cqw;
+}
+.cert.has-logo .cert-seal {
+  bottom: 3.9cqw;
+  width: 11.5cqw;
+  height: 11.5cqw;
 }
 
 /* Automatic fit guards for real-world names, schools and award wording.
@@ -1144,4 +1181,45 @@
 .cert.pdf-export .date.date--xl .v {
   font-size: 18.9px;
   max-width: 359px;
+}
+.cert.pdf-export.has-logo .body {
+  transform: translateY(-36px);
+}
+.cert.pdf-export.has-logo .logo {
+  max-height: 107px;
+  margin-bottom: 15.7px;
+}
+.cert.pdf-export.has-logo .eyebrow {
+  margin-bottom: 16.3px;
+}
+.cert.pdf-export.has-logo .award {
+  font-size: 54.5px;
+  margin-bottom: 23px;
+}
+.cert.pdf-export.has-logo .preposition {
+  margin-bottom: 10.1px;
+}
+.cert.pdf-export.has-logo .name {
+  font-size: 82.5px;
+  margin-bottom: 12.4px;
+}
+.cert.pdf-export.has-logo .rule {
+  margin-top: 12.4px;
+  margin-bottom: 17.4px;
+}
+.cert.pdf-export.has-logo .reason,
+.cert.pdf-export.has-logo .reason.reason--md,
+.cert.pdf-export.has-logo .reason.reason--lg,
+.cert.pdf-export.has-logo .reason.reason--xl {
+  font-size: 26.4px;
+  line-height: 1.25;
+  max-width: 72%;
+}
+.cert.pdf-export.has-logo .foot {
+  bottom: 59px;
+}
+.cert.pdf-export.has-logo .cert-seal {
+  bottom: 43.8px;
+  width: 129px;
+  height: 129px;
 }

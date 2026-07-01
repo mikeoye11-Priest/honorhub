@@ -3,7 +3,7 @@
 // with the browser's own renderer (gradients, foil text and container queries all
 // work), and either written into an A4-landscape PDF (one page per certificate)
 // or exported as a single PNG for sharing.
-import { certInnerHTML, printPages, type CertPage } from "@/components/Certificate"
+import { certClassName, certInnerHTML, printPages, type CertPage } from "@/components/Certificate"
 
 const PX_W = 1123 // ≈ A4 landscape width at 96dpi
 const PX_H = Math.round((PX_W * 210) / 297)
@@ -227,7 +227,7 @@ interface MountedCert {
  *  renders currentColor/var() in SVG unreliably, often as black). */
 function mountCertEl(host: HTMLDivElement, page: CertPage): MountedCert {
   const el = document.createElement("div")
-  el.className = `cert t-${page.fields.template} pdf-export`
+  el.className = certClassName(page.fields, "pdf-export")
   el.style.cssText = `width:${PX_W}px;height:${PX_H}px;animation:none;`
   el.style.setProperty("--accent", page.fields.accent)
   host.appendChild(el)
