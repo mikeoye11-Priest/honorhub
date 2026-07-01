@@ -184,6 +184,7 @@ export interface PremiumCollection {
   price: string
   includedIn: string
   bestFor: string[]
+  templateKeys: string[]
   items: PackItem[]
 }
 
@@ -197,6 +198,7 @@ export const PREMIUM_COLLECTIONS: PremiumCollection[] = [
     price: "£49",
     includedIn: "Education Pro",
     bestFor: ["Primary schools", "End of term", "Class awards"],
+    templateKeys: ["laurel", "sunbeam", "prestige", "sapphire", "playful"],
     items: [
       { label: "Star of the Week Certificate", kind: "certificate" },
       { label: "Maths Excellence Certificate", kind: "certificate" },
@@ -219,6 +221,7 @@ export const PREMIUM_COLLECTIONS: PremiumCollection[] = [
     price: "£39",
     includedIn: "Church Pro",
     bestFor: ["Churches", "Volunteer Sunday", "Workers appreciation"],
+    templateKeys: ["grace", "opulent", "vellum", "rose", "emerald"],
     items: [
       { label: "Volunteer Appreciation Certificate", kind: "certificate" },
       { label: "Faithfulness Award Certificate", kind: "certificate" },
@@ -240,6 +243,7 @@ export const PREMIUM_COLLECTIONS: PremiumCollection[] = [
     price: "£59",
     includedIn: "Organisation Pro",
     bestFor: ["Teams", "HR", "Monthly awards"],
+    templateKeys: ["executive", "onyx", "prestige", "sapphire", "midnight"],
     items: [
       { label: "Employee of the Month Certificate", kind: "certificate" },
       { label: "Leadership Excellence Certificate", kind: "certificate" },
@@ -260,6 +264,7 @@ export const PREMIUM_COLLECTIONS: PremiumCollection[] = [
     price: "£49",
     includedIn: "Sports Pro",
     bestFor: ["Clubs", "Season awards", "Youth teams"],
+    templateKeys: ["champion", "midnight", "imperial", "sapphire", "regal"],
     items: [
       { label: "Player of the Match Certificate", kind: "certificate" },
       { label: "Most Improved Player Certificate", kind: "certificate" },
@@ -280,6 +285,7 @@ export const PREMIUM_COLLECTIONS: PremiumCollection[] = [
     price: "£29",
     includedIn: "All Premium Plans",
     bestFor: ["Formal events", "Leadership awards", "Annual ceremonies"],
+    templateKeys: ["imperial", "opulent", "onyx", "emerald", "burgundy", "sapphire"],
     items: [
       { label: "Imperial Certificate", kind: "certificate" },
       { label: "Sapphire Gala Certificate", kind: "certificate" },
@@ -299,6 +305,7 @@ export const PREMIUM_COLLECTIONS: PremiumCollection[] = [
     price: "£99",
     includedIn: "One-time service",
     bestFor: ["New organisations", "Busy admins", "Launch setup"],
+    templateKeys: ["prestige", "sapphire", "executive"],
     items: [
       { label: "Brand Kit Configuration", kind: "certificate" },
       { label: "Logo and Colour Matching", kind: "certificate" },

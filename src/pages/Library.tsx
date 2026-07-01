@@ -84,6 +84,17 @@ export default function Library() {
     toast.success(`${preset.name} applied`, { description: "Your default certificate style has been updated." })
   }
 
+  const applyMarketplaceSample = (collection: (typeof PREMIUM_COLLECTIONS)[number]) => {
+    const template = getTemplate(collection.templateKeys[0] ?? h.template)
+    const firstCertificate = collection.items.find((item) => item.kind === "certificate")
+    h.setPack(null)
+    h.setTemplate(template.key)
+    h.setAccent(template.defaultAccent)
+    if (firstCertificate) h.setField("award", firstCertificate.label.replace(/\s+Certificate$/i, ""))
+    toast.success(`${collection.name} sample applied`, { description: "Opened in Create with the first ready-made design." })
+    navigate("/create")
+  }
+
   const newTemplate = () => {
     toast("Design a new template", { description: "Pick a style and customise it in Create." })
     navigate("/create")
@@ -547,64 +558,100 @@ export default function Library() {
           </div>
 
           <div className="grid gap-5 xl:grid-cols-2">
-            {PREMIUM_COLLECTIONS.map((c) => (
-              <div key={c.key} className="flex flex-col rounded-xl border bg-card p-5 shadow-sm">
-                <div className="flex items-start justify-between gap-4">
-                  <div className="flex items-start gap-3">
-                    <span className="grid size-11 shrink-0 place-items-center rounded-lg bg-accent text-primary">
-                      <ShoppingBag className="size-5" />
-                    </span>
-                    <div>
-                      <div className="flex flex-wrap items-center gap-2">
-                        <h3 className="font-semibold">{c.name}</h3>
-                        <Badge variant="outline">{c.includedIn}</Badge>
+            {PREMIUM_COLLECTIONS.map((c) => {
+              const previewAward = c.items.find((item) => item.kind === "certificate")?.label.replace(/\s+Certificate$/i, "") ?? h.award
+              const previewRecipient = h.recipients[0] ?? { name: "Amelia Cole", reason: h.defaultReason }
+              return (
+                <div key={c.key} className="flex flex-col rounded-xl border bg-card p-5 shadow-sm">
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex items-start gap-3">
+                      <span className="grid size-11 shrink-0 place-items-center rounded-lg bg-accent text-primary">
+                        <ShoppingBag className="size-5" />
+                      </span>
+                      <div>
+                        <div className="flex flex-wrap items-center gap-2">
+                          <h3 className="font-semibold">{c.name}</h3>
+                          <Badge variant="outline">{c.includedIn}</Badge>
+                        </div>
+                        <p className="mt-1 text-sm text-muted-foreground">{c.blurb}</p>
                       </div>
-                      <p className="mt-1 text-sm text-muted-foreground">{c.blurb}</p>
+                    </div>
+                    <span className="text-2xl font-extrabold">{c.price}</span>
+                  </div>
+
+                  <div className="mt-4 flex flex-wrap gap-2">
+                    {c.bestFor.map((tag) => (
+                      <Badge key={tag} variant="secondary" className="bg-muted text-muted-foreground">{tag}</Badge>
+                    ))}
+                  </div>
+
+                  <div className="mt-4 rounded-lg border bg-background p-3">
+                    <div className="mb-2 flex items-center justify-between gap-3">
+                      <p className="text-xs font-bold uppercase tracking-wide text-muted-foreground">Ready-made designs</p>
+                      <span className="text-xs text-muted-foreground">{c.templateKeys.length} templates attached</span>
+                    </div>
+                    <div className="grid grid-cols-3 gap-2">
+                      {c.templateKeys.slice(0, 3).map((templateKey) => {
+                        const template = getTemplate(templateKey)
+                        return (
+                          <button
+                            key={`${c.key}-${templateKey}`}
+                            onClick={() => {
+                              h.setTemplate(template.key)
+                              h.setAccent(template.defaultAccent)
+                            }}
+                            className="overflow-hidden rounded-md border bg-card p-1 text-left transition hover:border-primary"
+                            title={template.name}
+                          >
+                            <Certificate
+                              fields={{ ...fields, template: template.key, accent: template.defaultAccent, award: previewAward }}
+                              recipient={previewRecipient}
+                            />
+                            <span className="mt-1 block truncate px-1 text-[10px] font-medium">{template.name}</span>
+                          </button>
+                        )
+                      })}
                     </div>
                   </div>
-                  <span className="text-2xl font-extrabold">{c.price}</span>
-                </div>
 
-                <div className="mt-4 flex flex-wrap gap-2">
-                  {c.bestFor.map((tag) => (
-                    <Badge key={tag} variant="secondary" className="bg-muted text-muted-foreground">{tag}</Badge>
-                  ))}
-                </div>
+                  <div className="mt-4 rounded-lg border bg-background p-3">
+                    <div className="mb-2 flex items-center justify-between gap-3">
+                      <p className="text-xs font-bold uppercase tracking-wide text-muted-foreground">Included items</p>
+                      <span className="text-xs text-muted-foreground">{c.items.length} deliverables · {c.count} designs/assets</span>
+                    </div>
+                    <div className="grid gap-2 sm:grid-cols-2">
+                      {c.items.map((item) => (
+                        <div key={`${c.key}-${item.kind}-${item.label}`} className="flex items-center gap-2 rounded-md bg-card px-2.5 py-2 text-sm">
+                          <span className="grid size-6 shrink-0 place-items-center rounded bg-accent/60 text-[11px] font-bold uppercase text-primary">
+                            {item.kind.slice(0, 1)}
+                          </span>
+                          <span className="min-w-0 flex-1 truncate">{item.label}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
 
-                <div className="mt-4 rounded-lg border bg-background p-3">
-                  <div className="mb-2 flex items-center justify-between gap-3">
-                    <p className="text-xs font-bold uppercase tracking-wide text-muted-foreground">Included items</p>
-                    <span className="text-xs text-muted-foreground">{c.items.length} deliverables · {c.count} designs/assets</span>
-                  </div>
-                  <div className="grid gap-2 sm:grid-cols-2">
-                    {c.items.map((item) => (
-                      <div key={`${c.key}-${item.kind}-${item.label}`} className="flex items-center gap-2 rounded-md bg-card px-2.5 py-2 text-sm">
-                        <span className="grid size-6 shrink-0 place-items-center rounded bg-accent/60 text-[11px] font-bold uppercase text-primary">
-                          {item.kind.slice(0, 1)}
-                        </span>
-                        <span className="min-w-0 flex-1 truncate">{item.label}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
-                  <div className="flex flex-wrap gap-1">
-                    {c.sectors.map((sectorKey) => (
-                      <Badge key={sectorKey} variant="outline" className="capitalize">{VERTICALS[sectorKey].label}</Badge>
-                    ))}
-                  </div>
-                  <div className="flex gap-2">
-                    <Button variant="outline" onClick={() => toast(`${c.name}`, { description: c.items.map((item) => item.label).slice(0, 4).join(" · ") })}>
-                      Preview
-                    </Button>
-                    <Button onClick={() => toast.success(`${c.name}`, { description: "Checkout and unlock flow can connect here." })}>
-                      {c.price === "£99" ? "Book setup" : "Unlock pack"}
-                    </Button>
+                  <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
+                    <div className="flex flex-wrap gap-1">
+                      {c.sectors.map((sectorKey) => (
+                        <Badge key={sectorKey} variant="outline" className="capitalize">{VERTICALS[sectorKey].label}</Badge>
+                      ))}
+                    </div>
+                    <div className="flex gap-2">
+                      <Button variant="outline" onClick={() => toast(`${c.name}`, { description: c.templateKeys.map((key) => getTemplate(key).name).join(" · ") })}>
+                        Preview
+                      </Button>
+                      <Button variant="outline" onClick={() => applyMarketplaceSample(c)}>
+                        Use sample
+                      </Button>
+                      <Button onClick={() => toast.success(`${c.name}`, { description: "Checkout and unlock flow can connect here." })}>
+                        {c.price === "£99" ? "Book setup" : "Unlock pack"}
+                      </Button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              )
+            })}
           </div>
         </TabsContent>
       </Tabs>
