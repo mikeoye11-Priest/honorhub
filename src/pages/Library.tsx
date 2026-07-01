@@ -9,7 +9,6 @@ import {
   Copy,
   Check,
   Palette,
-  Type,
   Image,
   ShoppingBag,
   Package,
@@ -29,7 +28,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle } from "@/components/ui/sheet"
 import { Certificate } from "@/components/Certificate"
 import { useHonor } from "@/lib/store"
-import { TEMPLATES, ACCENTS, TEMPLATE_STYLES, TEMPLATE_TIERS, VERTICAL_LIST, VERTICALS, templateSearchText, type TemplateDef, type VerticalKey } from "@/lib/honor"
+import { TEMPLATES, ACCENTS, TEMPLATE_STYLES, TEMPLATE_TIERS, VERTICAL_LIST, VERTICALS, getRecommendedTemplates, getTemplate, templateSearchText, type TemplateDef, type VerticalKey } from "@/lib/honor"
 import { COLLECTIONS, PREMIUM_COLLECTIONS, type PackItem, type OutputKind } from "@/lib/catalog"
 import { usePacks, type NewPack } from "@/lib/packs"
 
@@ -44,14 +43,27 @@ function EmptyState({ icon: Icon, title, body, cta, onCta }: { icon: ElementType
   )
 }
 
+const BRAND_PRESETS: Array<{ key: string; name: string; blurb: string; template: string; accent: string; verticals: VerticalKey[] }> = [
+  { key: "school-classic", name: "School Classic", blurb: "Warm, assembly-ready certificates", template: "laurel", accent: "#F58220", verticals: ["school"] },
+  { key: "school-prestige", name: "Academic Prestige", blurb: "Formal awards for excellence", template: "sapphire", accent: "#C8A96A", verticals: ["school", "event"] },
+  { key: "church-grace", name: "Ministry Grace", blurb: "Soft, respectful appreciation", template: "grace", accent: "#8A5A2B", verticals: ["church", "charity"] },
+  { key: "sports-bold", name: "Club Champion", blurb: "Energetic club presentation style", template: "champion", accent: "#F58220", verticals: ["sports", "school"] },
+  { key: "corporate-exec", name: "Executive Recognition", blurb: "Quiet, professional brand tone", template: "executive", accent: "#B8893A", verticals: ["company", "charity"] },
+  { key: "event-gala", name: "Gala Ceremony", blurb: "Premium event-ready certificates", template: "onyx", accent: "#C8A96A", verticals: ["event", "company"] },
+]
+
 export default function Library() {
   const h = useHonor()
   const navigate = useNavigate()
+  const activeVertical = VERTICALS[h.vertical]
   const [sector, setSector] = useState<VerticalKey | "all">(h.vertical)
   const [tplQuery, setTplQuery] = useState("")
   const [tplTier, setTplTier] = useState<TemplateDef["tier"] | "all">("all")
   const [tplStyle, setTplStyle] = useState<TemplateDef["style"] | "all">("all")
   const fields = { template: h.template, accent: h.accent, logo: h.logo, org: h.org, award: h.award, date: h.date, signatory: h.signatory }
+  const currentTemplate = getTemplate(h.template)
+  const suggestedTemplates = getRecommendedTemplates(h.vertical).slice(0, 4)
+  const brandPresets = BRAND_PRESETS.filter((p) => p.verticals.includes(h.vertical))
 
   const q = tplQuery.trim().toLowerCase()
   const visibleTemplates = TEMPLATES.filter((t) => {
@@ -64,6 +76,12 @@ export default function Library() {
   const applyTemplate = (t: TemplateDef) => {
     h.setTemplate(t.key)
     h.setAccent(t.defaultAccent)
+  }
+
+  const applyBrandPreset = (preset: (typeof BRAND_PRESETS)[number]) => {
+    h.setTemplate(preset.template)
+    h.setAccent(preset.accent)
+    toast.success(`${preset.name} applied`, { description: "Your default certificate style has been updated." })
   }
 
   const newTemplate = () => {
@@ -357,128 +375,149 @@ export default function Library() {
 
         {/* ---------------- Brand Kit ---------------- */}
         <TabsContent value="brand" className="mt-6">
-          <div className="mb-6">
-            <h1 className="text-3xl font-semibold tracking-tight">Brand Identity</h1>
-            <p className="mt-1 max-w-2xl text-muted-foreground">
-              Your visual identity is applied automatically to every certificate.
-            </p>
+          <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
+            <div>
+              <h1 className="text-3xl font-semibold tracking-tight">Brand Kit</h1>
+              <p className="mt-1 max-w-2xl text-muted-foreground">
+                Set the default look for {h.org}. New certificates inherit this template, accent and logo automatically.
+              </p>
+            </div>
+            <Button onClick={() => navigate("/create")}>
+              <ArrowRight className="size-4" /> Create with this brand
+            </Button>
           </div>
+
           <div className="grid grid-cols-12 gap-6">
-            {/* Colours */}
-            <section className="col-span-12 rounded-xl border bg-card p-6 shadow-sm lg:col-span-7">
-              <div className="mb-5 flex items-center gap-2">
+            <section className="col-span-12 rounded-xl border bg-card p-5 shadow-sm xl:col-span-5">
+              <div className="mb-4 flex items-center gap-2">
+                <Sparkles className="size-5 text-primary" />
+                <h3 className="text-xl font-semibold">Brand presets</h3>
+              </div>
+              <div className="grid gap-3">
+                {brandPresets.map((preset) => {
+                  const active = h.template === preset.template && h.accent.toLowerCase() === preset.accent.toLowerCase()
+                  return (
+                    <button
+                      key={preset.key}
+                      onClick={() => applyBrandPreset(preset)}
+                      className={`rounded-lg border p-3 text-left transition hover:border-primary/40 hover:bg-accent/30 ${active ? "border-primary bg-accent/40 ring-1 ring-primary" : "bg-background"}`}
+                    >
+                      <div className="flex items-start justify-between gap-3">
+                        <div>
+                          <p className="font-semibold">{preset.name}</p>
+                          <p className="text-sm text-muted-foreground">{preset.blurb}</p>
+                        </div>
+                        <span className="mt-1 size-4 rounded-full border" style={{ background: preset.accent }} />
+                      </div>
+                      <div className="mt-2 flex flex-wrap gap-1">
+                        <Badge variant="outline">{getTemplate(preset.template).name}</Badge>
+                        <Badge variant="outline" className="capitalize">{getTemplate(preset.template).style}</Badge>
+                      </div>
+                    </button>
+                  )
+                })}
+              </div>
+              <div className="mt-4 rounded-lg border border-primary/15 bg-accent/30 p-3 text-sm text-muted-foreground">
+                <span className="font-semibold text-foreground">{activeVertical.label} recommendation:</span> {suggestedTemplates.map((t) => t.name).slice(0, 3).join(", ")}
+              </div>
+            </section>
+
+            <section className="col-span-12 rounded-xl border bg-card p-5 shadow-sm xl:col-span-7">
+              <div className="mb-4 flex items-center justify-between gap-3">
+                <div className="flex items-center gap-2">
+                  <Image className="size-5 text-primary" />
+                  <h3 className="text-xl font-semibold">Live brand preview</h3>
+                </div>
+                <Badge variant="outline" className="capitalize">{currentTemplate.tier} · {currentTemplate.style}</Badge>
+              </div>
+              <div className="overflow-hidden rounded-lg border bg-muted/30 p-4">
+                <Certificate fields={fields} recipient={h.recipients[0]} />
+              </div>
+            </section>
+
+            <section className="col-span-12 rounded-xl border bg-card p-5 shadow-sm lg:col-span-7">
+              <div className="mb-4 flex items-center gap-2">
                 <Palette className="size-5 text-primary" />
-                <h3 className="text-xl font-semibold">Brand colours</h3>
+                <h3 className="text-xl font-semibold">Certificate defaults</h3>
               </div>
-              <div className="grid grid-cols-3 gap-4">
-                {[
-                  { name: "Honor Orange", hex: "#F58220", label: "Primary", text: "text-white" },
-                  { name: "Coffee Brown", hex: "#6A4A3C", label: "Secondary", text: "text-white" },
-                  { name: "Surface White", hex: "#F8FAFC", label: "Background", text: "text-foreground", border: true },
-                ].map((c) => (
-                  <div key={c.label} className="flex flex-col gap-2">
-                    <div className={`flex h-28 items-end rounded-lg p-3 ${c.border ? "border" : ""}`} style={{ background: c.hex }}>
-                      <span className={`text-sm font-bold ${c.text}`}>{c.label}</span>
-                    </div>
-                    <div>
-                      <p className="text-sm font-bold">{c.hex}</p>
-                      <p className="text-xs text-muted-foreground">{c.name}</p>
-                    </div>
-                  </div>
-                ))}
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="grid gap-1.5">
+                  <Label>Organisation name</Label>
+                  <Input value={h.org} onChange={(e) => h.setField("org", e.target.value)} />
+                </div>
+                <div className="grid gap-1.5">
+                  <Label>Default signatory</Label>
+                  <Input value={h.signatory} onChange={(e) => h.setField("signatory", e.target.value)} />
+                </div>
+                <div className="grid gap-1.5">
+                  <Label>Default award title</Label>
+                  <Input value={h.award} onChange={(e) => h.setField("award", e.target.value)} />
+                </div>
+                <div className="grid gap-1.5">
+                  <Label>Preferred template</Label>
+                  <Select value={h.template} onValueChange={(key) => applyTemplate(getTemplate(key))}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {TEMPLATES.map((t) => (
+                        <SelectItem key={t.key} value={t.key}>
+                          {t.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
-              <div className="mt-6">
-                <p className="mb-2 text-xs font-medium uppercase tracking-wide text-muted-foreground">Certificate accent</p>
+              <div className="mt-5">
+                <p className="mb-2 text-xs font-medium uppercase tracking-wide text-muted-foreground">Default certificate accent</p>
                 <div className="flex flex-wrap gap-2">
                   {ACCENTS.map((a) => (
                     <button
                       key={a.hex}
                       title={a.name}
                       onClick={() => h.setAccent(a.hex)}
-                      className={`size-8 rounded-full ${h.accent === a.hex ? "ring-2 ring-foreground ring-offset-2" : ""}`}
+                      className={`size-8 rounded-full border ${h.accent === a.hex ? "ring-2 ring-foreground ring-offset-2" : ""}`}
                       style={{ background: a.hex }}
                     />
                   ))}
                 </div>
               </div>
-              <div className="mt-6 flex items-start gap-3 rounded-lg border border-primary/10 bg-accent/40 p-4">
-                <Sparkles className="mt-0.5 size-4 text-primary" />
-                <p className="text-sm text-accent-foreground">
-                  <span className="font-bold">AI insight:</span> this palette exceeds WCAG AA contrast for both printed and digital certificates.
-                </p>
-              </div>
             </section>
 
-            {/* Typography */}
-            <section className="col-span-12 rounded-xl border bg-card p-6 shadow-sm lg:col-span-5">
-              <div className="mb-5 flex items-center gap-2">
-                <Type className="size-5 text-primary" />
-                <h3 className="text-xl font-semibold">Typography</h3>
+            <section className="col-span-12 rounded-xl border bg-card p-5 shadow-sm lg:col-span-5">
+              <div className="mb-4 flex items-center gap-2">
+                <Upload className="size-5 text-primary" />
+                <h3 className="text-xl font-semibold">Logo asset</h3>
               </div>
-              <div className="flex flex-col gap-5">
-                <div className="border-b pb-4">
-                  <p className="mb-1 text-xs text-muted-foreground">Heading (Inter)</p>
-                  <p className="text-3xl font-bold leading-tight">Inter Bold</p>
-                  <p className="mt-1 text-xs text-primary">Weight 700 · tracking -0.02em</p>
-                </div>
-                <div className="border-b pb-4">
-                  <p className="mb-1 text-xs text-muted-foreground">Body text</p>
-                  <p className="leading-relaxed">Designed for readability in professional certificates and modern interfaces.</p>
-                  <p className="mt-1 text-xs text-primary">Weight 400 · line-height 1.5</p>
-                </div>
-                <div>
-                  <p className="mb-1 text-xs text-muted-foreground">Labels &amp; microcopy</p>
-                  <p className="font-medium uppercase tracking-wider">Button label style</p>
-                  <p className="mt-1 text-xs text-primary">Weight 500 · letter-spacing 0.05em</p>
-                </div>
-              </div>
-            </section>
-
-            {/* Core assets */}
-            <section className="col-span-12 rounded-xl border bg-card p-6 shadow-sm">
-              <div className="mb-5 flex items-center gap-2">
-                <Image className="size-5 text-primary" />
-                <h3 className="text-xl font-semibold">Core assets</h3>
-              </div>
-              <div className="grid gap-6 md:grid-cols-2">
-                <div className="rounded-xl border bg-background p-5">
-                  <p className="mb-4 text-sm font-bold">Organisation logo</p>
-                  <label className="flex h-44 cursor-pointer items-center justify-center rounded-lg border border-dashed bg-card p-6 transition-colors hover:border-primary">
-                    {h.logo ? (
-                      <img src={h.logo} alt="logo" className="max-h-full max-w-full object-contain" />
-                    ) : (
-                      <span className="flex flex-col items-center gap-2 text-sm text-muted-foreground">
-                        <Upload className="size-6" /> Upload logo
-                      </span>
-                    )}
-                    <input
-                      type="file"
-                      accept="image/*"
-                      hidden
-                      onChange={(e) => {
-                        const f = e.target.files?.[0]
-                        if (!f) return
-                        const r = new FileReader()
-                        r.onload = () => h.setLogo(String(r.result))
-                        r.readAsDataURL(f)
-                      }}
-                    />
-                  </label>
-                  {h.logo && (
-                    <button className="mt-3 text-sm text-destructive hover:underline" onClick={() => h.setLogo(null)}>
-                      Remove logo
-                    </button>
-                  )}
-                </div>
-                <div className="rounded-xl border bg-background p-5">
-                  <p className="mb-4 text-sm font-bold">Achievement seal</p>
-                  <div className="grid h-44 place-items-center rounded-lg border border-dashed bg-card">
-                    <div className="text-center text-sm text-muted-foreground">
-                      <Sparkles className="mx-auto mb-1 size-6 text-primary" />
-                      Built-in seal applied to every certificate
-                    </div>
-                  </div>
-                </div>
+              <label className="flex h-52 cursor-pointer items-center justify-center rounded-lg border border-dashed bg-background p-6 transition-colors hover:border-primary">
+                {h.logo ? (
+                  <img src={h.logo} alt="Organisation logo" className="max-h-full max-w-full object-contain" />
+                ) : (
+                  <span className="flex flex-col items-center gap-2 text-sm text-muted-foreground">
+                    <Upload className="size-6" /> Upload organisation logo
+                  </span>
+                )}
+                <input
+                  type="file"
+                  accept="image/*"
+                  hidden
+                  onChange={(e) => {
+                    const f = e.target.files?.[0]
+                    if (!f) return
+                    const r = new FileReader()
+                    r.onload = () => h.setLogo(String(r.result))
+                    r.readAsDataURL(f)
+                  }}
+                />
+              </label>
+              <div className="mt-3 flex items-center justify-between gap-3">
+                <p className="text-xs text-muted-foreground">Logo is saved with the organisation brand defaults.</p>
+                {h.logo && (
+                  <button className="text-sm text-destructive hover:underline" onClick={() => h.setLogo(null)}>
+                    Remove logo
+                  </button>
+                )}
               </div>
             </section>
           </div>
