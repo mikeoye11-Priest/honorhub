@@ -10,6 +10,9 @@ interface PersistShape {
   template: string
   accent: string
   logo: string | null
+  logoScale: number
+  logoX: number
+  logoY: number
   org: string
   award: string
   defaultReason: string
@@ -25,6 +28,7 @@ export interface HonorState extends PersistShape {
   setTemplate: (t: string) => void
   setAccent: (a: string) => void
   setLogo: (l: string | null) => void
+  setLogoAdjust: (patch: Partial<Pick<PersistShape, "logoScale" | "logoX" | "logoY">>) => void
   setField: (k: "org" | "award" | "defaultReason" | "signatory" | "date", v: string) => void
   setRecipientsRaw: (raw: string) => void
   clearRecipients: () => void
@@ -54,7 +58,10 @@ export function HonorProvider({ children }: { children: ReactNode }) {
   const [vertical, setVerticalState] = useState<VerticalKey>(persisted.vertical ?? "school")
   const [template, setTemplate] = useState(persisted.template ?? "laurel")
   const [accent, setAccent] = useState(persisted.accent ?? "#F58220")
-  const [logo, setLogo] = useState<string | null>(persisted.logo ?? null)
+  const [logo, setLogoState] = useState<string | null>(persisted.logo ?? null)
+  const [logoScale, setLogoScale] = useState(persisted.logoScale ?? 100)
+  const [logoX, setLogoX] = useState(persisted.logoX ?? 0)
+  const [logoY, setLogoY] = useState(persisted.logoY ?? 0)
   const [org, setOrg] = useState(persisted.org ?? seed.org)
   const [award, setAward] = useState(persisted.award ?? seed.award)
   const [defaultReason, setDefaultReason] = useState(persisted.defaultReason ?? seed.reason)
@@ -75,6 +82,21 @@ export function HonorProvider({ children }: { children: ReactNode }) {
     else setDate(v)
   }
 
+  const setLogo = (l: string | null) => {
+    setLogoState(l)
+    if (!l) {
+      setLogoScale(100)
+      setLogoX(0)
+      setLogoY(0)
+    }
+  }
+
+  const setLogoAdjust = (patch: Partial<Pick<PersistShape, "logoScale" | "logoX" | "logoY">>) => {
+    if (typeof patch.logoScale === "number") setLogoScale(patch.logoScale)
+    if (typeof patch.logoX === "number") setLogoX(patch.logoX)
+    if (typeof patch.logoY === "number") setLogoY(patch.logoY)
+  }
+
   const setVertical = (v: VerticalKey) => {
     const def = VERTICALS[v]
     setVerticalState(v)
@@ -88,13 +110,13 @@ export function HonorProvider({ children }: { children: ReactNode }) {
 
   // Persist org-level settings (not recipients) per the bible's privacy stance.
   useEffect(() => {
-    const data: PersistShape = { vertical, template, accent, logo, org, award, defaultReason, signatory, date }
+    const data: PersistShape = { vertical, template, accent, logo, logoScale, logoX, logoY, org, award, defaultReason, signatory, date }
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(data))
     } catch {
       /* ignore quota errors */
     }
-  }, [vertical, template, accent, logo, org, award, defaultReason, signatory, date])
+  }, [vertical, template, accent, logo, logoScale, logoX, logoY, org, award, defaultReason, signatory, date])
 
   // When signed in, the active organisation is the source of truth for org-level
   // settings: hydrate them on load / org switch, then persist edits back (debounced).
@@ -113,7 +135,7 @@ export function HonorProvider({ children }: { children: ReactNode }) {
       setOrg(o.name)
       setAccent(o.accent)
       setTemplate(o.template || "laurel")
-      setLogo(o.logo_url)
+      setLogoState(o.logo_url)
       setAward(o.default_award ?? def.award)
       setDefaultReason(o.default_reason ?? def.reason)
       setSignatory(o.default_signatory ?? def.signatory)
@@ -148,6 +170,9 @@ export function HonorProvider({ children }: { children: ReactNode }) {
     template,
     accent,
     logo,
+    logoScale,
+    logoX,
+    logoY,
     org,
     award,
     defaultReason,
@@ -160,6 +185,7 @@ export function HonorProvider({ children }: { children: ReactNode }) {
     setTemplate,
     setAccent,
     setLogo,
+    setLogoAdjust,
     setField,
     setRecipientsRaw,
     clearRecipients,

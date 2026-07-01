@@ -27,6 +27,7 @@ import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle } from "@/components/ui/sheet"
 import { Certificate } from "@/components/Certificate"
+import { LogoAdjustControls } from "@/components/LogoAdjustControls"
 import { useHonor } from "@/lib/store"
 import { TEMPLATES, ACCENTS, TEMPLATE_STYLES, TEMPLATE_TIERS, VERTICAL_LIST, VERTICALS, getRecommendedTemplates, getTemplate, templateSearchText, type TemplateDef, type VerticalKey } from "@/lib/honor"
 import { COLLECTIONS, PREMIUM_COLLECTIONS, type PackItem, type OutputKind } from "@/lib/catalog"
@@ -60,7 +61,18 @@ export default function Library() {
   const [tplQuery, setTplQuery] = useState("")
   const [tplTier, setTplTier] = useState<TemplateDef["tier"] | "all">("all")
   const [tplStyle, setTplStyle] = useState<TemplateDef["style"] | "all">("all")
-  const fields = { template: h.template, accent: h.accent, logo: h.logo, org: h.org, award: h.award, date: h.date, signatory: h.signatory }
+  const fields = {
+    template: h.template,
+    accent: h.accent,
+    logo: h.logo,
+    logoScale: h.logoScale,
+    logoX: h.logoX,
+    logoY: h.logoY,
+    org: h.org,
+    award: h.award,
+    date: h.date,
+    signatory: h.signatory,
+  }
   const currentTemplate = getTemplate(h.template)
   const suggestedTemplates = getRecommendedTemplates(h.vertical).slice(0, 4)
   const brandPresets = BRAND_PRESETS.filter((p) => p.verticals.includes(h.vertical))
@@ -530,6 +542,12 @@ export default function Library() {
                   </button>
                 )}
               </div>
+              {h.logo && (
+                <LogoAdjustControls
+                  value={{ logoScale: h.logoScale, logoX: h.logoX, logoY: h.logoY }}
+                  onChange={h.setLogoAdjust}
+                />
+              )}
             </section>
           </div>
         </TabsContent>

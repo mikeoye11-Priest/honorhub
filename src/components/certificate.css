@@ -58,6 +58,8 @@
   max-width: 42%;
   margin: 0 auto 2.6cqw;
   object-fit: contain;
+  transform: translate(var(--logo-x, 0), var(--logo-y, 0)) scale(calc(var(--logo-scale, 100) / 100));
+  transform-origin: center;
 }
 .cert .eyebrow {
   font-family: var(--ui);

@@ -19,10 +19,19 @@ function fitClass(base: string, text: string, limits: [number, number, number]):
   return base
 }
 
+function clampNumber(value: unknown, min: number, max: number, fallback: number): number {
+  const n = Number(value)
+  if (!Number.isFinite(n)) return fallback
+  return Math.min(max, Math.max(min, n))
+}
+
 export interface CertFields {
   template: string
   accent: string
   logo: string | null
+  logoScale?: number
+  logoX?: number
+  logoY?: number
   org: string
   award: string
   date: string
@@ -40,12 +49,16 @@ export function certInnerHTML(f: CertFields, recipient?: Recipient): string {
   const reasonClass = fitClass("reason", reason, [70, 110, 150])
   const sigClass = fitClass("sig", f.signatory, [22, 32, 42])
   const dateClass = fitClass("date", f.date, [24, 34, 44])
+  const logoScale = clampNumber(f.logoScale, 60, 180, 100)
+  const logoX = clampNumber(f.logoX, -24, 24, 0)
+  const logoY = clampNumber(f.logoY, -12, 18, 0)
+  const logoStyle = `--logo-scale:${logoScale};--logo-x:${logoX}cqw;--logo-y:${logoY}cqw;`
 
   return `
     <div class="frame"></div><div class="frame inner"></div>
     ${ORN[f.template] || ""}
     <div class="body">
-      ${f.logo ? `<img class="logo" src="${f.logo}" alt="">` : ""}
+      ${f.logo ? `<img class="logo" src="${esc(f.logo)}" alt="" style="${logoStyle}">` : ""}
       <div class="${orgClass}">${esc(f.org)}</div>
       <h2 class="${awardClass}">${esc(f.award)}</h2>
       <div class="preposition">is proudly awarded to</div>

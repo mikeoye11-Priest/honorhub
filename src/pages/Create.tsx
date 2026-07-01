@@ -36,6 +36,7 @@ import { Badge } from "@/components/ui/badge"
 import { toast } from "sonner"
 import { Certificate, printPages, type CertFields, type CertPage } from "@/components/Certificate"
 import { Confetti } from "@/components/Confetti"
+import { LogoAdjustControls } from "@/components/LogoAdjustControls"
 import { useHonor } from "@/lib/store"
 import { useAuth } from "@/lib/auth"
 import { VERTICALS, TEMPLATES, ACCENTS, getRecommendedTemplates, parseRecipients, type TemplateDef } from "@/lib/honor"
@@ -124,6 +125,9 @@ export default function Create() {
     template: h.template,
     accent: h.accent,
     logo: h.logo,
+    logoScale: h.logoScale,
+    logoX: h.logoX,
+    logoY: h.logoY,
     org: h.org,
     award: activeAward,
     date: h.date,
@@ -772,6 +776,12 @@ Respond with ONLY a JSON array of strings in order, no prose or fences.`
                     )}
                     <input ref={logoRef} type="file" accept="image/*" hidden onChange={onLogo} />
                   </div>
+                  {h.logo && (
+                    <LogoAdjustControls
+                      value={{ logoScale: h.logoScale, logoX: h.logoX, logoY: h.logoY }}
+                      onChange={h.setLogoAdjust}
+                    />
+                  )}
                 </div>
 
                 {/* Core details */}
