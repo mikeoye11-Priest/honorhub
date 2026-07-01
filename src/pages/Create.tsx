@@ -731,10 +731,15 @@ Respond with ONLY a JSON array of strings in order, no prose or fences.`
             )}
 
             {step === 3 && (
-              <section className="flex flex-col gap-5">
-                <div>
-                  <h2 className="text-3xl font-semibold tracking-tight">Final preview</h2>
-                  <p className="mt-1 text-muted-foreground">Review and polish before you generate.</p>
+              <section className="flex flex-col gap-4">
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div>
+                    <h2 className="text-3xl font-semibold tracking-tight">Final preview</h2>
+                    <p className="mt-1 text-muted-foreground">Review and polish before you generate.</p>
+                  </div>
+                  <Button onClick={() => setStep(4)} disabled={recipientCount === 0}>
+                    <Sparkles className="size-4" /> Generate {totalCerts} certificate{totalCerts === 1 ? "" : "s"}
+                  </Button>
                 </div>
 
                 {/* Customise */}
@@ -743,12 +748,12 @@ Respond with ONLY a JSON array of strings in order, no prose or fences.`
                     <Label className="block text-xs uppercase tracking-wide text-muted-foreground">Template engine</Label>
                     <Badge variant="outline" className="capitalize">{v.label} recommendations first</Badge>
                   </div>
-                  <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+                  <div className="grid max-h-64 grid-cols-2 gap-2 overflow-y-auto pr-1 sm:grid-cols-3 xl:grid-cols-4">
                     {orderedTemplates.map((t) => (
                       <button
                         key={t.key}
                         onClick={() => selectTemplate(t)}
-                        className={`min-h-24 rounded-lg border p-2 text-left transition hover:shadow-sm ${
+                        className={`min-h-20 rounded-lg border p-2 text-left transition hover:shadow-sm ${
                           h.template === t.key ? "border-primary ring-1 ring-primary" : "bg-card"
                         }`}
                       >
@@ -793,44 +798,46 @@ Respond with ONLY a JSON array of strings in order, no prose or fences.`
                   )}
                 </div>
 
-                {/* Core details */}
-                <div className="rounded-xl border bg-card p-4">
-                  <h4 className="mb-3 flex items-center gap-2 font-semibold">
-                    <Info className="size-4 text-primary" /> Core details
-                  </h4>
-                  <dl className="text-sm">
-                    {[
-                      ["Recipient", h.recipients[idx]?.name ?? "—"],
-                      ["Award", activeAward],
-                      ["Date", h.date],
-                      ["Organisation", h.org],
-                    ].map(([k, val], i, arr) => (
-                      <div key={k} className={`flex justify-between py-2 ${i < arr.length - 1 ? "border-b" : ""}`}>
-                        <dt className="text-muted-foreground">{k}</dt>
-                        <dd className="font-semibold">{val}</dd>
-                      </div>
-                    ))}
-                  </dl>
-                </div>
+                <div className="grid gap-4 lg:grid-cols-2">
+                  {/* Core details */}
+                  <div className="rounded-xl border bg-card p-4">
+                    <h4 className="mb-3 flex items-center gap-2 font-semibold">
+                      <Info className="size-4 text-primary" /> Core details
+                    </h4>
+                    <dl className="text-sm">
+                      {[
+                        ["Recipient", h.recipients[idx]?.name ?? "—"],
+                        ["Award", activeAward],
+                        ["Date", h.date],
+                        ["Organisation", h.org],
+                      ].map(([k, val], i, arr) => (
+                        <div key={k} className={`flex justify-between gap-3 py-2 ${i < arr.length - 1 ? "border-b" : ""}`}>
+                          <dt className="text-muted-foreground">{k}</dt>
+                          <dd className="text-right font-semibold">{val}</dd>
+                        </div>
+                      ))}
+                    </dl>
+                  </div>
 
-                {/* Visibility */}
-                <div className="rounded-xl border bg-card p-4">
-                  <h4 className="mb-3 flex items-center gap-2 font-semibold">
-                    <Eye className="size-4 text-primary" /> Privacy
-                  </h4>
-                  <div className="flex flex-col gap-2">
-                    <div className="flex items-start gap-3 rounded-lg bg-muted/50 p-3">
-                      <ShieldCheck className="mt-0.5 size-4 text-success" />
-                      <div>
-                        <p className="text-sm font-semibold">Pupil data is session-only</p>
-                        <p className="text-xs text-muted-foreground">Recipient names and messages stay in this browser and are not stored in HonorHub.</p>
+                  {/* Visibility */}
+                  <div className="rounded-xl border bg-card p-4">
+                    <h4 className="mb-3 flex items-center gap-2 font-semibold">
+                      <Eye className="size-4 text-primary" /> Privacy
+                    </h4>
+                    <div className="flex flex-col gap-2">
+                      <div className="flex items-start gap-3 rounded-lg bg-muted/50 p-3">
+                        <ShieldCheck className="mt-0.5 size-4 text-success" />
+                        <div>
+                          <p className="text-sm font-semibold">Pupil data is session-only</p>
+                          <p className="text-xs text-muted-foreground">Recipient names and messages stay in this browser and are not stored in HonorHub.</p>
+                        </div>
                       </div>
-                    </div>
-                    <div className="flex items-start gap-3 rounded-lg bg-muted/50 p-3">
-                      <Globe className="mt-0.5 size-4 text-info" />
-                      <div>
-                        <p className="text-sm font-semibold">Public sharing is optional</p>
-                        <p className="text-xs text-muted-foreground">Print and PDF download keep data local. Share links should be used only when the school chooses to publish a certificate.</p>
+                      <div className="flex items-start gap-3 rounded-lg bg-muted/50 p-3">
+                        <Globe className="mt-0.5 size-4 text-info" />
+                        <div>
+                          <p className="text-sm font-semibold">Public sharing is optional</p>
+                          <p className="text-xs text-muted-foreground">Print and PDF download keep data local. Share links should be used only when the school chooses to publish a certificate.</p>
+                        </div>
                       </div>
                     </div>
                   </div>
