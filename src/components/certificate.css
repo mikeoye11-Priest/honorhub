@@ -67,6 +67,8 @@
   color: var(--cert-ink-soft);
   font-weight: 600;
   margin-bottom: 2.4cqw;
+  max-width: 100%;
+  text-wrap: balance;
 }
 .cert .award {
   font-family: var(--cert-display, var(--serif));
@@ -75,6 +77,8 @@
   line-height: 1.05;
   margin: 0 0 3.4cqw;
   color: var(--cert-ink);
+  overflow-wrap: anywhere;
+  text-wrap: balance;
 }
 .cert .preposition {
   font-family: var(--ui);
@@ -91,6 +95,9 @@
   color: var(--accent);
   margin: 0 0 1.6cqw;
   letter-spacing: -0.01em;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  text-wrap: balance;
 }
 .cert .rule {
   width: 34%;
@@ -107,6 +114,8 @@
   color: var(--cert-ink);
   max-width: 80%;
   margin: 0 auto;
+  overflow-wrap: anywhere;
+  text-wrap: balance;
 }
 .cert .foot {
   position: absolute;
@@ -129,6 +138,9 @@
   border-bottom: 0.1cqw solid var(--cert-ink-faint);
   padding-bottom: 0.6cqw;
   min-width: 22cqw;
+  max-width: 29cqw;
+  overflow-wrap: anywhere;
+  line-height: 1.12;
 }
 .cert .sig .k,
 .cert .date .k {
@@ -150,6 +162,78 @@
   bottom: 5.2cqw;
   width: 13cqw;
   height: 13cqw;
+}
+
+/* Automatic fit guards for real-world names, schools and award wording.
+   These classes are emitted by Certificate.tsx from content length, so normal
+   certificates keep the original art direction while long content gets more air. */
+.cert .eyebrow--md {
+  font-size: 1.65cqw;
+  letter-spacing: 0.24em;
+}
+.cert .eyebrow--lg {
+  font-size: 1.42cqw;
+  letter-spacing: 0.18em;
+  margin-bottom: 1.9cqw;
+}
+.cert .eyebrow--xl {
+  font-size: 1.22cqw;
+  letter-spacing: 0.12em;
+  margin-bottom: 1.6cqw;
+}
+.cert .award--md {
+  font-size: 4.8cqw;
+  margin-bottom: 2.8cqw;
+}
+.cert .award--lg {
+  font-size: 4.15cqw;
+  line-height: 1.08;
+  margin-bottom: 2.35cqw;
+}
+.cert .award--xl {
+  font-size: 3.45cqw;
+  line-height: 1.12;
+  margin-bottom: 2cqw;
+}
+.cert .name--md {
+  font-size: 7.55cqw;
+}
+.cert .name--lg {
+  font-size: 6.45cqw;
+  line-height: 1.04;
+}
+.cert .name--xl {
+  font-size: 5.35cqw;
+  line-height: 1.08;
+}
+.cert .reason--md {
+  font-size: 2.35cqw;
+  line-height: 1.4;
+  max-width: 86%;
+}
+.cert .reason--lg {
+  font-size: 2.05cqw;
+  line-height: 1.32;
+  max-width: 90%;
+}
+.cert .reason--xl {
+  font-size: 1.78cqw;
+  line-height: 1.25;
+  max-width: 92%;
+}
+.cert .sig--md .v,
+.cert .date--md .v {
+  font-size: 2.25cqw;
+}
+.cert .sig--lg .v,
+.cert .date--lg .v {
+  font-size: 1.95cqw;
+  max-width: 31cqw;
+}
+.cert .sig--xl .v,
+.cert .date--xl .v {
+  font-size: 1.68cqw;
+  max-width: 32cqw;
 }
 
 /* ----- Templates ----- */
@@ -919,4 +1003,143 @@
 .cert.pdf-export.t-rose .cert-seal {
   bottom: 58px;
   filter: drop-shadow(0 6px 11px rgba(0, 0, 0, 0.3));
+}
+
+/* Final fit pass: keep long real-world text clear of dividers, seals and
+   signature lines even after template-specific typography and PDF fallback rules. */
+.cert .eyebrow.eyebrow--md {
+  font-size: 1.65cqw;
+  letter-spacing: 0.24em;
+}
+.cert .eyebrow.eyebrow--lg {
+  font-size: 1.42cqw;
+  letter-spacing: 0.18em;
+  margin-bottom: 1.9cqw;
+}
+.cert .eyebrow.eyebrow--xl {
+  font-size: 1.22cqw;
+  letter-spacing: 0.12em;
+  margin-bottom: 1.6cqw;
+}
+.cert .award.award--md {
+  font-size: 4.8cqw;
+  margin-bottom: 2.8cqw;
+}
+.cert .award.award--lg {
+  font-size: 4.15cqw;
+  line-height: 1.08;
+  margin-bottom: 2.35cqw;
+}
+.cert .award.award--xl {
+  font-size: 3.45cqw;
+  line-height: 1.12;
+  margin-bottom: 2cqw;
+}
+.cert .name.name--md {
+  font-size: 7.55cqw;
+}
+.cert .name.name--lg {
+  font-size: 6.45cqw;
+  line-height: 1.04;
+}
+.cert .name.name--xl {
+  font-size: 5.35cqw;
+  line-height: 1.08;
+}
+.cert .reason.reason--md {
+  font-size: 2.35cqw;
+  line-height: 1.4;
+  max-width: 86%;
+}
+.cert .reason.reason--lg {
+  font-size: 2.05cqw;
+  line-height: 1.32;
+  max-width: 90%;
+}
+.cert .reason.reason--xl {
+  font-size: 1.78cqw;
+  line-height: 1.25;
+  max-width: 92%;
+}
+.cert .sig.sig--md .v,
+.cert .date.date--md .v {
+  font-size: 2.25cqw;
+}
+.cert .sig.sig--lg .v,
+.cert .date.date--lg .v {
+  font-size: 1.95cqw;
+  max-width: 31cqw;
+}
+.cert .sig.sig--xl .v,
+.cert .date.date--xl .v {
+  font-size: 1.68cqw;
+  max-width: 32cqw;
+}
+.cert.pdf-export .eyebrow.eyebrow--md {
+  font-size: 18.5px;
+  letter-spacing: 0.24em;
+}
+.cert.pdf-export .eyebrow.eyebrow--lg {
+  font-size: 15.9px;
+  letter-spacing: 0.18em;
+  margin-bottom: 21.3px;
+}
+.cert.pdf-export .eyebrow.eyebrow--xl {
+  font-size: 13.7px;
+  letter-spacing: 0.12em;
+  margin-bottom: 18px;
+}
+.cert.pdf-export .award.award--md {
+  font-size: 53.9px;
+  margin-bottom: 31.4px;
+}
+.cert.pdf-export .award.award--lg {
+  font-size: 46.6px;
+  line-height: 1.08;
+  margin-bottom: 26.4px;
+}
+.cert.pdf-export .award.award--xl {
+  font-size: 38.7px;
+  line-height: 1.12;
+  margin-bottom: 22.5px;
+}
+.cert.pdf-export .name.name--md {
+  font-size: 84.8px;
+}
+.cert.pdf-export .name.name--lg {
+  font-size: 72.4px;
+  line-height: 1.04;
+}
+.cert.pdf-export .name.name--xl {
+  font-size: 60.1px;
+  line-height: 1.08;
+}
+.cert.pdf-export .reason.reason--md {
+  font-size: 26.4px;
+  line-height: 1.4;
+  max-width: 86%;
+}
+.cert.pdf-export .reason.reason--lg {
+  font-size: 23px;
+  line-height: 1.32;
+  max-width: 90%;
+}
+.cert.pdf-export .reason.reason--xl {
+  font-size: 20px;
+  line-height: 1.25;
+  max-width: 92%;
+}
+.cert.pdf-export .sig.sig--md .v,
+.cert.pdf-export .date.date--md .v {
+  font-size: 25.3px;
+}
+.cert.pdf-export .sig.sig--lg .v,
+.cert.pdf-export .date.date--lg .v {
+  font-size: 21.9px;
+  max-width: 348px;
+}
+.cert.pdf-export .sig.sig--xl .v,
+.cert.pdf-export .date.date--xl .v {
+  font-size: 18.9px;
+  max-width: 359px;
 }

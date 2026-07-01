@@ -7,6 +7,18 @@ function esc(s: string) {
   return (s || "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c] as string)
 }
 
+function compactLen(s: string): number {
+  return (s || "").replace(/\s+/g, " ").trim().length
+}
+
+function fitClass(base: string, text: string, limits: [number, number, number]): string {
+  const len = compactLen(text)
+  if (len >= limits[2]) return `${base} ${base}--xl`
+  if (len >= limits[1]) return `${base} ${base}--lg`
+  if (len >= limits[0]) return `${base} ${base}--md`
+  return base
+}
+
 export interface CertFields {
   template: string
   accent: string
@@ -20,21 +32,30 @@ export interface CertFields {
 /** Returns the inner HTML string for a single certificate (used for both
  *  the live React preview and the print document). */
 export function certInnerHTML(f: CertFields, recipient?: Recipient): string {
+  const name = recipient ? recipient.name : "Recipient name"
+  const reason = recipient ? recipient.reason : ""
+  const orgClass = fitClass("eyebrow", f.org, [30, 46, 62])
+  const awardClass = fitClass("award", f.award, [22, 34, 48])
+  const nameClass = fitClass("name", name, [18, 27, 36])
+  const reasonClass = fitClass("reason", reason, [70, 110, 150])
+  const sigClass = fitClass("sig", f.signatory, [22, 32, 42])
+  const dateClass = fitClass("date", f.date, [24, 34, 44])
+
   return `
     <div class="frame"></div><div class="frame inner"></div>
     ${ORN[f.template] || ""}
     <div class="body">
       ${f.logo ? `<img class="logo" src="${f.logo}" alt="">` : ""}
-      <div class="eyebrow">${esc(f.org)}</div>
-      <h2 class="award">${esc(f.award)}</h2>
+      <div class="${orgClass}">${esc(f.org)}</div>
+      <h2 class="${awardClass}">${esc(f.award)}</h2>
       <div class="preposition">is proudly awarded to</div>
-      <div class="name">${esc(recipient ? recipient.name : "Recipient name")}</div>
+      <div class="${nameClass}">${esc(name)}</div>
       <div class="rule"></div>
-      <div class="reason">${esc(recipient ? recipient.reason : "")}</div>
+      <div class="${reasonClass}">${esc(reason)}</div>
     </div>
     <div class="foot">
-      <div class="sig"><div class="v">${esc(f.signatory)}</div><div class="k">Signed</div></div>
-      <div class="date"><div class="v">${esc(f.date)}</div><div class="k">Date</div></div>
+      <div class="${sigClass}"><div class="v">${esc(f.signatory)}</div><div class="k">Signed</div></div>
+      <div class="${dateClass}"><div class="v">${esc(f.date)}</div><div class="k">Date</div></div>
     </div>
     ${seal()}`
 }
