@@ -38,7 +38,7 @@ import { Certificate, printPages, type CertFields, type CertPage } from "@/compo
 import { Confetti } from "@/components/Confetti"
 import { useHonor } from "@/lib/store"
 import { useAuth } from "@/lib/auth"
-import { VERTICALS, TEMPLATES, ACCENTS, parseRecipients } from "@/lib/honor"
+import { VERTICALS, TEMPLATES, ACCENTS, getRecommendedTemplates, parseRecipients, type TemplateDef } from "@/lib/honor"
 import { COLLECTIONS, getPack } from "@/lib/catalog"
 import { downloadPdf, buildShareFile, usesNativePdfDialog } from "@/lib/pdf"
 import { usePacks } from "@/lib/packs"
@@ -133,6 +133,14 @@ export default function Create() {
   const totalCerts = pack ? packCertItems.length * recipientCount : recipientCount
   const idx = Math.min(previewIndex, Math.max(0, h.recipients.length - 1))
   const awards = COLLECTIONS[h.vertical] ?? []
+  const recommendedTemplates = getRecommendedTemplates(h.vertical)
+  const recommendedTemplateKeys = new Set(recommendedTemplates.map((t) => t.key))
+  const orderedTemplates = [...recommendedTemplates, ...TEMPLATES.filter((t) => !recommendedTemplateKeys.has(t.key))]
+
+  const selectTemplate = (template: TemplateDef) => {
+    h.setTemplate(template.key)
+    h.setAccent(template.defaultAccent)
+  }
 
   // One page per (certificate-item × recipient) in pack mode, else one per recipient.
   const buildPages = (): CertPage[] =>
@@ -718,18 +726,28 @@ Respond with ONLY a JSON array of strings in order, no prose or fences.`
 
                 {/* Customise */}
                 <div className="rounded-xl border bg-card p-4">
-                  <Label className="mb-2 block text-xs uppercase tracking-wide text-muted-foreground">Template</Label>
-                  <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
-                    {TEMPLATES.map((t) => (
+                  <div className="mb-2 flex items-center justify-between gap-3">
+                    <Label className="block text-xs uppercase tracking-wide text-muted-foreground">Template engine</Label>
+                    <Badge variant="outline" className="capitalize">{v.label} recommendations first</Badge>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+                    {orderedTemplates.map((t) => (
                       <button
                         key={t.key}
-                        onClick={() => h.setTemplate(t.key)}
-                        className={`rounded-lg border p-2 text-left transition hover:shadow-sm ${
+                        onClick={() => selectTemplate(t)}
+                        className={`min-h-24 rounded-lg border p-2 text-left transition hover:shadow-sm ${
                           h.template === t.key ? "border-primary ring-1 ring-primary" : "bg-card"
                         }`}
                       >
-                        <div className="text-sm font-semibold">{t.name}</div>
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="text-sm font-semibold">{t.name}</div>
+                          <span className="mt-1 size-2 shrink-0 rounded-full" style={{ background: t.defaultAccent }} />
+                        </div>
                         <div className="text-[11px] text-muted-foreground">{t.blurb}</div>
+                        <div className="mt-2 flex flex-wrap gap-1">
+                          {recommendedTemplateKeys.has(t.key) ? <Badge variant="outline" className="px-1.5 py-0 text-[10px]">Recommended</Badge> : null}
+                          <Badge variant="outline" className="px-1.5 py-0 text-[10px] capitalize">{t.tier}</Badge>
+                        </div>
                       </button>
                     ))}
                   </div>

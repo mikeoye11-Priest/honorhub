@@ -98,34 +98,66 @@ export interface TemplateDef {
   key: string
   name: string
   blurb: string
+  tier: "signature" | "luxury" | "classic"
+  style: "formal" | "playful" | "modern" | "spiritual" | "sport" | "botanical"
+  bestFor: VerticalKey[]
+  defaultAccent: string
+  tags: string[]
 }
 
 export const TEMPLATES: TemplateDef[] = [
   // Signature tier — designed, illustrative certificates
-  { key: "excellence", name: "Classic Excellence", blurb: "Timeless & elegant" },
-  { key: "playful", name: "Bright & Playful", blurb: "Fun for young learners" },
-  { key: "grace", name: "Church Appreciation", blurb: "Warm & graceful" },
-  { key: "champion", name: "Sports Excellence", blurb: "Energetic & bold" },
-  { key: "executive", name: "Modern Professional", blurb: "Sleek & corporate" },
+  { key: "excellence", name: "Classic Excellence", blurb: "Timeless & elegant", tier: "signature", style: "formal", bestFor: ["school", "event", "charity"], defaultAccent: "#B8893A", tags: ["classic", "cream", "gold", "ceremony"] },
+  { key: "playful", name: "Bright & Playful", blurb: "Fun for young learners", tier: "signature", style: "playful", bestFor: ["school", "event"], defaultAccent: "#7C3AED", tags: ["kids", "colourful", "primary", "celebration"] },
+  { key: "grace", name: "Church Appreciation", blurb: "Warm & graceful", tier: "signature", style: "spiritual", bestFor: ["church", "charity"], defaultAccent: "#8A5A2B", tags: ["church", "ministry", "warm", "grace"] },
+  { key: "champion", name: "Sports Excellence", blurb: "Energetic & bold", tier: "signature", style: "sport", bestFor: ["sports", "school", "event"], defaultAccent: "#F58220", tags: ["sports", "bold", "team", "dark"] },
+  { key: "executive", name: "Modern Professional", blurb: "Sleek & corporate", tier: "signature", style: "modern", bestFor: ["company", "charity", "event"], defaultAccent: "#B8893A", tags: ["business", "corporate", "minimal", "navy"] },
   // Luxury tier — jewel-tone papers, gold-foil text and ornate flourishes
-  { key: "imperial", name: "Imperial", blurb: "Navy & gold, regal" },
-  { key: "opulent", name: "Opulent", blurb: "Ivory & gold, ornate" },
-  { key: "onyx", name: "Onyx", blurb: "Black-tie minimal" },
-  { key: "emerald", name: "Emerald", blurb: "Jewel green & gold" },
-  { key: "burgundy", name: "Burgundy", blurb: "Deep wine & gold" },
-  { key: "prestige", name: "Prestige Ivory", blurb: "Ivory, ink & gold" },
-  { key: "sapphire", name: "Sapphire Gala", blurb: "Royal blue ceremony" },
-  { key: "vellum", name: "Heritage Vellum", blurb: "Engraved parchment" },
-  { key: "rose", name: "Rose Ceremony", blurb: "Soft rose-gold" },
+  { key: "imperial", name: "Imperial", blurb: "Navy & gold, regal", tier: "luxury", style: "formal", bestFor: ["school", "church", "event", "company"], defaultAccent: "#C8A96A", tags: ["navy", "gold", "regal", "premium"] },
+  { key: "opulent", name: "Opulent", blurb: "Ivory & gold, ornate", tier: "luxury", style: "formal", bestFor: ["church", "event", "charity"], defaultAccent: "#B8893A", tags: ["ivory", "gold", "ornate", "premium"] },
+  { key: "onyx", name: "Onyx", blurb: "Black-tie minimal", tier: "luxury", style: "modern", bestFor: ["company", "event", "sports"], defaultAccent: "#C8A96A", tags: ["black", "minimal", "gala", "premium"] },
+  { key: "emerald", name: "Emerald", blurb: "Jewel green & gold", tier: "luxury", style: "formal", bestFor: ["school", "church", "charity"], defaultAccent: "#C8A96A", tags: ["green", "jewel", "gold", "premium"] },
+  { key: "burgundy", name: "Burgundy", blurb: "Deep wine & gold", tier: "luxury", style: "formal", bestFor: ["event", "church", "company"], defaultAccent: "#C8A96A", tags: ["wine", "gold", "ceremony", "premium"] },
+  { key: "prestige", name: "Prestige Ivory", blurb: "Ivory, ink & gold", tier: "luxury", style: "modern", bestFor: ["company", "event", "school"], defaultAccent: "#B8893A", tags: ["ivory", "ink", "prestige", "executive"] },
+  { key: "sapphire", name: "Sapphire Gala", blurb: "Royal blue ceremony", tier: "luxury", style: "formal", bestFor: ["event", "school", "company"], defaultAccent: "#C8A96A", tags: ["blue", "gala", "formal", "premium"] },
+  { key: "vellum", name: "Heritage Vellum", blurb: "Engraved parchment", tier: "luxury", style: "formal", bestFor: ["church", "school", "charity"], defaultAccent: "#B8893A", tags: ["parchment", "heritage", "engraved", "traditional"] },
+  { key: "rose", name: "Rose Ceremony", blurb: "Soft rose-gold", tier: "luxury", style: "botanical", bestFor: ["event", "charity", "church"], defaultAccent: "#C08552", tags: ["rose", "soft", "gold", "elegant"] },
   // Classic tier
-  { key: "laurel", name: "Laurel", blurb: "Classic, ceremonial" },
-  { key: "sunbeam", name: "Sunbeam", blurb: "Warm, younger years" },
-  { key: "meadow", name: "Meadow", blurb: "Fresh, modern" },
-  { key: "regal", name: "Regal", blurb: "Formal, premium" },
-  { key: "confetti", name: "Confetti", blurb: "Playful, celebration" },
-  { key: "botanical", name: "Botanical", blurb: "Elegant line art" },
-  { key: "midnight", name: "Midnight", blurb: "Premium dark" },
+  { key: "laurel", name: "Laurel", blurb: "Classic, ceremonial", tier: "classic", style: "formal", bestFor: ["school", "church", "charity", "event"], defaultAccent: "#F58220", tags: ["classic", "simple", "ceremony"] },
+  { key: "sunbeam", name: "Sunbeam", blurb: "Warm, younger years", tier: "classic", style: "playful", bestFor: ["school"], defaultAccent: "#F58220", tags: ["warm", "young", "simple"] },
+  { key: "meadow", name: "Meadow", blurb: "Fresh, modern", tier: "classic", style: "botanical", bestFor: ["school", "charity"], defaultAccent: "#5E8C6A", tags: ["fresh", "green", "modern"] },
+  { key: "regal", name: "Regal", blurb: "Formal, premium", tier: "classic", style: "formal", bestFor: ["school", "event", "company"], defaultAccent: "#B8893A", tags: ["formal", "premium", "classic"] },
+  { key: "confetti", name: "Confetti", blurb: "Playful, celebration", tier: "classic", style: "playful", bestFor: ["school", "event"], defaultAccent: "#F58220", tags: ["fun", "celebration", "kids"] },
+  { key: "botanical", name: "Botanical", blurb: "Elegant line art", tier: "classic", style: "botanical", bestFor: ["church", "charity", "event"], defaultAccent: "#5E8C6A", tags: ["botanical", "line art", "elegant"] },
+  { key: "midnight", name: "Midnight", blurb: "Premium dark", tier: "classic", style: "modern", bestFor: ["company", "sports", "event"], defaultAccent: "#C8A96A", tags: ["dark", "premium", "minimal"] },
 ]
+
+export const TEMPLATE_TIERS: Array<{ key: TemplateDef["tier"]; label: string }> = [
+  { key: "signature", label: "Signature" },
+  { key: "luxury", label: "Luxury" },
+  { key: "classic", label: "Classic" },
+]
+
+export const TEMPLATE_STYLES: Array<{ key: TemplateDef["style"]; label: string }> = [
+  { key: "formal", label: "Formal" },
+  { key: "playful", label: "Playful" },
+  { key: "modern", label: "Modern" },
+  { key: "spiritual", label: "Spiritual" },
+  { key: "sport", label: "Sport" },
+  { key: "botanical", label: "Botanical" },
+]
+
+export function getTemplate(key: string): TemplateDef {
+  return TEMPLATES.find((t) => t.key === key) ?? TEMPLATES[0]
+}
+
+export function getRecommendedTemplates(vertical: VerticalKey): TemplateDef[] {
+  return TEMPLATES.filter((t) => t.bestFor.includes(vertical)).slice(0, 8)
+}
+
+export function templateSearchText(t: TemplateDef): string {
+  return `${t.name} ${t.blurb} ${t.tier} ${t.style} ${t.tags.join(" ")} ${t.bestFor.join(" ")}`.toLowerCase()
+}
 
 export interface Accent {
   name: string

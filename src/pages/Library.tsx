@@ -29,7 +29,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle } from "@/components/ui/sheet"
 import { Certificate } from "@/components/Certificate"
 import { useHonor } from "@/lib/store"
-import { TEMPLATES, ACCENTS, VERTICAL_LIST, VERTICALS, type VerticalKey } from "@/lib/honor"
+import { TEMPLATES, ACCENTS, TEMPLATE_STYLES, TEMPLATE_TIERS, VERTICAL_LIST, VERTICALS, templateSearchText, type TemplateDef, type VerticalKey } from "@/lib/honor"
 import { COLLECTIONS, PREMIUM_COLLECTIONS, type PackItem, type OutputKind } from "@/lib/catalog"
 import { usePacks, type NewPack } from "@/lib/packs"
 
@@ -49,10 +49,22 @@ export default function Library() {
   const navigate = useNavigate()
   const [sector, setSector] = useState<VerticalKey | "all">(h.vertical)
   const [tplQuery, setTplQuery] = useState("")
+  const [tplTier, setTplTier] = useState<TemplateDef["tier"] | "all">("all")
+  const [tplStyle, setTplStyle] = useState<TemplateDef["style"] | "all">("all")
   const fields = { template: h.template, accent: h.accent, logo: h.logo, org: h.org, award: h.award, date: h.date, signatory: h.signatory }
 
   const q = tplQuery.trim().toLowerCase()
-  const visibleTemplates = q ? TEMPLATES.filter((t) => (t.name + " " + t.blurb).toLowerCase().includes(q)) : TEMPLATES
+  const visibleTemplates = TEMPLATES.filter((t) => {
+    const matchesSearch = q ? templateSearchText(t).includes(q) : true
+    const matchesTier = tplTier === "all" || t.tier === tplTier
+    const matchesStyle = tplStyle === "all" || t.style === tplStyle
+    return matchesSearch && matchesTier && matchesStyle
+  })
+
+  const applyTemplate = (t: TemplateDef) => {
+    h.setTemplate(t.key)
+    h.setAccent(t.defaultAccent)
+  }
 
   const newTemplate = () => {
     toast("Design a new template", { description: "Pick a style and customise it in Create." })
@@ -124,9 +136,30 @@ export default function Library() {
                 className="pl-9"
               />
             </div>
-            <Button variant="outline" onClick={() => toast("Filters", { description: "Advanced template filters are coming soon." })}>
-              <Filter className="size-4" /> Filter
-            </Button>
+            <Select value={tplTier} onValueChange={(value) => setTplTier(value as TemplateDef["tier"] | "all")}>
+              <SelectTrigger className="w-[150px]">
+                <Filter className="size-4" />
+                <SelectValue placeholder="Tier" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All tiers</SelectItem>
+                {TEMPLATE_TIERS.map((tier) => (
+                  <SelectItem key={tier.key} value={tier.key}>{tier.label}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Select value={tplStyle} onValueChange={(value) => setTplStyle(value as TemplateDef["style"] | "all")}>
+              <SelectTrigger className="w-[160px]">
+                <Palette className="size-4" />
+                <SelectValue placeholder="Style" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All styles</SelectItem>
+                {TEMPLATE_STYLES.map((style) => (
+                  <SelectItem key={style.key} value={style.key}>{style.label}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
             <Button variant="outline" onClick={() => toast("Sorted by recently used")}>
               <ArrowUpDown className="size-4" /> Sort: Recently used
             </Button>
@@ -134,9 +167,9 @@ export default function Library() {
 
           {/* Grid */}
           <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
-            {visibleTemplates.map((t, i) => {
+            {visibleTemplates.map((t) => {
               const active = h.template === t.key
-              const status = active ? "In use" : i % 3 === 0 ? "Default" : "Active"
+              const status = active ? "In use" : t.bestFor.includes(h.vertical) ? "Recommended" : t.tier
               return (
                 <div key={t.key} className="group flex flex-col overflow-hidden rounded-xl border bg-card shadow-soft transition hover:-translate-y-1 hover:shadow-soft-lg">
                   <div className="relative border-b bg-muted/40 p-4">
@@ -144,7 +177,7 @@ export default function Library() {
                       <Certificate fields={{ ...fields, template: t.key }} recipient={h.recipients[0]} />
                     </div>
                     <div className="absolute inset-0 flex items-center justify-center bg-foreground/5 opacity-0 transition-opacity group-hover:opacity-100">
-                      <Button size="sm" onClick={() => h.setTemplate(t.key)} className="shadow-sm">
+                      <Button size="sm" onClick={() => applyTemplate(t)} className="shadow-sm">
                         {active ? "Selected" : "Use template"}
                       </Button>
                     </div>
@@ -157,10 +190,17 @@ export default function Library() {
                           <span className={`rounded-full px-2 py-0.5 ${active ? "bg-success/10 text-success" : "bg-muted text-muted-foreground"}`}>{status}</span>
                           <span>· {t.blurb}</span>
                         </div>
+                        <div className="mt-2 flex flex-wrap gap-1">
+                          <Badge variant="outline" className="text-[10px] capitalize">{t.tier}</Badge>
+                          <Badge variant="outline" className="text-[10px] capitalize">{t.style}</Badge>
+                          <span className="inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] text-muted-foreground">
+                            <span className="size-2 rounded-full" style={{ background: t.defaultAccent }} /> Engine accent
+                          </span>
+                        </div>
                       </div>
                     </div>
                     <div className="mt-auto flex gap-2">
-                      <Button variant="outline" className="flex-1" onClick={() => h.setTemplate(t.key)}>
+                      <Button variant="outline" className="flex-1" onClick={() => applyTemplate(t)}>
                         {active ? <Check className="size-4" /> : null} {active ? "Selected" : "Use template"}
                       </Button>
                       <Button
@@ -168,7 +208,7 @@ export default function Library() {
                         size="icon"
                         aria-label="Duplicate"
                         onClick={() => {
-                          h.setTemplate(t.key)
+                          applyTemplate(t)
                           toast.success(`“${t.name}” duplicated`, { description: "Opened in Create to customise." })
                           navigate("/create")
                         }}
