@@ -179,14 +179,135 @@ export interface PremiumCollection {
   key: string
   name: string
   sectors: VerticalKey[]
+  blurb: string
   count: number
   price: string
+  includedIn: string
+  bestFor: string[]
+  items: PackItem[]
 }
 
 export const PREMIUM_COLLECTIONS: PremiumCollection[] = [
-  { key: "education", name: "Education Collection", sectors: ["school"], count: 50, price: "£29" },
-  { key: "church", name: "Church Collection", sectors: ["church"], count: 75, price: "£39" },
-  { key: "corporate", name: "Corporate Collection", sectors: ["company"], count: 100, price: "£49" },
+  {
+    key: "school-end-term",
+    name: "School End-of-Term Awards Pack",
+    sectors: ["school"],
+    blurb: "A complete assembly-ready set for pupil achievement, attendance, kindness and graduation moments.",
+    count: 42,
+    price: "£49",
+    includedIn: "Education Pro",
+    bestFor: ["Primary schools", "End of term", "Class awards"],
+    items: [
+      { label: "Star of the Week Certificate", kind: "certificate" },
+      { label: "Maths Excellence Certificate", kind: "certificate" },
+      { label: "Reading Champion Certificate", kind: "certificate" },
+      { label: "Kindness Award Certificate", kind: "certificate" },
+      { label: "Perfect Attendance Certificate", kind: "certificate" },
+      { label: "Graduation Certificate", kind: "certificate" },
+      { label: "Pupil Badge Sheet", kind: "badge" },
+      { label: "Parent Email Wording", kind: "email" },
+      { label: "Assembly Social Graphic", kind: "social" },
+      { label: "Printable Award Cards", kind: "card" },
+    ],
+  },
+  {
+    key: "church-volunteer",
+    name: "Church Volunteer Appreciation Pack",
+    sectors: ["church"],
+    blurb: "Warm certificates and event assets for ministry teams, volunteers, workers and thanksgiving services.",
+    count: 36,
+    price: "£39",
+    includedIn: "Church Pro",
+    bestFor: ["Churches", "Volunteer Sunday", "Workers appreciation"],
+    items: [
+      { label: "Volunteer Appreciation Certificate", kind: "certificate" },
+      { label: "Faithfulness Award Certificate", kind: "certificate" },
+      { label: "Choir Recognition Certificate", kind: "certificate" },
+      { label: "Children's Ministry Certificate", kind: "certificate" },
+      { label: "Pastor Appreciation Certificate", kind: "certificate" },
+      { label: "Thank You Card", kind: "card" },
+      { label: "Service Slide / Banner", kind: "banner" },
+      { label: "WhatsApp Share Graphic", kind: "social" },
+      { label: "Appreciation Email Wording", kind: "email" },
+    ],
+  },
+  {
+    key: "corporate-recognition",
+    name: "Corporate Recognition Pack",
+    sectors: ["company"],
+    blurb: "Professional awards for employee recognition, leadership, innovation, service and team achievement.",
+    count: 48,
+    price: "£59",
+    includedIn: "Organisation Pro",
+    bestFor: ["Teams", "HR", "Monthly awards"],
+    items: [
+      { label: "Employee of the Month Certificate", kind: "certificate" },
+      { label: "Leadership Excellence Certificate", kind: "certificate" },
+      { label: "Innovation Award Certificate", kind: "certificate" },
+      { label: "Customer Service Certificate", kind: "certificate" },
+      { label: "Long Service Certificate", kind: "certificate" },
+      { label: "LinkedIn Share Graphic", kind: "social" },
+      { label: "Digital Badge", kind: "badge" },
+      { label: "Manager Email Wording", kind: "email" },
+    ],
+  },
+  {
+    key: "sports-presentation",
+    name: "Sports Presentation Night Pack",
+    sectors: ["sports", "school"],
+    blurb: "A full club presentation set for end-of-season awards, match recognition and participation.",
+    count: 34,
+    price: "£49",
+    includedIn: "Sports Pro",
+    bestFor: ["Clubs", "Season awards", "Youth teams"],
+    items: [
+      { label: "Player of the Match Certificate", kind: "certificate" },
+      { label: "Most Improved Player Certificate", kind: "certificate" },
+      { label: "Fair Play Award Certificate", kind: "certificate" },
+      { label: "Top Goal Scorer Certificate", kind: "certificate" },
+      { label: "Participation Certificate", kind: "certificate" },
+      { label: "Medal Badge Sheet", kind: "badge" },
+      { label: "Club Social Graphic", kind: "social" },
+      { label: "Presentation Night Banner", kind: "banner" },
+    ],
+  },
+  {
+    key: "luxury-ceremony",
+    name: "Luxury Ceremony Certificate Pack",
+    sectors: ["school", "church", "company", "charity", "event"],
+    blurb: "Premium jewel-tone and ivory certificates for formal ceremonies and high-value recognition.",
+    count: 24,
+    price: "£29",
+    includedIn: "All Premium Plans",
+    bestFor: ["Formal events", "Leadership awards", "Annual ceremonies"],
+    items: [
+      { label: "Imperial Certificate", kind: "certificate" },
+      { label: "Sapphire Gala Certificate", kind: "certificate" },
+      { label: "Prestige Ivory Certificate", kind: "certificate" },
+      { label: "Rose Ceremony Certificate", kind: "certificate" },
+      { label: "Heritage Vellum Certificate", kind: "certificate" },
+      { label: "Premium Seal Badge", kind: "badge" },
+      { label: "Ceremony Programme Cover", kind: "card" },
+    ],
+  },
+  {
+    key: "done-for-you-setup",
+    name: "Done-for-You Brand Setup",
+    sectors: ["school", "church", "sports", "company", "charity", "event"],
+    blurb: "We configure your logo, colours, templates, signatories and starter award packs for your organisation.",
+    count: 1,
+    price: "£99",
+    includedIn: "One-time service",
+    bestFor: ["New organisations", "Busy admins", "Launch setup"],
+    items: [
+      { label: "Brand Kit Configuration", kind: "certificate" },
+      { label: "Logo and Colour Matching", kind: "certificate" },
+      { label: "Default Template Selection", kind: "certificate" },
+      { label: "Starter Award Pack Setup", kind: "certificate" },
+      { label: "Signatory Setup", kind: "email" },
+      { label: "PDF Export Check", kind: "card" },
+    ],
+  },
 ]
 
 /* ---------------- The Recognition Experience (multi-output) ---------------- */
