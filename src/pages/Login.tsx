@@ -1,6 +1,6 @@
 import { useEffect, useState, type FormEvent, type ReactNode } from "react"
 import { useNavigate, useSearchParams } from "react-router-dom"
-import { Award, Loader2, MailCheck, Mail } from "lucide-react"
+import { Award, Loader2, MailCheck, Mail, ShieldCheck } from "lucide-react"
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -14,16 +14,18 @@ export default function Login() {
   const navigate = useNavigate()
   const [params] = useSearchParams()
   const inviteToken = params.get("invite") || undefined
+  const trial = params.get("trial") || undefined
+  const isSchoolTrial = trial === "school"
   const { signIn, signUp, authed, refreshOrgs, setActiveOrgId } = useAuth()
-  const [mode, setMode] = useState<"signin" | "signup">(inviteToken ? "signup" : "signin")
+  const [mode, setMode] = useState<"signin" | "signup">(inviteToken || isSchoolTrial ? "signup" : "signin")
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [confirm, setConfirm] = useState(false)
 
-  const [email, setEmail] = useState("")
+  const [email, setEmail] = useState(params.get("email") || "")
   const [password, setPassword] = useState("")
-  const [fullName, setFullName] = useState("")
-  const [orgName, setOrgName] = useState("")
+  const [fullName, setFullName] = useState(params.get("name") || "")
+  const [orgName, setOrgName] = useState(params.get("org") || "")
   const [vertical, setVertical] = useState<VerticalKey>("school")
 
   // Join the invited org (after auth) and route in.
@@ -57,7 +59,15 @@ export default function Login() {
         if (error) setError(error)
         else await afterAuth()
       } else {
-        const { error, needsConfirmation } = await signUp({ email, password, fullName, organisationName: orgName, vertical, inviteToken })
+        const { error, needsConfirmation } = await signUp({
+          email,
+          password,
+          fullName,
+          organisationName: orgName,
+          vertical,
+          inviteToken,
+          trialKind: isSchoolTrial ? "school-30-day" : undefined,
+        })
         if (error) setError(error)
         else if (needsConfirmation) setConfirm(true)
         else await afterAuth()
@@ -99,9 +109,25 @@ export default function Login() {
             ? "You've been invited to a HonorHub workspace."
             : mode === "signin"
               ? "Sign in to your HonorHub workspace."
-              : "Start recognising achievement in minutes."}
+              : isSchoolTrial
+                ? "Start a 30-day school trial with template upload included."
+                : "Start recognising achievement in minutes."}
         </p>
       </div>
+
+      {isSchoolTrial && mode === "signup" && (
+        <div className="mb-4 rounded-lg border border-success/25 bg-success/5 p-3 text-sm">
+          <div className="flex items-start gap-2">
+            <ShieldCheck className="mt-0.5 size-4 shrink-0 text-success" />
+            <div>
+              <p className="font-semibold text-foreground">30-day free trial for schools</p>
+              <p className="mt-1 text-muted-foreground">
+                Teacher accounts, school branding and uploaded templates can be saved. Pupil names, reasons and recipient uploads stay session-only by default and are not stored in the school account.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
 
       {joining && (
         <div className="mb-4 flex items-center gap-2 rounded-lg border border-primary/20 bg-accent/40 p-3 text-sm">
@@ -151,7 +177,7 @@ export default function Login() {
 
         <Button type="submit" size="lg" disabled={busy} className="mt-1 font-semibold">
           {busy && <Loader2 className="size-4 animate-spin" />}
-          {mode === "signin" ? "Sign in" : "Create workspace"}
+          {mode === "signin" ? "Sign in" : isSchoolTrial ? "Start 30-day trial" : "Create workspace"}
         </Button>
       </form>
 

@@ -16,6 +16,7 @@ export interface SignUpInput {
   organisationName: string
   vertical: VerticalKey
   inviteToken?: string
+  trialKind?: string
 }
 
 interface AuthState {
@@ -112,6 +113,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           full_name: input.fullName,
           organisation_name: input.organisationName,
           vertical: input.vertical,
+          trial_kind: input.trialKind ?? "",
+          trial_days: input.trialKind ? "30" : "",
           // When present, the signup trigger skips creating a new org — the user
           // joins the inviting org via accept_invite() instead.
           invite_token: input.inviteToken ?? "",
