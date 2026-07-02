@@ -409,6 +409,13 @@ Respond with ONLY a JSON array of strings in order, no prose or fences.`
 
   /* ---------------- Step 5: success ---------------- */
   if (step === 4) {
+    const exportChecklist = [
+      `${totalCerts} certificate${totalCerts === 1 ? "" : "s"} ready`,
+      "A4 landscape layout",
+      usesNativePdfDialog() ? "Choose colour and Save as PDF in the print dialog" : "Colour PDF export enabled",
+      "Pupil names stay session-only",
+    ]
+
     return (
       <div className="relative -m-4 min-h-[calc(100vh-4rem)] overflow-hidden sm:-m-6">
         <Confetti />
@@ -461,6 +468,19 @@ Respond with ONLY a JSON array of strings in order, no prose or fences.`
                     <div key={m.k} className="rounded-lg bg-muted/50 p-3">
                       <p className="text-xs text-muted-foreground">{m.k}</p>
                       <p className="text-2xl font-bold text-primary">{m.v}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="rounded-xl border border-success/20 bg-success/5 p-5 text-left shadow-sm">
+                <h4 className="mb-3 flex items-center gap-2 font-semibold">
+                  <ShieldCheck className="size-4 text-success" /> Print checklist
+                </h4>
+                <div className="grid gap-2">
+                  {exportChecklist.map((item) => (
+                    <div key={item} className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <CheckCircle2 className="size-4 shrink-0 text-success" />
+                      <span>{item}</span>
                     </div>
                   ))}
                 </div>

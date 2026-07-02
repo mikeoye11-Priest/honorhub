@@ -22,6 +22,7 @@ import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { useExportStats } from "@/lib/exports"
 import { useAuth } from "@/lib/auth"
+import { useHonor } from "@/lib/store"
 
 function greeting(): string {
   const h = new Date().getHours()
@@ -113,6 +114,7 @@ function HealthDonut({ score }: { score: number }) {
 export default function Home() {
   const navigate = useNavigate()
   const { configured, user } = useAuth()
+  const honor = useHonor()
   const firstName = (configured && user?.fullName?.trim().split(/\s+/)[0]) || "there"
   const card = "rounded-xl border bg-card shadow-soft"
   const [activityFilter, setActivityFilter] = useState<"all" | "milestones">("all")
@@ -140,6 +142,12 @@ export default function Home() {
     return k.delta
   }
 
+  const loadDemo = () => {
+    honor.loadSchoolDemo()
+    toast.success("School demo loaded", { description: "Greenfield Primary, five sample pupils and a branded certificate are ready." })
+    navigate("/create")
+  }
+
   return (
     <div className="mx-auto max-w-7xl">
       {/* Greeting */}
@@ -149,6 +157,9 @@ export default function Home() {
           <p className="mt-1 text-muted-foreground">Let's celebrate someone's achievement today.</p>
         </div>
         <div className="flex flex-wrap gap-2">
+          <Button variant="outline" onClick={loadDemo}>
+            <Sparkles className="size-4" /> Load Demo Mode
+          </Button>
           <Button variant="outline" onClick={() => navigate("/create")}>
             <UserPlus className="size-4" /> Add Recipient
           </Button>
@@ -178,6 +189,9 @@ export default function Home() {
             </div>
             <Button variant="outline" onClick={() => navigate("/organisation")}>
               View privacy settings
+            </Button>
+            <Button onClick={loadDemo}>
+              <Sparkles className="size-4" /> Load school demo
             </Button>
           </div>
         </div>

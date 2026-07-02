@@ -33,6 +33,7 @@ export interface HonorState extends PersistShape {
   setRecipientsRaw: (raw: string) => void
   clearRecipients: () => void
   setPack: (k: string | null) => void
+  loadSchoolDemo: () => void
 }
 
 const SEED_RECIPIENTS = `Amelia Cole — for beautiful, careful handwriting all week
@@ -40,6 +41,15 @@ Noah Bryant — for being a kind and helpful friend
 Priya Shah — for fantastic ideas in our science lesson
 Leo Walsh — for never giving up on tricky maths
 Grace Owusu — for reading with wonderful expression`
+
+const SCHOOL_DEMO_RECIPIENTS = `Amelia Cole — for beautiful, careful handwriting all week
+Noah Bryant — for being a kind and helpful friend
+Priya Shah — for fantastic ideas in our science lesson
+Leo Walsh — for never giving up on tricky maths
+Grace Owusu — for reading with wonderful expression`
+
+const SCHOOL_DEMO_LOGO =
+  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 160 160'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop stop-color='%232d7f5e'/%3E%3Cstop offset='1' stop-color='%23c8a96a'/%3E%3C/linearGradient%3E%3C/defs%3E%3Ccircle cx='80' cy='80' r='72' fill='%23fffaf0' stroke='url(%23g)' stroke-width='8'/%3E%3Cpath d='M80 30 124 52v34c0 28-18 44-44 52-26-8-44-24-44-52V52l44-22Z' fill='%232d7f5e'/%3E%3Cpath d='M55 78h50v35H55z' fill='%23fffaf0'/%3E%3Cpath d='M50 72h60L80 50 50 72Z' fill='%23c8a96a'/%3E%3Cpath d='M64 84h32M64 96h32M64 108h22' stroke='%232d7f5e' stroke-width='5' stroke-linecap='round'/%3E%3Ctext x='80' y='145' text-anchor='middle' font-family='Arial,sans-serif' font-size='12' font-weight='700' fill='%232d7f5e'%3EGREENFIELD%3C/text%3E%3C/svg%3E"
 
 const HonorContext = createContext<HonorState | null>(null)
 
@@ -107,6 +117,23 @@ export function HonorProvider({ children }: { children: ReactNode }) {
   }
 
   const clearRecipients = () => setRecipientsRaw("")
+
+  const loadSchoolDemo = () => {
+    setVerticalState("school")
+    setOrg("Greenfield Community Primary School")
+    setAward("Star of the Week")
+    setDefaultReason("for showing kindness, effort and curiosity in class")
+    setSignatory("Mrs Hart · Class 3")
+    setDate(todayUK())
+    setTemplate("imperial")
+    setAccent("#C8A96A")
+    setLogoState(SCHOOL_DEMO_LOGO)
+    setLogoScale(92)
+    setLogoX(0)
+    setLogoY(-2)
+    setRecipientsRaw(SCHOOL_DEMO_RECIPIENTS)
+    setPack(null)
+  }
 
   // Persist org-level settings (not recipients) per the bible's privacy stance.
   useEffect(() => {
@@ -190,6 +217,7 @@ export function HonorProvider({ children }: { children: ReactNode }) {
     setRecipientsRaw,
     clearRecipients,
     setPack,
+    loadSchoolDemo,
   }
 
   return <HonorContext.Provider value={value}>{children}</HonorContext.Provider>
