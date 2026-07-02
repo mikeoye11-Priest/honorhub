@@ -40,6 +40,7 @@ import { LogoAdjustControls } from "@/components/LogoAdjustControls"
 import { useHonor } from "@/lib/store"
 import { useAuth } from "@/lib/auth"
 import { VERTICALS, TEMPLATES, ACCENTS, getRecommendedTemplates, parseRecipients, type TemplateDef } from "@/lib/honor"
+import { useCustomTemplates } from "@/lib/custom-templates"
 import { COLLECTIONS, getPack } from "@/lib/catalog"
 import { downloadPdf, buildShareFile, usesNativePdfDialog } from "@/lib/pdf"
 import { usePacks } from "@/lib/packs"
@@ -132,6 +133,7 @@ export default function Create() {
     award: activeAward,
     date: h.date,
     signatory: h.signatory,
+    custom: h.template === "custom" ? h.customLayout ?? undefined : undefined,
   }
   const recipientCount = parseRecipients(h.recipientsRaw, h.defaultReason).length
   const totalCerts = pack ? packCertItems.length * recipientCount : recipientCount
@@ -140,6 +142,7 @@ export default function Create() {
   const recommendedTemplates = getRecommendedTemplates(h.vertical)
   const recommendedTemplateKeys = new Set(recommendedTemplates.map((t) => t.key))
   const orderedTemplates = [...recommendedTemplates, ...TEMPLATES.filter((t) => !recommendedTemplateKeys.has(t.key))]
+  const { templates: customTemplates } = useCustomTemplates()
 
   const selectTemplate = (template: TemplateDef) => {
     h.setTemplate(template.key)
@@ -788,6 +791,20 @@ Respond with ONLY a JSON array of strings in order, no prose or fences.`
                         </div>
                       </button>
                     ))}
+                    {customTemplates.map((t) => {
+                      const active = h.template === "custom" && h.customLayout?.background === t.background
+                      return (
+                        <button
+                          key={t.id}
+                          onClick={() => h.setCustomTemplate({ background: t.background, aspect: t.aspect, fields: t.fields })}
+                          className={`min-h-20 rounded-lg border p-2 text-left transition hover:shadow-sm ${active ? "border-primary ring-1 ring-primary" : "bg-card"}`}
+                        >
+                          <div className="text-sm font-semibold">{t.name}</div>
+                          <div className="text-[11px] text-muted-foreground">Your upload</div>
+                          <div className="mt-2"><Badge variant="outline" className="px-1.5 py-0 text-[10px]">Custom</Badge></div>
+                        </button>
+                      )
+                    })}
                   </div>
                   <Label className="mb-2 mt-4 block text-xs uppercase tracking-wide text-muted-foreground">Accent</Label>
                   <div className="flex flex-wrap items-center gap-2">

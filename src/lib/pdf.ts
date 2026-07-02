@@ -219,6 +219,25 @@ function applySolidTextForPdf(el: HTMLElement, template: string, accent: string)
 interface MountedCert {
   el: HTMLDivElement
   paper: string
+  w: number
+  h: number
+}
+
+const A4_W_MM = 297
+
+/** width / height of a page. Built-ins are A4 landscape; uploaded templates
+ *  keep the aspect ratio of the design the school provided. */
+function pageAspect(page: CertPage): number {
+  return page.fields.custom ? page.fields.custom.aspect : PX_W / PX_H
+}
+
+function pageDims(aspect: number) {
+  return {
+    w: PX_W,
+    h: Math.round(PX_W / aspect),
+    wmm: A4_W_MM,
+    hmm: Math.round((A4_W_MM / aspect) * 100) / 100,
+  }
 }
 
 /** Create the off-screen certificate, append it, and bake the template's
@@ -226,9 +245,10 @@ interface MountedCert {
  *  design. Also substitutes literal colours into the inline SVG (html-to-image
  *  renders currentColor/var() in SVG unreliably, often as black). */
 function mountCertEl(host: HTMLDivElement, page: CertPage): MountedCert {
+  const { w, h } = pageDims(pageAspect(page))
   const el = document.createElement("div")
   el.className = certClassName(page.fields, "pdf-export")
-  el.style.cssText = `width:${PX_W}px;height:${PX_H}px;animation:none;`
+  el.style.cssText = `width:${w}px;height:${h}px;animation:none;`
   el.style.setProperty("--accent", page.fields.accent)
   host.appendChild(el)
 
@@ -264,7 +284,7 @@ function mountCertEl(host: HTMLDivElement, page: CertPage): MountedCert {
   html = html.replace(/var\(--accent\)/g, accent)
   el.innerHTML = `<div aria-hidden="true" style="position:absolute;inset:0;background:${paper};z-index:0"></div>${html}`
   applySolidTextForPdf(el, page.fields.template, accent)
-  return { el, paper }
+  return { el, paper, w, h }
 }
 
 function opaqueImageData(canvas: HTMLCanvasElement, paper: string): string {
@@ -279,13 +299,13 @@ function opaqueImageData(canvas: HTMLCanvasElement, paper: string): string {
   return flattened.toDataURL("image/jpeg", 0.96)
 }
 
-async function capturePdfCanvas(el: HTMLDivElement, paper: string): Promise<HTMLCanvasElement> {
+async function capturePdfCanvas(el: HTMLDivElement, paper: string, w: number, h: number): Promise<HTMLCanvasElement> {
   const { default: html2canvas } = await import("html2canvas")
   return html2canvas(el, {
     backgroundColor: paper,
     scale: CANVAS_SCALE,
-    width: PX_W,
-    height: PX_H,
+    width: w,
+    height: h,
     useCORS: true,
     logging: false,
   })
@@ -301,16 +321,19 @@ export async function downloadPdf(pages: CertPage[], filename = "honorhub-certif
   await ensureFonts()
 
   const host = makeHost()
-  const pdf = new jsPDF({ orientation: "landscape", unit: "mm", format: "a4" })
+  let pdf: import("jspdf").jsPDF | null = null
   try {
     for (let i = 0; i < pages.length; i++) {
-      const { el, paper } = mountCertEl(host, pages[i])
-      const canvas = await capturePdfCanvas(el, paper)
-      if (i > 0) pdf.addPage()
-      pdf.addImage(opaqueImageData(canvas, paper), "JPEG", 0, 0, 297, 210)
+      const { wmm, hmm } = pageDims(pageAspect(pages[i]))
+      const orientation = wmm >= hmm ? "landscape" : "portrait"
+      const { el, paper, w, h } = mountCertEl(host, pages[i])
+      const canvas = await capturePdfCanvas(el, paper, w, h)
+      if (!pdf) pdf = new jsPDF({ orientation, unit: "mm", format: [wmm, hmm] })
+      else pdf.addPage([wmm, hmm], orientation)
+      pdf.addImage(opaqueImageData(canvas, paper), "JPEG", 0, 0, wmm, hmm)
       host.removeChild(el)
     }
-    pdf.save(filename)
+    pdf?.save(filename)
   } finally {
     host.remove()
   }
@@ -327,8 +350,8 @@ export async function buildShareFile(pages: CertPage[], fileBase = "honorhub-cer
     const { toBlob } = await import("html-to-image")
     const host = makeHost()
     try {
-      const { el } = mountCertEl(host, pages[0])
-      const blob = await toBlob(el, RENDER_OPTS)
+      const { el, w, h } = mountCertEl(host, pages[0])
+      const blob = await toBlob(el, { ...RENDER_OPTS, width: w, height: h })
       if (!blob) throw new Error("image render failed")
       return new File([blob], `${fileBase}.png`, { type: "image/png" })
     } finally {
@@ -339,17 +362,20 @@ export async function buildShareFile(pages: CertPage[], fileBase = "honorhub-cer
   // Several certificates → reuse the PDF path, but capture the bytes.
   const { jsPDF } = await import("jspdf")
   const host = makeHost()
-  const pdf = new jsPDF({ orientation: "landscape", unit: "mm", format: "a4" })
+  let pdf: import("jspdf").jsPDF | null = null
   try {
     for (let i = 0; i < pages.length; i++) {
-      const { el, paper } = mountCertEl(host, pages[i])
-      const canvas = await capturePdfCanvas(el, paper)
-      if (i > 0) pdf.addPage()
-      pdf.addImage(opaqueImageData(canvas, paper), "JPEG", 0, 0, 297, 210)
+      const { wmm, hmm } = pageDims(pageAspect(pages[i]))
+      const orientation = wmm >= hmm ? "landscape" : "portrait"
+      const { el, paper, w, h } = mountCertEl(host, pages[i])
+      const canvas = await capturePdfCanvas(el, paper, w, h)
+      if (!pdf) pdf = new jsPDF({ orientation, unit: "mm", format: [wmm, hmm] })
+      else pdf.addPage([wmm, hmm], orientation)
+      pdf.addImage(opaqueImageData(canvas, paper), "JPEG", 0, 0, wmm, hmm)
       host.removeChild(el)
     }
   } finally {
     host.remove()
   }
-  return new File([pdf.output("blob")], `${fileBase}.pdf`, { type: "application/pdf" })
+  return new File([pdf!.output("blob")], `${fileBase}.pdf`, { type: "application/pdf" })
 }

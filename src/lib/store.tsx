@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react"
 import { VERTICALS, parseRecipients, todayUK, type Recipient, type VerticalKey } from "./honor"
+import type { CustomLayout } from "./custom-templates"
 import { useAuth } from "./auth"
 import { fetchOrganisation, updateOrganisation } from "./org"
 
@@ -24,8 +25,11 @@ export interface HonorState extends PersistShape {
   recipientsRaw: string
   recipients: Recipient[]
   packKey: string | null
+  // Set only while an uploaded template is active (template === "custom").
+  customLayout: CustomLayout | null
   setVertical: (v: VerticalKey) => void
   setTemplate: (t: string) => void
+  setCustomTemplate: (layout: CustomLayout) => void
   setAccent: (a: string) => void
   setLogo: (l: string | null) => void
   setLogoAdjust: (patch: Partial<Pick<PersistShape, "logoScale" | "logoX" | "logoY">>) => void
@@ -66,7 +70,9 @@ export function HonorProvider({ children }: { children: ReactNode }) {
   const seed = VERTICALS[persisted.vertical ?? "school"]
 
   const [vertical, setVerticalState] = useState<VerticalKey>(persisted.vertical ?? "school")
-  const [template, setTemplate] = useState(persisted.template ?? "laurel")
+  // "custom" is never a persisted default — an uploaded template must be re-selected.
+  const [template, setTemplateRaw] = useState(persisted.template && persisted.template !== "custom" ? persisted.template : "laurel")
+  const [customLayout, setCustomLayout] = useState<CustomLayout | null>(null)
   const [accent, setAccent] = useState(persisted.accent ?? "#F58220")
   const [logo, setLogoState] = useState<string | null>(persisted.logo ?? null)
   const [logoScale, setLogoScale] = useState(persisted.logoScale ?? 100)
@@ -118,6 +124,16 @@ export function HonorProvider({ children }: { children: ReactNode }) {
 
   const clearRecipients = () => setRecipientsRaw("")
 
+  // Selecting a built-in template clears any active uploaded template.
+  const setTemplate = (t: string) => {
+    setTemplateRaw(t)
+    if (t !== "custom") setCustomLayout(null)
+  }
+  const setCustomTemplate = (layout: CustomLayout) => {
+    setCustomLayout(layout)
+    setTemplateRaw("custom")
+  }
+
   const loadSchoolDemo = () => {
     setVerticalState("school")
     setOrg("Greenfield Community Primary School")
@@ -161,7 +177,7 @@ export function HonorProvider({ children }: { children: ReactNode }) {
       setVerticalState(o.vertical)
       setOrg(o.name)
       setAccent(o.accent)
-      setTemplate(o.template || "laurel")
+      setTemplate(o.template && o.template !== "custom" ? o.template : "laurel")
       setLogoState(o.logo_url)
       setAward(o.default_award ?? def.award)
       setDefaultReason(o.default_reason ?? def.reason)
@@ -181,7 +197,8 @@ export function HonorProvider({ children }: { children: ReactNode }) {
         vertical,
         accent,
         logo_url: logo,
-        template,
+        // Don't persist "custom" as the org default — it can't be re-hydrated without the layout.
+        ...(template !== "custom" ? { template } : {}),
         default_award: award,
         default_reason: defaultReason,
         default_signatory: signatory,
@@ -208,8 +225,10 @@ export function HonorProvider({ children }: { children: ReactNode }) {
     recipientsRaw,
     recipients,
     packKey,
+    customLayout,
     setVertical,
     setTemplate,
+    setCustomTemplate,
     setAccent,
     setLogo,
     setLogoAdjust,

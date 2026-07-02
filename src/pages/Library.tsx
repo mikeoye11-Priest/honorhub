@@ -32,6 +32,8 @@ import { useHonor } from "@/lib/store"
 import { TEMPLATES, ACCENTS, TEMPLATE_STYLES, TEMPLATE_TIERS, VERTICAL_LIST, VERTICALS, getRecommendedTemplates, getTemplate, templateSearchText, type TemplateDef, type VerticalKey } from "@/lib/honor"
 import { COLLECTIONS, PREMIUM_COLLECTIONS, type PackItem, type OutputKind } from "@/lib/catalog"
 import { usePacks, type NewPack } from "@/lib/packs"
+import { useCustomTemplates, type CustomTemplate } from "@/lib/custom-templates"
+import { CustomTemplateEditor } from "@/components/CustomTemplateEditor"
 
 function EmptyState({ icon: Icon, title, body, cta, onCta }: { icon: ElementType; title: string; body: string; cta: string; onCta?: () => void }) {
   return (
@@ -61,6 +63,21 @@ export default function Library() {
   const [tplQuery, setTplQuery] = useState("")
   const [tplTier, setTplTier] = useState<TemplateDef["tier"] | "all">("all")
   const [tplStyle, setTplStyle] = useState<TemplateDef["style"] | "all">("all")
+  const { templates: customTemplates, live: customLive, deleteTemplate } = useCustomTemplates()
+  const [editorOpen, setEditorOpen] = useState(false)
+
+  const applyCustom = (t: CustomTemplate) => {
+    h.setCustomTemplate({ background: t.background, aspect: t.aspect, fields: t.fields })
+    toast.success(`“${t.name}” selected`, { description: "Opened in Create." })
+    navigate("/create")
+  }
+  const openEditor = () => {
+    if (!customLive) {
+      toast("Sign in to upload templates", { description: "Uploaded templates save to your organisation." })
+      return
+    }
+    setEditorOpen(true)
+  }
   const fields = {
     template: h.template,
     accent: h.accent,
@@ -161,9 +178,14 @@ export default function Library() {
               <h1 className="text-3xl font-semibold tracking-tight">Certificate Templates</h1>
               <p className="mt-1 text-muted-foreground">Manage your designs for every recognition occasion.</p>
             </div>
-            <Button className="font-semibold" onClick={newTemplate}>
-              <Plus className="size-4" /> Create new template
-            </Button>
+            <div className="flex gap-2">
+              <Button variant="outline" className="font-semibold" onClick={openEditor}>
+                <Upload className="size-4" /> Upload your own
+              </Button>
+              <Button className="font-semibold" onClick={newTemplate}>
+                <Plus className="size-4" /> Create new template
+              </Button>
+            </div>
           </div>
 
           {/* Filter bar */}
@@ -261,6 +283,38 @@ export default function Library() {
                 </div>
               )
             })}
+
+            {/* Uploaded (bring-your-own) templates */}
+            {customTemplates.map((t) => (
+              <div key={t.id} className="group flex flex-col overflow-hidden rounded-xl border bg-card shadow-soft transition hover:-translate-y-1 hover:shadow-soft-lg">
+                <div className="relative border-b bg-muted/40 p-4">
+                  <div className="overflow-hidden rounded-lg ring-1 ring-border">
+                    <Certificate fields={{ ...fields, template: "custom", custom: { background: t.background, aspect: t.aspect, fields: t.fields } }} recipient={h.recipients[0]} />
+                  </div>
+                </div>
+                <div className="flex flex-1 flex-col p-4">
+                  <div className="mb-3">
+                    <h3 className="font-semibold">{t.name}</h3>
+                    <Badge variant="outline" className="mt-1 text-[10px]">Your upload</Badge>
+                  </div>
+                  <div className="mt-auto flex gap-2">
+                    <Button variant="outline" className="flex-1" onClick={() => applyCustom(t)}>Use template</Button>
+                    <Button variant="outline" size="icon" aria-label="Delete" onClick={() => void deleteTemplate(t.id).then(() => toast.success(`“${t.name}” deleted`))}>
+                      <Trash2 className="size-4" />
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            ))}
+
+            {/* Upload your own */}
+            <button onClick={openEditor} className="group flex min-h-[320px] flex-col items-center justify-center rounded-xl border-2 border-dashed p-8 text-center transition hover:border-primary/40 hover:bg-accent/40">
+              <span className="grid size-16 place-items-center rounded-full bg-muted transition-transform group-hover:scale-110">
+                <Upload className="size-8 text-primary" />
+              </span>
+              <span className="mt-4 font-semibold">Upload your own template</span>
+              <p className="mt-1 max-w-[220px] text-xs text-muted-foreground">Upload your school's certificate (image or PDF) and drag the fields into place.</p>
+            </button>
 
             {/* Create new */}
             <button onClick={newTemplate} className="group flex min-h-[320px] flex-col items-center justify-center rounded-xl border-2 border-dashed p-8 text-center transition hover:border-primary/40 hover:bg-accent/40">
@@ -673,6 +727,16 @@ export default function Library() {
           </div>
         </TabsContent>
       </Tabs>
+
+      {editorOpen && (
+        <CustomTemplateEditor
+          onClose={() => setEditorOpen(false)}
+          onSaved={(t) => {
+            h.setCustomTemplate({ background: t.background, aspect: t.aspect, fields: t.fields })
+            navigate("/create")
+          }}
+        />
+      )}
     </div>
   )
 }

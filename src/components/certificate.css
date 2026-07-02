@@ -1223,3 +1223,32 @@
   width: 129px;
   height: 129px;
 }
+
+/* ================================================================
+   CUSTOM (bring-your-own) uploaded templates
+   Background image fills the certificate (its container adopts the
+   uploaded design's aspect ratio, so no distortion) and each field is
+   positioned as a fraction of the certificate — scaling identically in
+   the small preview and on a full-size export.
+================================================================= */
+.t-custom {
+  background: #ffffff;
+  overflow: hidden;
+  padding: 0;
+}
+.t-custom .cert-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  display: block;
+}
+.t-custom .cf {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  line-height: 1.18;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  z-index: 2;
+}
